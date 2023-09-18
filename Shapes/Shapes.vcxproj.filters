@@ -32,16 +32,7 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="lib\Shape\ICanvas.h">
-      <Filter>Файлы заголовков</Filter>
-    </ClInclude>
-    <ClInclude Include="lib\Shape\IVisualObjectInfo.h">
-      <Filter>Файлы заголовков</Filter>
-    </ClInclude>
     <ClInclude Include="lib\Shape\EllipseDrawingStrategy.h">
-      <Filter>Файлы заголовков</Filter>
-    </ClInclude>
-    <ClInclude Include="lib\Shape\Circle.h">
       <Filter>Файлы заголовков</Filter>
     </ClInclude>
     <ClInclude Include="lib\Shape\CController.h">
@@ -53,7 +44,19 @@
     <ClInclude Include="lib\Shape\RectangleDrawingStrategy.h">
       <Filter>Файлы заголовков</Filter>
     </ClInclude>
-    <ClInclude Include="lib\Shape\CircleObjextInfo.h">
+    <ClInclude Include="lib\Shape\Color.h">
+      <Filter>Файлы заголовков</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\Shape\ICanvas.h">
+      <Filter>Файлы заголовков</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\Shape\LineDrawingStrategy.h">
+      <Filter>Файлы заголовков</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\Shape\TriangleDrawingStrategy.h">
+      <Filter>Файлы заголовков</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\Shape\TextDrawingStrategy.h">
       <Filter>Файлы заголовков</Filter>
     </ClInclude>
   </ItemGroup>

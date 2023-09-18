@@ -1,21 +1,14 @@
 #pragma once
-#include "IVisualObjectInfo.h"
+#include <string>
+#include "Color.h"
+
 class ICanvas
 {
 public:
-	void virtual DrawElipse(
-		IVisualObjectInfo::Point position,
-		IVisualObjectInfo::Color color, 
-		IVisualObjectInfo::Point bounds
-	) = 0;
-	void virtual DrawLine(
-		IVisualObjectInfo::Point position,
-		IVisualObjectInfo::Color color
-	) = 0;
-	void virtual DrawRectangle(
-		IVisualObjectInfo::Point position,
-		IVisualObjectInfo::Color color,
-		IVisualObjectInfo::Point bounds
-	) = 0;
-	~ICanvas() = default;
+	virtual void MoveTo(double x, double y) = 0;
+	virtual void SetColor(Color color) = 0;
+	virtual void LineTo(double x, double y) = 0;
+	virtual void DrawEllipse(double cx, double cy, double rx, double ry) = 0;
+	virtual void DrawText(double left, double top, double fontSize, const std::string& text) = 0;
+	virtual void Display() = 0;
 };

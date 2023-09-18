@@ -1,10 +1,14 @@
 #pragma once
 #include "ICanvas.h"
-#include "IVisualObjectInfo.h"
+#include "Color.h"
+#include <string>
+#include <iostream>
 
 class IDrawingStrategy
 {
 public:
 	virtual ~IDrawingStrategy() = default;
-	virtual void Draw(ICanvas& canvas, IVisualObjectInfo& objectInfo) = 0;
+	virtual void Move(double dx, double dy) = 0;
+	virtual void Display(std::string id, Color color) = 0;
+	virtual void Draw(ICanvas& canvas, Color color) = 0;
 };

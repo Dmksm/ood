@@ -10,8 +10,8 @@
 
 int main()
 {
-	Picture picture(std::make_unique<std::map<std::string, Shape>>());
-	CController controller(picture, std::cin, std::cout);
+	Picture picture(std::make_unique<Picture::ShapesList>());
+	CController controller(std::move(picture), std::cin, std::cout);
 	while (!std::cin.eof() && !std::cin.fail())
 	{
 		std::cout << "> ";

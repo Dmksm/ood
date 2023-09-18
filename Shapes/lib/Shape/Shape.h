@@ -1,41 +1,72 @@
 #pragma once
 #include "ICanvas.h"
-#include "IVisualObjectInfo.h"
+#include "Color.h"
 #include "IDrawingStrategy.h"
 #include "EllipseDrawingStrategy.h"
 #include <memory>
+#include <string>
 
-class Shape: public IVisualObjectInfo
+class Shape
 {
 public:
-	Shape(std::shared_ptr<IDrawingStrategy>&& drawingStrategy = 
-		std::make_shared<EllipseDrawingStrategy>(), Color color = 0)
+	Shape(std::unique_ptr<IDrawingStrategy>&& drawingStrategy, const std::string& id, Color color)
 		: m_drawingStrategy(std::move(drawingStrategy))
 		, m_color(color)
+		, m_id(id)
 	{
 	};
 
-	void SetDrawingStrategy(std::shared_ptr<IDrawingStrategy>&& drawingStrategy)
+	/*std::unique_ptr<IDrawingStrategy>&& GetDrawingStrategy() const
+	{
+		return std::make_shared<IDrawingStrategy>(m_drawingStrategy.get());
+	}*/
+
+	void SetDrawingStrategy(std::unique_ptr<IDrawingStrategy>&& drawingStrategy)
 	{
 		m_drawingStrategy = std::move(drawingStrategy);
 	}
 
-	void virtual Draw(ICanvas& canvas)
+	void Move(double dx, double dy) const
 	{
-		m_drawingStrategy->Draw(canvas, *this);
+		if (!(dx == 0 && dy == 0))
+		{
+			m_drawingStrategy->Move(dx, dy);
+		}
+	}
+
+	void Draw(ICanvas& canvas) const
+	{
+		m_drawingStrategy->Draw(canvas, m_color);
 	};
 
 	void SetColor(Color color)
 	{
-		m_color = color;
+		if (m_color != color)
+		{
+			m_color = color;
+		}
 	}	
 
-	Color GetColor()
+	std::string GetId() const
+	{
+		return m_id;
+	}
+
+	Color GetColor() const
 	{
 		return m_color;
 	}
 
+	void Display() const
+	{
+		if (m_drawingStrategy)
+		{
+			m_drawingStrategy->Display(m_id, m_color);
+		}
+	}
+
 private:
-	std::shared_ptr<IDrawingStrategy> m_drawingStrategy;
-	Color m_color = 0;
+	std::unique_ptr<IDrawingStrategy> m_drawingStrategy;
+	Color m_color;
+	std::string m_id;
 };

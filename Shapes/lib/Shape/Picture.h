@@ -1,108 +1,242 @@
 #pragma once
 #include "CCanvas.h"
-#include "Circle.h"
 #include "Shape.h"
 #include "IDrawingStrategy.h"
 #include "EllipseDrawingStrategy.h"
 #include "RectangleDrawingStrategy.h"
-#include <vector>
+#include "LineDrawingStrategy.h"
+#include "TriangleDrawingStrategy.h"
+#include "TextDrawingStrategy.h"
 #include <memory>
 #include <string>
 #include <stdexcept>
 #include <map>
 #include <sstream>
-using namespace std::string_literals;
 
 class Picture
 {
 public:
-	Picture(std::unique_ptr<std::map<std::string, Shape>>&& shapes)
-		: m_shapes(std::move(shapes))
+	using ShapesList = std::map<unsigned, Shape>;
+	
+	Picture(std::unique_ptr<ShapesList>&& shapes): m_shapes(std::move(shapes))
 	{
 	};
 
-	bool IsShapeExist(const std::string& id)
+	void MoveShape(const std::string& id, double dx, double dy) const
 	{
-		return m_shapes->find(id) != m_shapes->end();
+		ShapesList::iterator shapeIterator = GetShapeIterator(id);
+		if (shapeIterator == m_shapes->end())
+		{
+			throw std::logic_error("Shape with id = "s + id + " does not exist! "s);
+		};
+		shapeIterator->second.Move(dx, dy);
+	}
+
+	void Move(double dx, double dy) const
+	{
+		for (auto& it : *m_shapes)
+		{
+			it.second.Move(dx, dy);
+		}
+	}
+
+	void DeleteShape(const std::string& id)
+	{
+		m_shapes->erase(GetShapeIterator(id));
 	}
 
 	void AddShape(
 		const std::string& id,
-		const std::string& hexColor,
+		const std::string& color,
+		const std::string& type,
+		std::istream& args
+	) 
+	{
+		ValidateColor(color);
+		ShapesList::iterator shapeIterator = GetShapeIterator(id);
+		if (shapeIterator != m_shapes->end())
+		{
+			throw std::logic_error("Shape with id = "s + id + " already exist! "s);
+		}
+
+		Shape shape(MakeDrawingStrategy(type, args), id, color);
+		m_shapes->insert({ ++m_token,  std::move(shape) });
+	};
+
+	std::unique_ptr<EllipseDrawingStrategy>&& MakeEllipseStrategy(std::istream& args)
+	{
+		double x, y, radius;
+		args >> x >> y >> radius;
+		if (radius < 0)
+		{
+			throw std::logic_error("Radius can not be negative!");
+		}
+		return std::move(std::make_unique<EllipseDrawingStrategy>(x, y, radius, radius));
+	}
+
+	std::unique_ptr<RectangleDrawingStrategy>&& MakeRectangleStrategy(std::istream& args)
+	{
+		double x, y, width, heigth;
+		args >> x >> y >> width >> heigth;
+		if (width < 0 || heigth < 0)
+		{
+			throw std::logic_error("width and heigth can not be negative!");
+		}
+
+		return std::move(std::make_unique<RectangleDrawingStrategy>(x, y, width, heigth));
+	}
+
+	std::unique_ptr<LineDrawingStrategy>&& MakeLineStrategy(std::istream& args)
+	{
+		double x1, y1, x2, y2;
+		args >> x1 >> y1 >> x2 >> y2;
+
+		return std::move(std::make_unique<LineDrawingStrategy>(x1, y1, x2, y2));
+	}
+
+	std::unique_ptr<TriangleDrawingStrategy>&& MakeTriangleStrategy(std::istream& args)
+	{
+		double x1, y1, x2, y2, x3, y3;
+		args >> x1 >> y1 >> x2 >> y2 >> x3 >> y3;
+
+		return std::move(std::make_unique<TriangleDrawingStrategy>(x1, y1, x2, y2, x3, y3));
+	}
+
+	std::unique_ptr<TextDrawingStrategy>&& MakeTextStrategy(std::istream& args)
+	{
+		double width, heigth, fontSize;
+		std::string text;
+		args >> width >> heigth >> fontSize;
+		getline(args, text);
+		if (width < 0 || heigth < 0 || fontSize < 0)
+		{
+			throw std::logic_error("width and heigth and font size can not be negative!");
+		}
+
+		return std::move(std::make_unique<TextDrawingStrategy>(width, heigth, fontSize, text));
+	}
+
+	void ChangeShape(
+		const std::string& id,
 		const std::string& type,
 		std::istream& args
 	)
 	{
-		if (!IsShapeExist(id))
+		ShapesList::iterator shapeIterator = GetShapeIterator(id);
+		if (shapeIterator == m_shapes->end())
 		{
-			Shape shape;
-			if (type == "circle")
-			{
-				double x, y, radius;
-				args >> x >> y >> radius;
-				if (radius < 0)
-				{
-					throw std::logic_error("Radius can not be negative!");
-				}
-
-				Circle shape(x, y, radius);
-			}
-			if (type == "rectangle")
-			{
-				Shape shape;
-				shape.SetDrawingStrategy(std::make_shared<RectangleDrawingStrategy>());
-				double x, y, width, heigth;
-				args >> x >> y >> width >> heigth;
-				if (width < 0 || heigth < 0)
-				{
-					throw std::logic_error("width and heigth can not be negative!");
-				}
-				shape.SetPosition({ x, y });
-				shape.SetBounds({ width, heigth });
-			}
-			else
-			{
-				throw std::logic_error("Undefined type " + type);
-			}
-			shape.SetColor(HexToUint32(hexColor));
-			m_shapes->insert({ id, shape });
+			throw std::logic_error("Shape with id = "s + id + " does not exist! "s);
 		}
+		shapeIterator->second.SetDrawingStrategy(MakeDrawingStrategy(type, args));
 	};
 
-	void DrawShape(std::string id)
+	std::unique_ptr<IDrawingStrategy>&& MakeDrawingStrategy(
+		const std::string& type,
+		std::istream& args
+	)
 	{
-		if (IsShapeExist(id))
+		if (type == "circle")
 		{
-			CCanvas canvas;
-			m_shapes->at(id).Draw(canvas);
-		};
+			return std::move(MakeEllipseStrategy(args));
+		}
+		else if (type == "rectangle")
+		{
+			return std::move(MakeRectangleStrategy(args));
+		}
+		else if (type == "line")
+		{
+			return std::move(MakeLineStrategy(args));
+		}
+		else if (type == "triangle")
+		{
+			return std::move(MakeTriangleStrategy(args));
+		}
+		else if (type == "text")
+		{
+			return std::move(MakeTextStrategy(args));
+		}
+		else
+		{
+			throw std::logic_error("Undefined type " + type);
+		}
 	}
+
+	void ChangeColor(const std::string& id, const std::string& color) const
+	{
+		ValidateColor(color);
+		ShapesList::iterator shapeIterator = GetShapeIterator(id);
+		if (shapeIterator == m_shapes->end())
+		{
+			throw std::logic_error("Shape with id = "s + id + " does not exist! "s);
+		};
+		shapeIterator->second.SetColor(color);
+	}
+
+	ShapesList&& GetShapes() const
+	{
+		return std::move(*m_shapes);
+	}
+
+	void Draw()
+	{
+		CCanvas canvas;
+		for (auto& it : *m_shapes)
+		{
+			it.second.Draw(canvas);
+		}
+		canvas.Display();
+	}
+
+	void DrawShape(const std::string& id) const
+	{
+		ShapesList::iterator shapeIterator = GetShapeIterator(id);
+		if (shapeIterator == m_shapes->end())
+		{
+			throw std::logic_error("Shape with id = "s + id + " does not exist! "s);
+		};
+		CCanvas canvas;
+		shapeIterator->second.Draw(canvas);
+		canvas.Display();
+	}
+
+	/*void CloneShape(const std::string& id, const std::string& newId)
+	{
+		ShapesList::iterator shapeIterator = GetShapeIterator(id);
+		if (shapeIterator == m_shapes->end())
+		{
+			throw std::logic_error("Shape with id = "s + id + " does not exist! "s);
+		};
+
+		Shape shape(shapeIterator->second.GetDrawingStrategy(), 
+			id, shapeIterator->second.GetColor());
+		m_shapes->insert({ ++m_token, shape });
+	}*/
 
 private:
-	IVisualObjectInfo::Color HexToUint32(const std::string& hexColor)
-	{
-		if (!IsValidHexCode(hexColor))
-		{
-			throw std::logic_error("Undefined hex color code = "s + hexColor + ". "s);
-		}
-		std::string hexCode = hexColor;
-		if (hexCode.at(0) == '#') 
-		{
-			hexCode.erase(0, 1);
-		}
-		while (hexCode.length() != 6)
-		{
-			hexCode += "0";
-		}
-		while (hexCode.length() != 8)
-		{
-			hexCode += "F";
-		}
+	unsigned m_token = 0;
+	std::unique_ptr<ShapesList> m_shapes;
 
-		return std::stoul(hexCode, nullptr, 16);
+	void ValidateColor(const std::string& color) const
+	{
+		if (!IsValidHexCode(color))
+		{
+			throw std::logic_error("Undefined hex color code = "s + color + ". "s);
+		}
 	}
 
-	bool IsValidHexCode(const std::string& hexColor)
+	ShapesList::iterator GetShapeIterator(const std::string& id) const
+	{
+		for (auto& it : *m_shapes)
+		{
+			if (it.second.GetId() == id)
+			{
+				return m_shapes->find(it.first);
+			}
+		}
+		return m_shapes->end();
+	}
+
+	bool IsValidHexCode(const std::string& hexColor) const
 	{
 		const unsigned AVAILABLE_HEX_SIZE = 7;
 		const char FIRST_HEX_SYMBOL = '#';
@@ -123,6 +257,4 @@ private:
 
 		return true;
 	}
-
-	std::unique_ptr<std::map<std::string, Shape>> m_shapes;
 };
