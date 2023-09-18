@@ -63,7 +63,7 @@ public:
 		m_shapes->insert({ ++m_token,  std::move(shape) });
 	};
 
-	std::unique_ptr<EllipseDrawingStrategy>&& MakeEllipseStrategy(std::istream& args)
+	std::unique_ptr<EllipseDrawingStrategy> MakeEllipseStrategy(std::istream& args)
 	{
 		double x, y, radius;
 		args >> x >> y >> radius;
@@ -71,10 +71,10 @@ public:
 		{
 			throw std::logic_error("Radius can not be negative!");
 		}
-		return std::move(std::make_unique<EllipseDrawingStrategy>(x, y, radius, radius));
+		return std::make_unique<EllipseDrawingStrategy>(x, y, radius, radius);
 	}
 
-	std::unique_ptr<RectangleDrawingStrategy>&& MakeRectangleStrategy(std::istream& args)
+	std::unique_ptr<RectangleDrawingStrategy> MakeRectangleStrategy(std::istream& args)
 	{
 		double x, y, width, heigth;
 		args >> x >> y >> width >> heigth;
@@ -83,26 +83,26 @@ public:
 			throw std::logic_error("width and heigth can not be negative!");
 		}
 
-		return std::move(std::make_unique<RectangleDrawingStrategy>(x, y, width, heigth));
+		return std::make_unique<RectangleDrawingStrategy>(x, y, width, heigth);
 	}
 
-	std::unique_ptr<LineDrawingStrategy>&& MakeLineStrategy(std::istream& args)
+	std::unique_ptr<LineDrawingStrategy> MakeLineStrategy(std::istream& args)
 	{
 		double x1, y1, x2, y2;
 		args >> x1 >> y1 >> x2 >> y2;
 
-		return std::move(std::make_unique<LineDrawingStrategy>(x1, y1, x2, y2));
+		return std::make_unique<LineDrawingStrategy>(x1, y1, x2, y2);
 	}
 
-	std::unique_ptr<TriangleDrawingStrategy>&& MakeTriangleStrategy(std::istream& args)
+	std::unique_ptr<TriangleDrawingStrategy> MakeTriangleStrategy(std::istream& args)
 	{
 		double x1, y1, x2, y2, x3, y3;
 		args >> x1 >> y1 >> x2 >> y2 >> x3 >> y3;
 
-		return std::move(std::make_unique<TriangleDrawingStrategy>(x1, y1, x2, y2, x3, y3));
+		return std::make_unique<TriangleDrawingStrategy>(x1, y1, x2, y2, x3, y3);
 	}
 
-	std::unique_ptr<TextDrawingStrategy>&& MakeTextStrategy(std::istream& args)
+	std::unique_ptr<TextDrawingStrategy> MakeTextStrategy(std::istream& args)
 	{
 		double width, heigth, fontSize;
 		std::string text;
@@ -113,7 +113,7 @@ public:
 			throw std::logic_error("width and heigth and font size can not be negative!");
 		}
 
-		return std::move(std::make_unique<TextDrawingStrategy>(width, heigth, fontSize, text));
+		return std::make_unique<TextDrawingStrategy>(width, heigth, fontSize, text);
 	}
 
 	void ChangeShape(
@@ -130,30 +130,30 @@ public:
 		shapeIterator->second.SetDrawingStrategy(MakeDrawingStrategy(type, args));
 	};
 
-	std::unique_ptr<IDrawingStrategy>&& MakeDrawingStrategy(
+	std::unique_ptr<IDrawingStrategy> MakeDrawingStrategy(
 		const std::string& type,
 		std::istream& args
 	)
 	{
 		if (type == "circle")
 		{
-			return std::move(MakeEllipseStrategy(args));
+			return MakeEllipseStrategy(args);
 		}
 		else if (type == "rectangle")
 		{
-			return std::move(MakeRectangleStrategy(args));
+			return MakeRectangleStrategy(args);
 		}
 		else if (type == "line")
 		{
-			return std::move(MakeLineStrategy(args));
+			return MakeLineStrategy(args);
 		}
 		else if (type == "triangle")
 		{
-			return std::move(MakeTriangleStrategy(args));
+			return MakeTriangleStrategy(args);
 		}
 		else if (type == "text")
 		{
-			return std::move(MakeTextStrategy(args));
+			return MakeTextStrategy(args);
 		}
 		else
 		{

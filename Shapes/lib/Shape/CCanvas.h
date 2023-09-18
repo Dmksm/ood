@@ -41,6 +41,31 @@ public:
         m_window.draw(ellipse);
     }
 
+    void DrawRectangle(double left, double top, double width, double height) override
+    {
+        sf::ConvexShape rectangle(4);
+        rectangle.setPoint(0, sf::Vector2f(left, top));
+        rectangle.setPoint(1, sf::Vector2f(left + width, top));
+        rectangle.setPoint(2, sf::Vector2f(left + width, top + height));
+        rectangle.setPoint(3, sf::Vector2f(left, top + height));
+
+        rectangle.setPosition(m_position);
+        rectangle.setFillColor(m_color);
+        m_window.draw(rectangle);
+    }
+
+    void DrawTriangle(double x1, double y1, double x2, double y2, double x3, double y3) override
+    {
+        sf::ConvexShape triangle(3);
+        triangle.setPoint(0, sf::Vector2f(x1, y1));
+        triangle.setPoint(1, sf::Vector2f(x2, y2));
+        triangle.setPoint(2, sf::Vector2f(x3, y3));
+
+        triangle.setPosition(m_position);
+        triangle.setFillColor(m_color);
+        m_window.draw(triangle);
+    }
+
     void DrawText(double left, double top, double fontSize, const std::string& text) override
     {
         sf::Text drawingText;
@@ -51,7 +76,8 @@ public:
             throw std::logic_error("Can not open file "s + FONT_FILE_NAME);
         }
         drawingText.setFont(font);
-        drawingText.setPosition(sf::Vector2f(left, top));
+        drawingText.setPosition(m_position);
+        drawingText.move(sf::Vector2f(left, top));
         drawingText.setString(text);
         drawingText.setCharacterSize(fontSize);
         drawingText.setFillColor(m_color);
@@ -78,7 +104,8 @@ private:
     sf::Vector2f m_position;
 
     const unsigned WINDOW_WIDTH = 1920, WINDOW_HEIGHT = 1080, FRAME_RATE = 145;
-    sf::RenderWindow m_window = sf::RenderWindow(sf::VideoMode(WINDOW_WIDTH, WINDOW_HEIGHT), "");
+    sf::RenderWindow m_window = sf::RenderWindow(sf::VideoMode(WINDOW_WIDTH, WINDOW_HEIGHT), 
+        "Project 'Shapes'", sf::Style::Default, sf::ContextSettings(24, 8, 16, 4, 6, 0, true));
 
     uint32_t HexToUint32(const std::string& hexColor) const
     {

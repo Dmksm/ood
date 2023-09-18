@@ -1,14 +1,42 @@
-AddShape sh1 #ff00ff circle 100 110 15
-AddShape circ #febb38 circle 100 200 25
+AddShape circ1 #ff00ff circle 100 110 15
+DrawShape circ1
+
+AddShape circ2 #febb38 circle 100 200 25
+DrawShape circ2
+
 AddShape sh1 #123456 rectangle 10 20 30 40
-AddShape tr1 #00fefe triangle 0 0 10 0 0 10
+DrawShape sh1
+
+AddShape tr1 #00fefe triangle 5 5 10 5 5 10
+DrawShape tr1
+
 AddShape ln1 #fefefe line 10 20 35 -88
+DrawShape ln1
+
 AddShape txt1 #ffaa88 text 100.3 100.2 12.8 Hello world
 List
 DrawPicture
+
 MoveShape sh1 600 600
 List
 DrawPicture
+
 MovePicture 600 200
+List
+DrawPicture
+
+DeleteShape circ2
+List
+DrawPicture
+
+ChangeColor circ1 #00FFFF
+List
+DrawPicture
+
+ChangeShape circ1 text 100.3 100.2 30 Shape changed!
+List
+DrawPicture
+
+DeleteShape txt1
 List
 DrawPicture

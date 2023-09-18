@@ -167,7 +167,7 @@ private:
 	{
 		try 
 		{
-			for (auto&& it : m_picture.GetShapes())
+			for (auto& it : m_picture.GetShapes())
 			{
 				m_output << it.first << " ";
 				it.second.Display();

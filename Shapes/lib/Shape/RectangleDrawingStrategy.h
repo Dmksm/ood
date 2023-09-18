@@ -22,11 +22,7 @@ public:
 	void Draw(ICanvas& canvas, Color color) override
 	{
 		canvas.SetColor(color);
-		canvas.MoveTo(m_left, m_top);
-		canvas.LineTo(m_left + m_width, m_top);
-		canvas.LineTo(m_left + m_width, m_top + m_height);
-		canvas.LineTo(m_left, m_top + m_height);
-		canvas.LineTo(m_left, m_top);
+		canvas.DrawRectangle(m_left, m_top, m_width, m_height);
 	};
 
 	void Display(std::string id, Color color) override
