@@ -9,6 +9,13 @@ using namespace std::string_literals;
 class CCanvas : public ICanvas
 {
 public:
+    CCanvas(sf::RenderWindow* window)
+        : m_window(window)
+        , m_color(sf::Color())
+        , m_position(sf::Vector2(0, 0))
+    {
+    }
+
     void MoveTo(double x, double y) override
     {
         m_position = sf::Vector2f(x, y);
@@ -28,7 +35,7 @@ public:
             sf::Vertex(nextPosition)
         };
         line->color = m_color;
-        m_window.draw(line, 2, sf::Lines);
+        m_window->draw(line, 2, sf::Lines);
         m_position = nextPosition;
     }
 
@@ -38,7 +45,8 @@ public:
         ellipse.setPosition(m_position);
         ellipse.move(sf::Vector2f(cx, cy));
         ellipse.setFillColor(m_color);
-        m_window.draw(ellipse);
+        m_window->setActive(true);
+        m_window->draw(ellipse);
     }
 
     void DrawRectangle(double left, double top, double width, double height) override
@@ -51,7 +59,7 @@ public:
 
         rectangle.setPosition(m_position);
         rectangle.setFillColor(m_color);
-        m_window.draw(rectangle);
+        m_window->draw(rectangle);
     }
 
     void DrawTriangle(double x1, double y1, double x2, double y2, double x3, double y3) override
@@ -63,7 +71,7 @@ public:
 
         triangle.setPosition(m_position);
         triangle.setFillColor(m_color);
-        m_window.draw(triangle);
+        m_window->draw(triangle);
     }
 
     void DrawText(double left, double top, double fontSize, const std::string& text) override
@@ -81,31 +89,18 @@ public:
         drawingText.setString(text);
         drawingText.setCharacterSize(fontSize);
         drawingText.setFillColor(m_color);
-        m_window.draw(drawingText);
+        m_window->draw(drawingText);
     }
 
     void Display() override
     {
-        while (m_window.isOpen())
-        {
-            sf::Event event;
-            while (m_window.pollEvent(event))
-            {
-                if (event.type == sf::Event::Closed)
-                    m_window.close();
-            }
-            m_window.setFramerateLimit(FRAME_RATE);
-            m_window.display();
-        }
+        m_window->display();
     }
 
 private:
     sf::Color m_color;
     sf::Vector2f m_position;
-
-    const unsigned WINDOW_WIDTH = 1920, WINDOW_HEIGHT = 1080, FRAME_RATE = 145;
-    sf::RenderWindow m_window = sf::RenderWindow(sf::VideoMode(WINDOW_WIDTH, WINDOW_HEIGHT), 
-        "Project 'Shapes'", sf::Style::Default, sf::ContextSettings(24, 8, 16, 4, 6, 0, true));
+    std::shared_ptr<sf::RenderWindow> m_window;
 
     uint32_t HexToUint32(const std::string& hexColor) const
     {

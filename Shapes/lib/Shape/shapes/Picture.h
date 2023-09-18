@@ -18,6 +18,10 @@ class Picture
 public:
 	using ShapesList = std::map<unsigned, Shape>;
 	
+	Picture(Picture&& picture) noexcept : m_shapes(std::move(picture.m_shapes))
+	{
+	};
+
 	Picture(std::unique_ptr<ShapesList>&& shapes): m_shapes(std::move(shapes))
 	{
 	};
@@ -177,9 +181,8 @@ public:
 		return std::move(*m_shapes);
 	}
 
-	void Draw()
+	void Draw(ICanvas& canvas)
 	{
-		CCanvas canvas;
 		for (auto& it : *m_shapes)
 		{
 			it.second.Draw(canvas);
@@ -187,14 +190,13 @@ public:
 		canvas.Display();
 	}
 
-	void DrawShape(const std::string& id) const
+	void DrawShape(const std::string& id, ICanvas& canvas) const
 	{
 		ShapesList::iterator shapeIterator = GetShapeIterator(id);
 		if (shapeIterator == m_shapes->end())
 		{
 			throw std::logic_error("Shape with id = "s + id + " does not exist! "s);
 		};
-		CCanvas canvas;
 		shapeIterator->second.Draw(canvas);
 		canvas.Display();
 	}

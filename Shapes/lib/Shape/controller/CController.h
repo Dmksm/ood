@@ -5,12 +5,17 @@
 #include <string>
 #include <sstream>
 #include "../shapes/Picture.h"
+#include "../gfx/ICanvas.h"
 
 class CController
 {
 public:
-	CController(Picture&& picture, std::istream& input, std::ostream& output)
+	CController(std::unique_ptr<Picture>&& picture,
+		std::unique_ptr<ICanvas>&& canvas,
+		std::istream& input, std::ostream& output
+	)
 		: m_picture(std::move(picture))
+		, m_canvas(std::move(canvas))
 		, m_input(input)
 		, m_output(output)
 	{
@@ -38,7 +43,8 @@ private:
 	using Handler = std::function<bool(std::istream& args)>;
 	using ActionMap = std::map<std::string, Handler>;
 
-	Picture m_picture;
+	std::unique_ptr<Picture> m_picture;
+	std::unique_ptr<ICanvas> m_canvas;
 	std::istream& m_input;
 	std::ostream& m_output;
 
@@ -81,7 +87,7 @@ private:
 			std::string id, type;
 			args >> id >> type;
 
-			m_picture.ChangeShape(id, type, args);
+			m_picture->ChangeShape(id, type, args);
 		}
 		catch (std::exception e)
 		{
@@ -98,7 +104,7 @@ private:
 		{
 			std::string id;
 			args >> id;
-			m_picture.DeleteShape(id);
+			m_picture->DeleteShape(id);
 		}
 		catch (std::exception e)
 		{
@@ -115,7 +121,7 @@ private:
 		{
 			std::string id, color;
 			args >> id >> color;
-			m_picture.ChangeColor(id, color);
+			m_picture->ChangeColor(id, color);
 		}
 		catch (std::exception e)
 		{
@@ -133,7 +139,7 @@ private:
 			double dx, dy;
 			args >> dx >> dy;
 
-			m_picture.Move(dx, dy);
+			m_picture->Move(dx, dy);
 		}
 		catch (std::exception e)
 		{
@@ -152,7 +158,7 @@ private:
 			double dx, dy;
 			args >> id >> dx >> dy;
 
-			m_picture.MoveShape(id, dx, dy);
+			m_picture->MoveShape(id, dx, dy);
 		}
 		catch (std::exception e)
 		{
@@ -167,7 +173,7 @@ private:
 	{
 		try 
 		{
-			for (auto& it : m_picture.GetShapes())
+			for (auto& it : m_picture->GetShapes())
 			{
 				m_output << it.first << " ";
 				it.second.Display();
@@ -190,7 +196,8 @@ private:
 			std::string id;
 			args >> id;
 
-			m_picture.DrawShape(id);
+			m_picture->DrawShape(id, *m_canvas);
+			m_canvas->Display();
 		}
 		catch (std::exception e)
 		{
@@ -205,7 +212,7 @@ private:
 	{
 		try
 		{
-			m_picture.Draw();
+			m_picture->Draw(*m_canvas);
 		}
 		catch (std::exception e)
 		{
@@ -223,7 +230,7 @@ private:
 			std::string id, hexColor, type;
 			args >> id >> hexColor >> type;
 
-			m_picture.AddShape(id, hexColor, type, args);
+			m_picture->AddShape(id, hexColor, type, args);
 		}
 		catch (std::exception e)
 		{
