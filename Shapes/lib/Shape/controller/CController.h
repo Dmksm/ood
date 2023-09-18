@@ -4,7 +4,7 @@
 #include <map>
 #include <string>
 #include <sstream>
-#include "Picture.h"
+#include "../shapes/Picture.h"
 
 class CController
 {

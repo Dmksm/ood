@@ -1,6 +1,6 @@
 #pragma once
-#include "ICanvas.h"
-#include "Color.h"
+#include "../gfx/ICanvas.h"
+#include "../gfx/Color.h"
 #include "IDrawingStrategy.h"
 #include "EllipseDrawingStrategy.h"
 #include <memory>

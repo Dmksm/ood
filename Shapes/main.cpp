@@ -1,12 +1,5 @@
-#include "lib/Shape/Picture.h"
-#include "lib/Shape/CCanvas.h"
-#include "lib/Shape/CController.h"
-#include "lib/Shape/EllipseDrawingStrategy.h"
-#include "lib/Shape/Shape.h"
-#include <memory>
-#include <iostream>
-#include <string>
-#include <map>
+#include "lib/Shape/shapes/Picture.h"
+#include "lib/Shape/controller/CController.h"
 
 int main()
 {

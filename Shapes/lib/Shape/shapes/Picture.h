@@ -1,5 +1,5 @@
 #pragma once
-#include "CCanvas.h"
+#include "../gfx/CCanvas.h"
 #include "Shape.h"
 #include "IDrawingStrategy.h"
 #include "EllipseDrawingStrategy.h"

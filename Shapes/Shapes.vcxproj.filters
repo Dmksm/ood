@@ -15,49 +15,68 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="lib\Shape\Shape.h">
+    <ClCompile Include="lib\Shape\shapes\Shape.h">
       <Filter>Исходные файлы</Filter>
     </ClCompile>
     <ClCompile Include="main.cpp">
       <Filter>Исходные файлы</Filter>
     </ClCompile>
-    <ClCompile Include="lib\Shape\CCanvas.h">
+    <ClCompile Include="lib\Shape\gfx\CCanvas.h">
       <Filter>Исходные файлы</Filter>
     </ClCompile>
-    <ClCompile Include="lib\Shape\EllipseShape.h">
+    <ClCompile Include="lib\Shape\gfx\EllipseShape.h">
       <Filter>Исходные файлы</Filter>
     </ClCompile>
-    <ClCompile Include="lib\Shape\IDrawingStrategy.h">
+    <ClCompile Include="lib\Shape\shapes\IDrawingStrategy.h">
       <Filter>Исходные файлы</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="lib\Shape\EllipseDrawingStrategy.h">
+    <ClInclude Include="lib\Shape\shapes\EllipseDrawingStrategy.h">
       <Filter>Файлы заголовков</Filter>
     </ClInclude>
-    <ClInclude Include="lib\Shape\CController.h">
+    <ClInclude Include="lib\Shape\controller\CController.h">
       <Filter>Файлы заголовков</Filter>
     </ClInclude>
-    <ClInclude Include="lib\Shape\Picture.h">
+    <ClInclude Include="lib\Shape\shapes\Picture.h">
       <Filter>Файлы заголовков</Filter>
     </ClInclude>
-    <ClInclude Include="lib\Shape\RectangleDrawingStrategy.h">
+    <ClInclude Include="lib\Shape\shapes\RectangleDrawingStrategy.h">
       <Filter>Файлы заголовков</Filter>
     </ClInclude>
-    <ClInclude Include="lib\Shape\Color.h">
+    <ClInclude Include="lib\Shape\gfx\Color.h">
       <Filter>Файлы заголовков</Filter>
     </ClInclude>
-    <ClInclude Include="lib\Shape\ICanvas.h">
+    <ClInclude Include="lib\Shape\gfx\ICanvas.h">
       <Filter>Файлы заголовков</Filter>
     </ClInclude>
-    <ClInclude Include="lib\Shape\LineDrawingStrategy.h">
+    <ClInclude Include="lib\Shape\shapes\LineDrawingStrategy.h">
       <Filter>Файлы заголовков</Filter>
     </ClInclude>
-    <ClInclude Include="lib\Shape\TriangleDrawingStrategy.h">
+    <ClInclude Include="lib\Shape\shapes\TriangleDrawingStrategy.h">
       <Filter>Файлы заголовков</Filter>
     </ClInclude>
-    <ClInclude Include="lib\Shape\TextDrawingStrategy.h">
+    <ClInclude Include="lib\Shape\shapes\TextDrawingStrategy.h">
       <Filter>Файлы заголовков</Filter>
     </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="openal32.dll" />
+    <None Include="sfml-audio-2.dll" />
+    <None Include="sfml-audio-d-2.dll" />
+    <None Include="sfml-graphics-2.dll" />
+    <None Include="sfml-graphics-d-2.dll" />
+    <None Include="sfml-network-2.dll" />
+    <None Include="sfml-network-d-2.dll" />
+    <None Include="sfml-system-2.dll" />
+    <None Include="sfml-system-d-2.dll" />
+    <None Include="sfml-window-2.dll" />
+    <None Include="sfml-window-d-2.dll" />
+  </ItemGroup>
+  <ItemGroup>
+    <Font Include="ArialMT.ttf" />
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="Command.txt" />
   </ItemGroup>
 </Project>
