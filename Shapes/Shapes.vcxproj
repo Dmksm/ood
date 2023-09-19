@@ -145,20 +145,20 @@
   <ItemGroup>
     <ClCompile Include="lib\Shape\gfx\CCanvas.h" />
     <ClCompile Include="lib\Shape\gfx\EllipseShape.h" />
-    <ClCompile Include="lib\Shape\shapes\IDrawingStrategy.h" />
+    <ClCompile Include="lib\Shape\shapes\strategy\IDrawingStrategy.h" />
     <ClCompile Include="lib\Shape\shapes\Shape.h" />
     <ClCompile Include="main.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="lib\Shape\controller\CController.h" />
     <ClInclude Include="lib\Shape\gfx\Color.h" />
-    <ClInclude Include="lib\Shape\shapes\EllipseDrawingStrategy.h" />
+    <ClInclude Include="lib\Shape\shapes\strategy\EllipseDrawingStrategy.h" />
     <ClInclude Include="lib\Shape\gfx\ICanvas.h" />
-    <ClInclude Include="lib\Shape\shapes\LineDrawingStrategy.h" />
+    <ClInclude Include="lib\Shape\shapes\strategy\LineDrawingStrategy.h" />
     <ClInclude Include="lib\Shape\shapes\Picture.h" />
-    <ClInclude Include="lib\Shape\shapes\RectangleDrawingStrategy.h" />
-    <ClInclude Include="lib\Shape\shapes\TextDrawingStrategy.h" />
-    <ClInclude Include="lib\Shape\shapes\TriangleDrawingStrategy.h" />
+    <ClInclude Include="lib\Shape\shapes\strategy\RectangleDrawingStrategy.h" />
+    <ClInclude Include="lib\Shape\shapes\strategy\TextDrawingStrategy.h" />
+    <ClInclude Include="lib\Shape\shapes\strategy\TriangleDrawingStrategy.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="openal32.dll" />

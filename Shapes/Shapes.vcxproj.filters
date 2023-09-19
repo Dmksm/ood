@@ -27,12 +27,12 @@
     <ClCompile Include="lib\Shape\gfx\EllipseShape.h">
       <Filter>Исходные файлы</Filter>
     </ClCompile>
-    <ClCompile Include="lib\Shape\shapes\IDrawingStrategy.h">
+    <ClCompile Include="lib\Shape\shapes\strategy\IDrawingStrategy.h">
       <Filter>Исходные файлы</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="lib\Shape\shapes\EllipseDrawingStrategy.h">
+    <ClInclude Include="lib\Shape\shapes\strategy\EllipseDrawingStrategy.h">
       <Filter>Файлы заголовков</Filter>
     </ClInclude>
     <ClInclude Include="lib\Shape\controller\CController.h">
@@ -41,7 +41,7 @@
     <ClInclude Include="lib\Shape\shapes\Picture.h">
       <Filter>Файлы заголовков</Filter>
     </ClInclude>
-    <ClInclude Include="lib\Shape\shapes\RectangleDrawingStrategy.h">
+    <ClInclude Include="lib\Shape\shapes\strategy\RectangleDrawingStrategy.h">
       <Filter>Файлы заголовков</Filter>
     </ClInclude>
     <ClInclude Include="lib\Shape\gfx\Color.h">
@@ -50,13 +50,13 @@
     <ClInclude Include="lib\Shape\gfx\ICanvas.h">
       <Filter>Файлы заголовков</Filter>
     </ClInclude>
-    <ClInclude Include="lib\Shape\shapes\LineDrawingStrategy.h">
+    <ClInclude Include="lib\Shape\shapes\strategy\LineDrawingStrategy.h">
       <Filter>Файлы заголовков</Filter>
     </ClInclude>
-    <ClInclude Include="lib\Shape\shapes\TriangleDrawingStrategy.h">
+    <ClInclude Include="lib\Shape\shapes\strategy\TriangleDrawingStrategy.h">
       <Filter>Файлы заголовков</Filter>
     </ClInclude>
-    <ClInclude Include="lib\Shape\shapes\TextDrawingStrategy.h">
+    <ClInclude Include="lib\Shape\shapes\strategy\TextDrawingStrategy.h">
       <Filter>Файлы заголовков</Filter>
     </ClInclude>
   </ItemGroup>

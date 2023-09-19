@@ -1,8 +1,7 @@
 #pragma once
 #include "../gfx/ICanvas.h"
 #include "../gfx/Color.h"
-#include "IDrawingStrategy.h"
-#include "EllipseDrawingStrategy.h"
+#include "strategy/IDrawingStrategy.h"
 #include <memory>
 #include <string>
 
@@ -15,11 +14,6 @@ public:
 		, m_id(id)
 	{
 	};
-
-	/*std::unique_ptr<IDrawingStrategy>&& GetDrawingStrategy() const
-	{
-		return std::make_shared<IDrawingStrategy>(m_drawingStrategy.get());
-	}*/
 
 	void SetDrawingStrategy(std::unique_ptr<IDrawingStrategy>&& drawingStrategy)
 	{
