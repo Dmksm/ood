@@ -4,8 +4,7 @@
 
 int main()
 {
-	const unsigned WINDOW_WIDTH = 1920, WINDOW_HEIGHT = 1080, FRAME_RATE = 145;
-	sf::RenderWindow renderWindow(sf::VideoMode(WINDOW_WIDTH, WINDOW_HEIGHT), "The Shape",
+	sf::RenderWindow renderWindow(sf::VideoMode::getDesktopMode(), "The Shape",
 		sf::Style::Default, sf::ContextSettings(24, 8, 16, 4, 6, 0, true));
 
 	Picture picture(std::make_unique<Picture::ShapesList>());

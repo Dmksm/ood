@@ -28,15 +28,8 @@ public:
      
     void LineTo(double x, double y) override
     {
-        sf::Vector2f nextPosition = sf::Vector2f(x, y);
-        sf::Vertex line[] =
-        {
-            sf::Vertex(m_position),
-            sf::Vertex(nextPosition)
-        };
-        line->color = m_color;
-        m_window->draw(line, 2, sf::Lines);
-        m_position = nextPosition;
+        DrawLine(m_position.x, m_position.y, x, y);
+        m_position = sf::Vector2f(x, y);
     }
 
     void DrawEllipse(double cx, double cy, double rx, double ry) override
@@ -90,6 +83,17 @@ public:
         drawingText.setCharacterSize(fontSize);
         drawingText.setFillColor(m_color);
         m_window->draw(drawingText);
+    }
+
+    void DrawLine(double x1, double y1, double x2, double y2) override
+    {
+        sf::Vertex line[] =
+        {
+            sf::Vertex(sf::Vector2f(x1, y1)),
+            sf::Vertex(sf::Vector2f(x2, y2))
+        };
+        line->color = m_color;
+        m_window->draw(line, 2, sf::Lines);
     }
 
     void Display() override

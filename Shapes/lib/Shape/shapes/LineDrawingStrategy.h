@@ -23,8 +23,7 @@ public:
 	void Draw(ICanvas& canvas, Color color) override
 	{
 		canvas.SetColor(color);
-		canvas.MoveTo(m_x1, m_y1);
-		canvas.LineTo(m_x2, m_y2);
+		canvas.DrawLine(m_x1, m_y1, m_x2, m_y2);
 	};
 
 	void Display(std::string id, Color color) override
