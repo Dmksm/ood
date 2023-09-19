@@ -8,7 +8,7 @@
 class Shape
 {
 public:
-	Shape(std::unique_ptr<IDrawingStrategy>&& drawingStrategy, const std::string& id, Color color)
+	Shape(std::unique_ptr<IDrawingStrategy>&& drawingStrategy = nullptr, const std::string& id = "", Color color = 0)
 		: m_drawingStrategy(std::move(drawingStrategy))
 		, m_color(color)
 		, m_id(id)

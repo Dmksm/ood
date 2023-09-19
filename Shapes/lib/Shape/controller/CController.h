@@ -176,7 +176,7 @@ private:
 			for (auto& it : m_picture->GetShapes())
 			{
 				m_output << it.first << " ";
-				it.second.Display();
+				it.second->Display();
 				m_output << std::endl;
 			}
 		}

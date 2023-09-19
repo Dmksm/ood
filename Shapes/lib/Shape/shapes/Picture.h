@@ -16,37 +16,33 @@
 class Picture
 {
 public:
-	using ShapesList = std::map<unsigned, Shape>;
-	
-	Picture(Picture&& picture) noexcept : m_shapes(std::move(picture.m_shapes))
-	{
-	};
+	using ShapesList = std::map<unsigned, std::unique_ptr<Shape>>;
 
-	Picture(std::unique_ptr<ShapesList>&& shapes): m_shapes(std::move(shapes))
+	Picture(ShapesList& shapes): m_shapes(shapes)
 	{
 	};
 
 	void MoveShape(const std::string& id, double dx, double dy) const
 	{
-		ShapesList::iterator shapeIterator = GetShapeIterator(id);
-		if (shapeIterator == m_shapes->end())
+		ShapesList::const_iterator shapeIterator = GetShapeIterator(id);
+		if (shapeIterator == m_shapes.end())
 		{
 			throw std::logic_error("Shape with id = "s + id + " does not exist! "s);
 		};
-		shapeIterator->second.Move(dx, dy);
+		shapeIterator->second->Move(dx, dy);
 	}
 
 	void Move(double dx, double dy) const
 	{
-		for (auto& it : *m_shapes)
+		for (auto& it : m_shapes)
 		{
-			it.second.Move(dx, dy);
+			it.second->Move(dx, dy);
 		}
 	}
 
 	void DeleteShape(const std::string& id)
 	{
-		m_shapes->erase(GetShapeIterator(id));
+		m_shapes.erase(GetShapeIterator(id));
 	}
 
 	void AddShape(
@@ -57,14 +53,14 @@ public:
 	) 
 	{
 		ValidateColor(color);
-		ShapesList::iterator shapeIterator = GetShapeIterator(id);
-		if (shapeIterator != m_shapes->end())
+		ShapesList::const_iterator shapeIterator = GetShapeIterator(id);
+		if (shapeIterator != m_shapes.end())
 		{
 			throw std::logic_error("Shape with id = "s + id + " already exist! "s);
 		}
 
 		Shape shape(MakeDrawingStrategy(type, args), id, color);
-		m_shapes->insert({ ++m_token,  std::move(shape) });
+		m_shapes.insert({ ++m_token,  std::make_unique<Shape>(shape) });
 	};
 
 	std::unique_ptr<EllipseDrawingStrategy> MakeEllipseStrategy(std::istream& args)
@@ -126,12 +122,12 @@ public:
 		std::istream& args
 	)
 	{
-		ShapesList::iterator shapeIterator = GetShapeIterator(id);
-		if (shapeIterator == m_shapes->end())
+		ShapesList::const_iterator shapeIterator = GetShapeIterator(id);
+		if (shapeIterator == m_shapes.end())
 		{
 			throw std::logic_error("Shape with id = "s + id + " does not exist! "s);
 		}
-		shapeIterator->second.SetDrawingStrategy(MakeDrawingStrategy(type, args));
+		shapeIterator->second->SetDrawingStrategy(MakeDrawingStrategy(type, args));
 	};
 
 	std::unique_ptr<IDrawingStrategy> MakeDrawingStrategy(
@@ -168,36 +164,36 @@ public:
 	void ChangeColor(const std::string& id, const std::string& color) const
 	{
 		ValidateColor(color);
-		ShapesList::iterator shapeIterator = GetShapeIterator(id);
-		if (shapeIterator == m_shapes->end())
+		ShapesList::const_iterator shapeIterator = GetShapeIterator(id);
+		if (shapeIterator == m_shapes.end())
 		{
 			throw std::logic_error("Shape with id = "s + id + " does not exist! "s);
 		};
-		shapeIterator->second.SetColor(color);
+		shapeIterator->second->SetColor(color);
 	}
 
-	ShapesList&& GetShapes() const
+	const ShapesList& GetShapes() const
 	{
-		return std::move(*m_shapes);
+		return m_shapes;
 	}
 
 	void Draw(ICanvas& canvas)
 	{
-		for (auto& it : *m_shapes)
+		for (auto& it : m_shapes)
 		{
-			it.second.Draw(canvas);
+			it.second->Draw(canvas);
 		}
 		canvas.Display();
 	}
 
 	void DrawShape(const std::string& id, ICanvas& canvas) const
 	{
-		ShapesList::iterator shapeIterator = GetShapeIterator(id);
-		if (shapeIterator == m_shapes->end())
+		ShapesList::const_iterator shapeIterator = GetShapeIterator(id);
+		if (shapeIterator == m_shapes.end())
 		{
 			throw std::logic_error("Shape with id = "s + id + " does not exist! "s);
 		};
-		shapeIterator->second.Draw(canvas);
+		shapeIterator->second->Draw(canvas);
 		canvas.Display();
 	}
 
@@ -216,7 +212,7 @@ public:
 
 private:
 	unsigned m_token = 0;
-	std::unique_ptr<ShapesList> m_shapes;
+	ShapesList m_shapes;
 
 	void ValidateColor(const std::string& color) const
 	{
@@ -226,16 +222,16 @@ private:
 		}
 	}
 
-	ShapesList::iterator GetShapeIterator(const std::string& id) const
+	ShapesList::const_iterator GetShapeIterator(const std::string& id) const
 	{
-		for (auto& it : *m_shapes)
+		for (auto& it : m_shapes)
 		{
-			if (it.second.GetId() == id)
+			if (it.second->GetId() == id)
 			{
-				return m_shapes->find(it.first);
+				return m_shapes.find(it.first);
 			}
 		}
-		return m_shapes->end();
+		return m_shapes.end();
 	}
 
 	bool IsValidHexCode(const std::string& hexColor) const
