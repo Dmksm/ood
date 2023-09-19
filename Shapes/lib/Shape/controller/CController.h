@@ -59,10 +59,10 @@ private:
 		  { "ChangeShape", bind(&CController::ChangeShape, this, std::placeholders::_1) },
 		  { "DrawPicture", bind(&CController::DrawPicture, this, std::placeholders::_1) },
 		  { "MovePicture", bind(&CController::MovePicture, this, std::placeholders::_1) },
-		  //{ "CloneShape", bind(&CController::CloneShape, this, std::placeholders::_1) },
+		  { "CloneShape", bind(&CController::CloneShape, this, std::placeholders::_1) },
 	};
 
-	/*bool CloneShape(std::istream& args)
+	bool CloneShape(std::istream& args)
 	{
 		try
 		{
@@ -78,7 +78,7 @@ private:
 		}
 
 		return true;
-	}*/
+	}
 
 	bool ChangeShape(std::istream& args)
 	{

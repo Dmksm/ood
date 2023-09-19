@@ -16,10 +16,10 @@ public:
 	{
 	};
 
-	/*std::unique_ptr<IDrawingStrategy>&& GetDrawingStrategy() const
+	std::unique_ptr<Shape> Clone() const
 	{
-		return std::make_shared<IDrawingStrategy>(m_drawingStrategy.get());
-	}*/
+		return std::make_unique<Shape>(*this);
+	}
 
 	void SetDrawingStrategy(std::unique_ptr<IDrawingStrategy>&& drawingStrategy)
 	{

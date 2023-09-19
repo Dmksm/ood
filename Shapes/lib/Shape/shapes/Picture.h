@@ -16,7 +16,7 @@
 class Picture
 {
 public:
-	using ShapesList = std::map<unsigned, Shape>;
+	using ShapesList = std::map<unsigned, std::unique_ptr<Shape>>;
 	
 	Picture(Picture&& picture) noexcept : m_shapes(std::move(picture.m_shapes))
 	{
@@ -33,14 +33,14 @@ public:
 		{
 			throw std::logic_error("Shape with id = "s + id + " does not exist! "s);
 		};
-		shapeIterator->second.Move(dx, dy);
+		shapeIterator->second->Move(dx, dy);
 	}
 
 	void Move(double dx, double dy) const
 	{
 		for (auto& it : *m_shapes)
 		{
-			it.second.Move(dx, dy);
+			it.second->Move(dx, dy);
 		}
 	}
 
@@ -64,7 +64,7 @@ public:
 		}
 
 		Shape shape(MakeDrawingStrategy(type, args), id, color);
-		m_shapes->insert({ ++m_token,  std::move(shape) });
+		m_shapes->insert({ ++m_token, std::make_unique<Shape>(shape) });
 	};
 
 	std::unique_ptr<EllipseDrawingStrategy> MakeEllipseStrategy(std::istream& args)
@@ -131,7 +131,7 @@ public:
 		{
 			throw std::logic_error("Shape with id = "s + id + " does not exist! "s);
 		}
-		shapeIterator->second.SetDrawingStrategy(MakeDrawingStrategy(type, args));
+		shapeIterator->second->SetDrawingStrategy(MakeDrawingStrategy(type, args));
 	};
 
 	std::unique_ptr<IDrawingStrategy> MakeDrawingStrategy(
@@ -173,7 +173,7 @@ public:
 		{
 			throw std::logic_error("Shape with id = "s + id + " does not exist! "s);
 		};
-		shapeIterator->second.SetColor(color);
+		shapeIterator->second->SetColor(color);
 	}
 
 	ShapesList&& GetShapes() const
@@ -185,7 +185,7 @@ public:
 	{
 		for (auto& it : *m_shapes)
 		{
-			it.second.Draw(canvas);
+			it.second->Draw(canvas);
 		}
 		canvas.Display();
 	}
@@ -197,11 +197,11 @@ public:
 		{
 			throw std::logic_error("Shape with id = "s + id + " does not exist! "s);
 		};
-		shapeIterator->second.Draw(canvas);
+		shapeIterator->second->Draw(canvas);
 		canvas.Display();
 	}
 
-	/*void CloneShape(const std::string& id, const std::string& newId)
+	void CloneShape(const std::string& id, const std::string& newId)
 	{
 		ShapesList::iterator shapeIterator = GetShapeIterator(id);
 		if (shapeIterator == m_shapes->end())
@@ -209,10 +209,8 @@ public:
 			throw std::logic_error("Shape with id = "s + id + " does not exist! "s);
 		};
 
-		Shape shape(shapeIterator->second.GetDrawingStrategy(), 
-			id, shapeIterator->second.GetColor());
-		m_shapes->insert({ ++m_token, shape });
-	}*/
+		m_shapes->insert({ ++m_token, shapeIterator->second->Clone() });
+	}
 
 private:
 	unsigned m_token = 0;
@@ -230,7 +228,7 @@ private:
 	{
 		for (auto& it : *m_shapes)
 		{
-			if (it.second.GetId() == id)
+			if (it.second->GetId() == id)
 			{
 				return m_shapes->find(it.first);
 			}
