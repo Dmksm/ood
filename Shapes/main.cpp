@@ -5,9 +5,8 @@
 int main()
 {
 	sf::RenderWindow renderWindow(sf::VideoMode::getDesktopMode(), "The Shape",
-		sf::Style::Default, sf::ContextSettings(24, 8, 16, 4, 6, 0, true));
-	Picture::ShapesList shapes;
-	Picture picture(shapes);
+		sf::Style::Fullscreen, sf::ContextSettings(24, 8, 16, 4, 6, 0, true));
+	Picture picture;
 	CController controller(std::make_unique<Picture>(std::move(picture)),
 		std::make_unique<CCanvas>(&renderWindow),
 		std::cin, std::cout);

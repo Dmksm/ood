@@ -8,11 +8,14 @@
 class Shape
 {
 public:
-	Shape(std::unique_ptr<IDrawingStrategy>&& drawingStrategy = nullptr, const std::string& id = "", Color color = 0)
+	Shape(std::unique_ptr<IDrawingStrategy>&& drawingStrategy = nullptr, 
+		const std::string& id = "",
+		Color color = 0)
 		: m_drawingStrategy(std::move(drawingStrategy))
-		, m_color(color)
 		, m_id(id)
 	{
+		ValidateColor(color);
+		m_color = color;
 	};
 
 	void SetDrawingStrategy(std::unique_ptr<IDrawingStrategy>&& drawingStrategy)
@@ -35,6 +38,7 @@ public:
 
 	void SetColor(Color color)
 	{
+		ValidateColor(color);
 		if (m_color != color)
 		{
 			m_color = color;
@@ -60,7 +64,38 @@ public:
 	}
 
 private:
-	std::unique_ptr<IDrawingStrategy> m_drawingStrategy;
-	Color m_color;
-	std::string m_id;
+	std::unique_ptr<IDrawingStrategy> m_drawingStrategy = nullptr;
+	Color m_color = "";
+	std::string m_id = "";
+
+	void ValidateColor(const std::string& color) const
+	{
+		if (!IsValidHexCode(color))
+		{
+			const std::string message = "Undefined hex color code = " + color + ". ";
+			throw std::logic_error(message);
+		}
+	}
+
+	bool IsValidHexCode(const std::string& hexColor) const
+	{
+		const unsigned AVAILABLE_HEX_SIZE = 7;
+		const char FIRST_HEX_SYMBOL = '#';
+		if ((hexColor[0] != FIRST_HEX_SYMBOL) || (hexColor.length() != AVAILABLE_HEX_SIZE))
+		{
+			return false;
+		}
+
+		for (int position = 1; position < hexColor.length(); position++)
+		{
+			if (!((hexColor[position] >= '0' && hexColor[position] <= '9')
+				|| (hexColor[position] >= 'a' && hexColor[position] <= 'f')
+				|| (hexColor[position] >= 'A' && hexColor[position] <= 'F')))
+			{
+				return false;
+			}
+		}
+
+		return true;
+	}
 };
