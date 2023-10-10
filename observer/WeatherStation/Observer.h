@@ -57,7 +57,7 @@ class CObservable : public IObservable<T>
 {
 public:
 	typedef ObserverWithPriority<T> ObserverType;
-	void RegisterObserver(ObserverType& observerWithPriority) override
+	void RegisterObserver(ObserverType& observerWithPriority) override // отдельно наблюдатель и приоритет
 	{
 		m_observers.insert(&observerWithPriority);
 	}
@@ -72,7 +72,7 @@ public:
 		}
 	}
 
-	void RemoveObserver(ObserverType& observerWithPriority) override
+	void RemoveObserver(ObserverType& observerWithPriority) override // разобарться с передачей аргументов по ссылке
 	{
 		m_observers.erase(&observerWithPriority);
 	}
@@ -81,5 +81,5 @@ protected:
 	virtual T GetChangedData()const = 0;
 
 private:
-	std::set<ObserverType*, CmpPoint<T>> m_observers;
+	std::set<ObserverType*, CmpPoint<T>> m_observers; // не получится с одним приоритетом получать, сделать при
 };

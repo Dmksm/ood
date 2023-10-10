@@ -91,7 +91,7 @@ private:
 
 	struct Sensor
 	{
-		std::map<std::string, StatsData> m_statsList =
+		std::map<std::string, StatsData> m_statsList = //сделать так чтобы не дублировать код при использовании в других ( в статс дата, сделать классво умеющим обновлять свое состояние, выводом статс дисплей )
 		{
 			{
 				std::string("Humidity"),

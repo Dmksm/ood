@@ -46,6 +46,19 @@ public:
 	}
 };
 
+class CDoubleCappuccino : public CCoffee
+{
+public:
+	CDoubleCappuccino()
+		:CCoffee("Double cappuccino")
+	{}
+
+	double GetCost() const override
+	{
+		return 120;
+	}
+};
+
 // Ëàòòå
 class CLatte : public CCoffee
 {
@@ -60,12 +73,25 @@ public:
 	}
 };
 
+class CDoubleLatte : public CCoffee
+{
+public:
+	CDoubleLatte()
+		:CCoffee("Double latte")
+	{}
+
+	double GetCost() const override
+	{
+		return 130;
+	}
+};
+
 // ×àé
 class CTea : public CBeverage
 {
 public:
-	CTea()
-		:CBeverage("Tea")
+	CTea(const std::string& description = "Tea")
+		:CBeverage(description)
 	{}
 
 	double GetCost() const override
@@ -74,12 +100,83 @@ public:
 	}
 };
 
+class ÑPalacePuer : public CTea
+{
+public:
+	ÑPalacePuer()
+		:CTea("Palace puer")
+	{}
+};
+
+class ÑCeylonMaharaja : public CTea
+{
+public:
+	ÑCeylonMaharaja()
+		:CTea("Ceylon maharaja")
+	{}
+};
+
+class CBaiMaoHou : public CTea
+{
+public:
+	CBaiMaoHou()
+		:CTea("Bai Mao Hou")
+	{}
+};
+
+class CChocolateTruffle : public CTea
+{
+public:
+	CChocolateTruffle()
+		:CTea("Chocolate truffle")
+	{}
+};
+
 // Ìîëî÷íûé êîêòåéëü
 class CMilkshake : public CBeverage
 {
 public:
-	CMilkshake()
+	CMilkshake(const std::string& description = "Milkshake")
 		:CBeverage("Milkshake")
+	{}
+
+	double GetCost() const override
+	{
+		return 80;
+	}
+};
+
+class CSmallMilkshake : public CMilkshake
+{
+public:
+	CSmallMilkshake()
+		:CMilkshake("Small milkshake")
+	{}
+
+	double GetCost() const override
+	{
+		return 50;
+	}
+};
+
+class CMediumMilkshake : public CMilkshake
+{
+public:
+	CMediumMilkshake()
+		:CMilkshake("Medium milkshake")
+	{}
+
+	double GetCost() const override
+	{
+		return 60;
+	}
+};
+
+class CLargeMilkshake : public CMilkshake
+{
+public:
+	CLargeMilkshake()
+		:CMilkshake("Large milkshake")
 	{}
 
 	double GetCost() const override
