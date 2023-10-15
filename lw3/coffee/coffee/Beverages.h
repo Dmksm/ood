@@ -1,8 +1,8 @@
 #pragma once
 
 #include "IBeverage.h"
+#include <map>
 
-// Базовая реализация напитка, предоставляющая его описание
 class CBeverage : public IBeverage
 {
 public:
@@ -18,7 +18,6 @@ private:
 	std::string m_description;
 };
 
-// Кофе
 class CCoffee : public CBeverage
 {
 public:
@@ -32,155 +31,142 @@ public:
 	}
 };
 
-// Капуччино
 class CCappuccino : public CCoffee
 {
 public:
-	CCappuccino()
-		:CCoffee("Cappuccino")
-	{}
+	enum class CappuccinoSize
+	{
+		Standart,
+		Double
+	};
+
+	CCappuccino(CappuccinoSize size)
+		:CCoffee((size == CappuccinoSize::Standart) ? "Cappuccino" : "Double cappuccino")
+		, m_size(size)
+	{
+	}
 
 	double GetCost() const override
 	{
-		return 80;
+		return (m_size == CappuccinoSize::Standart) ? 80 : 120;
 	}
+private:
+	CappuccinoSize m_size;
 };
 
-class CDoubleCappuccino : public CCoffee
-{
-public:
-	CDoubleCappuccino()
-		:CCoffee("Double cappuccino")
-	{}
-
-	double GetCost() const override
-	{
-		return 120;
-	}
-};
-
-// Латте
 class CLatte : public CCoffee
 {
 public:
-	CLatte()
-		:CCoffee("Latte")
-	{}
+	enum class LatteSize
+	{
+		Standart,
+		Double
+	};
+
+	CLatte(LatteSize size)
+		: CCoffee((size == LatteSize::Standart) ? "Latte" : "Double latte")
+		, m_size(size)
+	{
+	}
 
 	double GetCost() const override
 	{
-		return 90;
+		return (m_size == LatteSize::Standart) ? 90 : 130;
 	}
+private:
+	LatteSize m_size;
 };
 
-class CDoubleLatte : public CCoffee
-{
-public:
-	CDoubleLatte()
-		:CCoffee("Double latte")
-	{}
-
-	double GetCost() const override
-	{
-		return 130;
-	}
-};
-
-// Чай
 class CTea : public CBeverage
 {
 public:
-	CTea(const std::string& description = "Tea")
-		:CBeverage(description)
-	{}
+	enum class TeaVariety
+	{
+		PalacePuer,
+		CeylonMaharaja,
+		BaiMaoHou,
+		ChocolateTruffle
+	};
+
+	CTea(TeaVariety variety)
+		: CBeverage(GetTeaDescription(variety))
+	{
+	}
 
 	double GetCost() const override
 	{
 		return 30;
 	}
+
+private:
+	std::string GetTeaDescription(TeaVariety variety)
+	{
+		switch (variety)
+		{
+			case TeaVariety::PalacePuer:
+			{
+				return "PalacePuer";
+			}
+			case TeaVariety::BaiMaoHou:
+			{
+				return "BaiMaoHou";
+			}
+			case TeaVariety::CeylonMaharaja:
+			{
+				return "CeylonMaharaja";
+			}
+			case TeaVariety::ChocolateTruffle:
+			{
+				return "ChocolateTruffle";
+			}
+		}
+	}
 };
 
-class СPalacePuer : public CTea
-{
-public:
-	СPalacePuer()
-		:CTea("Palace puer")
-	{}
-};
-
-class СCeylonMaharaja : public CTea
-{
-public:
-	СCeylonMaharaja()
-		:CTea("Ceylon maharaja")
-	{}
-};
-
-class CBaiMaoHou : public CTea
-{
-public:
-	CBaiMaoHou()
-		:CTea("Bai Mao Hou")
-	{}
-};
-
-class CChocolateTruffle : public CTea
-{
-public:
-	CChocolateTruffle()
-		:CTea("Chocolate truffle")
-	{}
-};
-
-// Молочный коктейль
 class CMilkshake : public CBeverage
 {
 public:
-	CMilkshake(const std::string& description = "Milkshake")
-		:CBeverage("Milkshake")
-	{}
-
-	double GetCost() const override
+	enum class MilkshakeSize
 	{
-		return 80;
+		Small,
+		Medium,
+		Large
+	};
+
+	CMilkshake(MilkshakeSize size)
+		:CBeverage(GetMilkshakeDescription(size))
+		, m_size(size)
+	{
 	}
-};
-
-class CSmallMilkshake : public CMilkshake
-{
-public:
-	CSmallMilkshake()
-		:CMilkshake("Small milkshake")
-	{}
 
 	double GetCost() const override
 	{
-		return 50;
+		return GetMilkshakeCost(m_size);
 	}
-};
 
-class CMediumMilkshake : public CMilkshake
-{
-public:
-	CMediumMilkshake()
-		:CMilkshake("Medium milkshake")
-	{}
+private:
+	MilkshakeSize m_size;
 
-	double GetCost() const override
+	std::map<MilkshakeSize, std::pair<std::string, double>> m_milkshakeInfo =
+		{
+			{
+				MilkshakeSize::Small, {"Small milkshake", 50}
+			},
+			{
+				MilkshakeSize::Medium, {"Medium milkshake", 60}
+			},
+			{
+				MilkshakeSize::Large, {"Large milkshake", 80}
+			},
+		};
+
+	std::string GetMilkshakeDescription(MilkshakeSize size) const
 	{
-		return 60;
+		return m_milkshakeInfo.at(size).first;
 	}
-};
 
-class CLargeMilkshake : public CMilkshake
-{
-public:
-	CLargeMilkshake()
-		:CMilkshake("Large milkshake")
-	{}
-
-	double GetCost() const override
+	double GetMilkshakeCost(MilkshakeSize size) const
 	{
-		return 80;
+		return m_milkshakeInfo.at(size).second;
 	}
 };
