@@ -49,12 +49,85 @@ protected:
 	}
 };
 
+class CCream : public CCondimentDecorator
+{
+public:
+	CCream(IBeveragePtr&& beverage)
+		: CCondimentDecorator(std::move(beverage))
+	{
+	}
+protected:
+	double GetCondimentCost()const override
+	{
+		return 25;
+	}
+
+	std::string GetCondimentDescription()const override
+	{
+		return "Cream";
+	}
+};
+
+class CChocolate : public CCondimentDecorator
+{
+public:
+	CChocolate(IBeveragePtr&& beverage, unsigned quantity = 1)
+		: CCondimentDecorator(std::move(beverage))
+	{
+		if (quantity < 1 || quantity > 5)
+		{
+			throw std::logic_error("The number of chocolate slices should be from 1 to 5!");
+		}
+		m_quantity = quantity;
+	}
+protected:
+	double GetCondimentCost()const override
+	{
+		return 10 * m_quantity;
+	}
+
+	std::string GetCondimentDescription()const override
+	{
+		return "Chocolate x " + std::to_string(m_quantity);
+	}
+private:
+	unsigned m_quantity;
+};
+
+class CLiquor : public CCondimentDecorator
+{
+public:
+	enum class LiquorType
+	{
+		Chocolate,
+		Nut
+	};
+
+	CLiquor(IBeveragePtr&& beverage, LiquorType type = LiquorType::Nut)
+		: CCondimentDecorator(std::move(beverage))
+		, m_type(type)
+	{
+	}
+
+protected:
+	double GetCondimentCost()const override
+	{
+		return 50;
+	}
+	std::string GetCondimentDescription()const override
+	{
+		return std::string(m_type == LiquorType::Nut ? "Nut" : "Chocolate") + " liquor";
+	}
+private:
+	LiquorType m_type;
+};
+
 // Лимонная добавка
 class CLemon : public CCondimentDecorator
 {
 public:
 	CLemon(IBeveragePtr&& beverage, unsigned quantity = 1)
-		: CCondimentDecorator(move(beverage))
+		: CCondimentDecorator(std::move(beverage))
 		, m_quantity(quantity)
 	{}
 protected:
@@ -74,7 +147,7 @@ class CLemon : public CCondimentDecorator
 {
 public:
 	CLemon(IBeveragePtr&& beverage, unsigned quantity = 1)
-		: CCondimentDecorator(move(beverage))
+		: CCondimentDecorator(std::move(beverage))
 		, m_quantity(quantity)
 	{}
 protected:
@@ -89,7 +162,6 @@ protected:
 private:
 	unsigned m_quantity;
 };
-
 
 enum class IceCubeType
 {
@@ -103,7 +175,7 @@ class CIceCubes : public CCondimentDecorator
 {
 public:
 	CIceCubes(IBeveragePtr&& beverage, unsigned quantity, IceCubeType type = IceCubeType::Water)
-		: CCondimentDecorator(move(beverage))
+		: CCondimentDecorator(std::move(beverage))
 		, m_quantity(quantity)
 		, m_type(type)
 	{}
@@ -136,7 +208,7 @@ class CSyrup : public CCondimentDecorator
 {
 public:
 	CSyrup(IBeveragePtr&& beverage, SyrupType syrupType)
-		: CCondimentDecorator(move(beverage))
+		: CCondimentDecorator(std::move(beverage))
 		, m_syrupType(syrupType)
 	{}
 protected:
@@ -158,7 +230,7 @@ class CChocolateCrumbs : public CCondimentDecorator
 {
 public:
 	CChocolateCrumbs(IBeveragePtr&& beverage, unsigned mass)
-		:CCondimentDecorator(move(beverage))
+		:CCondimentDecorator(std::move(beverage))
 		, m_mass(mass)
 	{
 	}
@@ -181,7 +253,7 @@ class CCoconutFlakes : public CCondimentDecorator
 {
 public:
 	CCoconutFlakes(IBeveragePtr&& beverage, unsigned mass)
-		: CCondimentDecorator(move(beverage))
+		: CCondimentDecorator(std::move(beverage))
 		, m_mass(mass)
 	{}
 
