@@ -41,6 +41,14 @@ public:
         m_window->draw(ellipse);
     }
 
+    void DrawRegularPolygon(double radius, double vertexCount)
+    {
+        sf::CircleShape regularPolygon(radius, vertexCount);
+        regularPolygon.setPosition(m_position);
+        regularPolygon.setFillColor(m_color);
+        m_window->draw(regularPolygon);
+    }
+
     void DrawRectangle(double left, double top, double width, double height) override
     {
         sf::ConvexShape rectangle(4);

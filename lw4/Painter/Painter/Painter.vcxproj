@@ -147,6 +147,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="libpainter\shapes\CRegularPolygon.h" />
     <ClCompile Include="libpainter\CShapeFactory.cpp" />
     <ClCompile Include="libpainter\Designer.cpp" />
     <ClCompile Include="libpainter\PictureDraft.cpp" />
@@ -163,6 +164,9 @@
     <ClInclude Include="libpainter\IShapeFactory.h" />
     <ClInclude Include="libpainter\PictureDraft.h" />
     <ClInclude Include="libpainter\Shape.h" />
+    <ClInclude Include="libpainter\shapes\CEllipse.h" />
+    <ClInclude Include="libpainter\shapes\CRectangle.h" />
+    <ClInclude Include="libpainter\shapes\CTriangle.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="targetver.h" />
   </ItemGroup>

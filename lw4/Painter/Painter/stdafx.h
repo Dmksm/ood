@@ -10,3 +10,5 @@
 #include <memory>
 #include <vector>
 #include <boost/iterator/indirect_iterator.hpp>
+#include <sstream>
+#include <iostream>

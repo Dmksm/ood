@@ -4,7 +4,7 @@
 class CShapeFactory : public IShapeFactory
 {
 public:
-	CShape CreateShape(const std::string& description);
+	std::unique_ptr<CShape> CreateShape(const std::string& description) override;
 private:
 	std::string m_memberName;
 };
