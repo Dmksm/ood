@@ -110,7 +110,7 @@ auto operator << (Component&& component, const Decorator& decorate)
 
 void DialogWithUser()
 {
-	cout << "Type 1 for coffee or 2 for tea\n";
+	cout << "Type 1 for coffee or 2 for tea 3 for Milkshake" << std::endl;
 	int beverageChoice;
 	cin >> beverageChoice;
 
@@ -119,10 +119,104 @@ void DialogWithUser()
 	if (beverageChoice == 1)
 	{
 		beverage = make_unique<CCoffee>();
+
+		int coffeeChoice;
+		cout << "1 - Cappuccino, 2 - Latte" << endl;
+		cin >> coffeeChoice;
+
+		if (coffeeChoice == 1)
+		{
+			int portionChoice;
+			cout << "1 - Standard, 2 - Double" << endl;
+			cin >> portionChoice;
+
+			if (portionChoice == 2)
+			{
+				beverage = make_unique<CCappuccino>(CCappuccino::CappuccinoSize::Double);
+			}
+			else if (portionChoice == 1)
+			{
+				beverage = make_unique<CCappuccino>();
+			}
+			else
+			{
+				return;
+			}
+		}
+		else if (coffeeChoice == 2)
+		{
+
+			int portionChoice;
+			cout << "1 - Standard, 2 - Double" << endl;
+			cin >> portionChoice;
+
+			if (portionChoice == 2)
+			{
+				beverage = make_unique<CLatte>(CLatte::LatteSize::Double);
+			}
+			else if (portionChoice == 1)
+			{
+				beverage = make_unique<CLatte>();
+			}
+			else
+			{
+				return;
+			}
+		}
+		else
+		{
+			return;
+		}
 	}
 	else if (beverageChoice == 2)
 	{
-		beverage = make_unique<CTea>();
+		int teaChoice;
+		cout << "1 - Bai Mao Hou, 2 - Ceylon Maharaja, 3 - Chocolate Truffle, 4 - Palace Puer" << endl;
+		cin >> teaChoice;
+		if (teaChoice == 1)
+		{
+			beverage = make_unique<CTea>(CTea::TeaVariety::BaiMaoHou);
+		}
+		else if (teaChoice == 2)
+		{
+			beverage = make_unique<CTea>(CTea::TeaVariety::CeylonMaharaja);
+		}
+		else if (teaChoice == 3)
+		{
+			beverage = make_unique<CTea>(CTea::TeaVariety::ChocolateTruffle);
+		}
+		else if (teaChoice == 4)
+		{
+			beverage = make_unique<CTea>(CTea::TeaVariety::PalacePuer);
+		}
+		else
+		{
+			return;
+		}
+
+	}
+	else if (beverageChoice == 3)
+	{
+		int sizeChoice;
+		cout << "1 - Small, 2 - Medium, 3 - Large" << endl;
+		cin >> sizeChoice;
+
+		if (sizeChoice == 1)
+		{
+			beverage = make_unique<CMilkshake>(CMilkshake::MilkshakeSize::Small);
+		}
+		else if (sizeChoice == 2)
+		{
+			beverage = make_unique<CMilkshake>(CMilkshake::MilkshakeSize::Medium);
+		}
+		else if (sizeChoice == 3)
+		{
+			beverage = make_unique<CMilkshake>(CMilkshake::MilkshakeSize::Large);
+		}
+		else
+		{
+			return;
+		}
 	}
 	else
 	{
@@ -132,18 +226,35 @@ void DialogWithUser()
 	int condimentChoice;
 	for (;;)
 	{
-		cout << "1 - Lemon, 2 - Cinnamon, 0 - Checkout" << endl;
+		cout << "1 - Lemon, 2 - Cinnamon, 3 - Cream, 4 - Chocolate, 0 - Checkout" << endl;
 		cin >> condimentChoice;
 
 		if (condimentChoice == 1)
 		{
-			//beverage = make_unique<CLemon>(move(beverage));
-			beverage = move(beverage) << MakeCondiment<CLemon>(2);
+			beverage = move(beverage) << MakeCondiment<CLemon>(1);
 		}
 		else if (condimentChoice == 2)
 		{
-			//beverage = make_unique<CCinnamon>(move(beverage));
 			beverage = move(beverage) << MakeCondiment<CCinnamon>();
+		}
+		else if (condimentChoice == 3)
+		{
+			beverage = move(beverage) << MakeCondiment<CCream>();
+		}
+		else if (condimentChoice == 4)
+		{
+			int chocolateQuantity;
+			cout << "Enter quantity of chocolate" << endl;
+			cin >> chocolateQuantity;
+
+			try
+			{
+				beverage = move(beverage) << MakeCondiment<CChocolate>(chocolateQuantity);
+			}
+			catch (std::exception e)
+			{
+				std::cout << e.what() << std::endl;
+			}
 		}
 		else if (condimentChoice == 0)
 		{
@@ -154,9 +265,6 @@ void DialogWithUser()
 			return;
 		}
 	}
-
-
-
 	cout << beverage->GetDescription() << ", cost: " << beverage->GetCost() << endl;
 }
 

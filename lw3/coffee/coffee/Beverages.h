@@ -40,8 +40,8 @@ public:
 		Double
 	};
 
-	CCappuccino(CappuccinoSize size)
-		:CCoffee((size == CappuccinoSize::Standart) ? "Cappuccino" : "Double cappuccino")
+	CCappuccino(CappuccinoSize size = CappuccinoSize::Standart)
+		: CCoffee((size == CappuccinoSize::Standart) ? "Cappuccino" : "Double cappuccino")
 		, m_size(size)
 	{
 	}
@@ -63,7 +63,7 @@ public:
 		Double
 	};
 
-	CLatte(LatteSize size)
+	CLatte(LatteSize size = LatteSize::Standart)
 		: CCoffee((size == LatteSize::Standart) ? "Latte" : "Double latte")
 		, m_size(size)
 	{
@@ -88,7 +88,7 @@ public:
 		ChocolateTruffle
 	};
 
-	CTea(TeaVariety variety)
+	CTea(TeaVariety variety = TeaVariety::PalacePuer)
 		: CBeverage(GetTeaDescription(variety))
 	{
 	}
@@ -133,8 +133,8 @@ public:
 		Large
 	};
 
-	CMilkshake(MilkshakeSize size)
-		:CBeverage(GetMilkshakeDescription(size))
+	CMilkshake(MilkshakeSize size = MilkshakeSize::Medium)
+		: CBeverage(GetMilkshakeDescription(size))
 		, m_size(size)
 	{
 	}
@@ -147,26 +147,41 @@ public:
 private:
 	MilkshakeSize m_size;
 
-	std::map<MilkshakeSize, std::pair<std::string, double>> m_milkshakeInfo =
-		{
-			{
-				MilkshakeSize::Small, {"Small milkshake", 50}
-			},
-			{
-				MilkshakeSize::Medium, {"Medium milkshake", 60}
-			},
-			{
-				MilkshakeSize::Large, {"Large milkshake", 80}
-			},
-		};
-
 	std::string GetMilkshakeDescription(MilkshakeSize size) const
 	{
-		return m_milkshakeInfo.at(size).first;
+		switch (size)
+		{
+			case MilkshakeSize::Small:
+			{
+				return "Small milkshake";
+			}
+			case MilkshakeSize::Medium:
+			{
+				return "Medium milkshake";
+			}
+			case MilkshakeSize::Large:
+			{
+				return "Large milkshake";
+			}
+		}
 	}
 
 	double GetMilkshakeCost(MilkshakeSize size) const
 	{
-		return m_milkshakeInfo.at(size).second;
+		switch (size)
+		{
+			case MilkshakeSize::Small:
+			{
+				return 50;
+			}
+			case MilkshakeSize::Medium:
+			{
+				return 60;
+			}
+			case MilkshakeSize::Large:
+			{
+				return 80;
+			}
+		}
 	}
 };
