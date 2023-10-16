@@ -5,6 +5,8 @@ VisualStudioVersion = 17.7.34009.444
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Painter", "Painter\Painter.vcxproj", "{3E06B84F-75D7-488C-A858-A775B524E156}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "PainterTests", "PainterTests\PainterTests.vcxproj", "{298B582A-A962-4526-BFEC-0C6F0DEC1A43}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x64 = Debug|x64
@@ -21,6 +23,14 @@ Global
 		{3E06B84F-75D7-488C-A858-A775B524E156}.Release|x64.Build.0 = Release|x64
 		{3E06B84F-75D7-488C-A858-A775B524E156}.Release|x86.ActiveCfg = Release|Win32
 		{3E06B84F-75D7-488C-A858-A775B524E156}.Release|x86.Build.0 = Release|Win32
+		{298B582A-A962-4526-BFEC-0C6F0DEC1A43}.Debug|x64.ActiveCfg = Debug|x64
+		{298B582A-A962-4526-BFEC-0C6F0DEC1A43}.Debug|x64.Build.0 = Debug|x64
+		{298B582A-A962-4526-BFEC-0C6F0DEC1A43}.Debug|x86.ActiveCfg = Debug|Win32
+		{298B582A-A962-4526-BFEC-0C6F0DEC1A43}.Debug|x86.Build.0 = Debug|Win32
+		{298B582A-A962-4526-BFEC-0C6F0DEC1A43}.Release|x64.ActiveCfg = Release|x64
+		{298B582A-A962-4526-BFEC-0C6F0DEC1A43}.Release|x64.Build.0 = Release|x64
+		{298B582A-A962-4526-BFEC-0C6F0DEC1A43}.Release|x86.ActiveCfg = Release|Win32
+		{298B582A-A962-4526-BFEC-0C6F0DEC1A43}.Release|x86.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

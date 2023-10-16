@@ -33,6 +33,9 @@
     <ClCompile Include="libpainter\shapes\CRegularPolygon.h">
       <Filter>Исходные файлы</Filter>
     </ClCompile>
+    <ClCompile Include="libpainter\CPainter.cpp">
+      <Filter>Исходные файлы</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="stdafx.h">
@@ -75,6 +78,9 @@
       <Filter>Файлы заголовков</Filter>
     </ClInclude>
     <ClInclude Include="libpainter\shapes\CTriangle.h">
+      <Filter>Файлы заголовков</Filter>
+    </ClInclude>
+    <ClInclude Include="libpainter\CPainter.h">
       <Filter>Файлы заголовков</Filter>
     </ClInclude>
   </ItemGroup>

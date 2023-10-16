@@ -2,6 +2,7 @@
 #include "libpainter/CShapeFactory.h"
 #include "libpainter/gfx/CCanvas.h"
 #include "libpainter/PictureDraft.h"
+#include "libpainter/CPainter.h"
 #include "stdafx.h"
 
 int main()
@@ -11,10 +12,13 @@ int main()
 
 	sf::RenderWindow renderWindow(sf::VideoMode::getDesktopMode(), "The Shape",
 		sf::Style::Fullscreen, sf::ContextSettings(24, 8, 16, 4, 6, 0, true));
+	CCanvas canvas(&renderWindow);
 
+	CPainter painter;
 	while (!std::cin.eof() && !std::cin.fail())
 	{
-		designer.CreateDraft(std::cin);
+		CPictureDraft draft = designer.CreateDraft(std::cin);
+		painter.DrawPicture(draft, canvas);
 	}
 
 	return 0;

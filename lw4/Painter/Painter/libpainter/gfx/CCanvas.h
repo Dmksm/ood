@@ -37,7 +37,6 @@ public:
         ellipse.setPosition(m_position);
         ellipse.move(sf::Vector2f(cx, cy));
         ellipse.setFillColor(m_color);
-        m_window->setActive(true);
         m_window->draw(ellipse);
     }
 
