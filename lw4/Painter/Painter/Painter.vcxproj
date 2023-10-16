@@ -147,13 +147,14 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="libpainter\controller\CController.cpp" />
+    <ClCompile Include="libpainter\CShapeFactory.cpp" />
     <ClCompile Include="libpainter\Designer.cpp" />
     <ClCompile Include="libpainter\PictureDraft.cpp" />
     <ClCompile Include="libpainter\Shape.cpp" />
     <ClCompile Include="main.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="libpainter\CShapeFactory.h" />
     <ClInclude Include="libpainter\Designer.h" />
     <ClInclude Include="libpainter\gfx\CCanvas.h" />
     <ClInclude Include="libpainter\gfx\Color.h" />

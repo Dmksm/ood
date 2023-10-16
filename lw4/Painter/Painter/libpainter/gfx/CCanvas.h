@@ -4,6 +4,7 @@
 #include "Color.h"
 #include <stdint.h>
 #include <string>
+
 using namespace std::string_literals;
 
 class CCanvas : public ICanvas
@@ -11,8 +12,6 @@ class CCanvas : public ICanvas
 public:
     CCanvas(sf::RenderWindow* window)
         : m_window(window)
-        , m_color(sf::Color())
-        , m_position(sf::Vector2(0, 0))
     {
     }
 
@@ -23,7 +22,7 @@ public:
 
     void SetColor(Color color) override
     {
-        m_color = (sf::Color)(color.GetRGBFormat());
+        m_color = GetColor(color);
     }
      
     void LineTo(double x, double y) override
@@ -102,52 +101,38 @@ public:
     }
 
 private:
-    sf::Color m_color;
-    sf::Vector2f m_position;
+    sf::Color m_color = sf::Color();
+    sf::Vector2f m_position = sf::Vector2(0.0f, 0.0f);
     std::shared_ptr<sf::RenderWindow> m_window;
 
-    uint32_t HexToUint32(const std::string& hexColor) const
+    sf::Color GetColor(Color color)
     {
-        if (!IsValidHexCode(hexColor))
+        switch (color)
         {
-            throw std::logic_error("Undefined hex color code = "s + hexColor + ". "s);
-        }
-        std::string hexCode = hexColor;
-        if (hexCode.at(0) == '#')
-        {
-            hexCode.erase(0, 1);
-        }
-        while (hexCode.length() != 6)
-        {
-            hexCode += "0";
-        }
-        while (hexCode.length() != 8)
-        {
-            hexCode += "F";
-        }
-
-        return std::stoul(hexCode, nullptr, 16);
-    }
-
-    bool IsValidHexCode(const std::string& hexColor) const
-    {
-        const unsigned AVAILABLE_HEX_SIZE = 7;
-        const char FIRST_HEX_SYMBOL = '#';
-        if ((hexColor[0] != FIRST_HEX_SYMBOL) || (hexColor.length() != AVAILABLE_HEX_SIZE))
-        {
-            return false;
-        }
-
-        for (int position = 1; position < hexColor.length(); position++)
-        {
-            if (!((hexColor[position] >= '0' && hexColor[position] <= '9')
-                || (hexColor[position] >= 'a' && hexColor[position] <= 'f')
-                || (hexColor[position] >= 'A' && hexColor[position] <= 'F')))
+            case Color::Green:
             {
-                return false;
+                return { 0, 255, 0, 255 };
+            }
+            case Color::Red:
+            {
+                return { 255, 0, 0, 255 };
+            }
+            case Color::Blue:
+            {
+                return { 0, 0, 255, 255 };
+            }
+            case Color::Yellow:
+            {
+                return { 255, 255, 0, 255 };
+            }
+            case Color::Pink:
+            {
+                return { 255, 105, 180, 255 };
+            }
+            case Color::Black:
+            {
+                return { 0, 0, 0, 255 };
             }
         }
-
-        return true;
     }
 };
