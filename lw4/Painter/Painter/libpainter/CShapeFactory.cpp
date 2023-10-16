@@ -41,28 +41,28 @@ std::unique_ptr<CShape> GetEllipse(Color color, std::stringstream& args)
 {
 	double cx, cy, rx, ry;
 	args >> cx >> cy >> rx >> ry;
-	return std::make_unique<CShape>(CEllipse(color, cx, cy, rx, ry));
+	return std::make_unique<CEllipse>(color, cx, cy, rx, ry);
 }
 
 std::unique_ptr<CShape> GetTriangle(Color color, std::stringstream& args)
 {
 	double x1, y1, x2, y2, x3, y3;
 	args >> x1 >> y1 >> x2 >> y2 >> x3 >> y3;
-	return std::make_unique<CShape>(CTriangle(color, x1, y1, x2, y2, x3, y3));
+	return std::make_unique<CTriangle>(color, x1, y1, x2, y2, x3, y3);
 }
 
 std::unique_ptr<CShape> GetRectangle(Color color, std::stringstream& args)
 {
 	double left, top, width, height;
 	args >> left >> top >> width >> height;
-	return std::make_unique<CShape>(CRectangle(color, left, top, width, height));
+	return std::make_unique<CRectangle>(color, left, top, width, height);
 }
 
 std::unique_ptr<CShape> GetRegularPolygon(Color color, std::stringstream& args)
 {
 	double radius, vertexCount;
 	args >> radius >> vertexCount;
-	return std::make_unique<CShape>(CRegularPolygon(color, radius, vertexCount));
+	return std::make_unique<CRegularPolygon>(color, radius, vertexCount);
 }
 
 std::unique_ptr<CShape> CShapeFactory::CreateShape(const std::string& description)
