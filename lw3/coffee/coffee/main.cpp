@@ -132,7 +132,7 @@ void DialogWithUser()
 
 			if (portionChoice == 2)
 			{
-				beverage = make_unique<CCappuccino>(CCappuccino::CappuccinoSize::Double);
+				beverage = make_unique<CCappuccino>(CCappuccino::Size::Double);
 			}
 			else if (portionChoice == 1)
 			{
@@ -152,7 +152,7 @@ void DialogWithUser()
 
 			if (portionChoice == 2)
 			{
-				beverage = make_unique<CLatte>(CLatte::LatteSize::Double);
+				beverage = make_unique<CLatte>(CLatte::Size::Double);
 			}
 			else if (portionChoice == 1)
 			{
@@ -175,19 +175,19 @@ void DialogWithUser()
 		cin >> teaChoice;
 		if (teaChoice == 1)
 		{
-			beverage = make_unique<CTea>(CTea::TeaVariety::BaiMaoHou);
+			beverage = make_unique<CTea>(CTea::Variety::BaiMaoHou);
 		}
 		else if (teaChoice == 2)
 		{
-			beverage = make_unique<CTea>(CTea::TeaVariety::CeylonMaharaja);
+			beverage = make_unique<CTea>(CTea::Variety::CeylonMaharaja);
 		}
 		else if (teaChoice == 3)
 		{
-			beverage = make_unique<CTea>(CTea::TeaVariety::ChocolateTruffle);
+			beverage = make_unique<CTea>(CTea::Variety::ChocolateTruffle);
 		}
 		else if (teaChoice == 4)
 		{
-			beverage = make_unique<CTea>(CTea::TeaVariety::PalacePuer);
+			beverage = make_unique<CTea>(CTea::Variety::PalacePuer);
 		}
 		else
 		{
@@ -203,15 +203,15 @@ void DialogWithUser()
 
 		if (sizeChoice == 1)
 		{
-			beverage = make_unique<CMilkshake>(CMilkshake::MilkshakeSize::Small);
+			beverage = make_unique<CMilkshake>(CMilkshake::Size::Small);
 		}
 		else if (sizeChoice == 2)
 		{
-			beverage = make_unique<CMilkshake>(CMilkshake::MilkshakeSize::Medium);
+			beverage = make_unique<CMilkshake>(CMilkshake::Size::Medium);
 		}
 		else if (sizeChoice == 3)
 		{
-			beverage = make_unique<CMilkshake>(CMilkshake::MilkshakeSize::Large);
+			beverage = make_unique<CMilkshake>(CMilkshake::Size::Large);
 		}
 		else
 		{

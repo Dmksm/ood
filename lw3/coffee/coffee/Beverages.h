@@ -2,7 +2,10 @@
 
 #include "IBeverage.h"
 #include <map>
+#include <stdexcept>
 
+
+//программа должна компилироваться без варнингов
 class CBeverage : public IBeverage
 {
 public:
@@ -34,53 +37,53 @@ public:
 class CCappuccino : public CCoffee
 {
 public:
-	enum class CappuccinoSize
+	enum class Size //можно не указывать конкретно что это капучино сиче просто ссайз
 	{
 		Standart,
 		Double
 	};
 
-	CCappuccino(CappuccinoSize size = CappuccinoSize::Standart)
-		: CCoffee((size == CappuccinoSize::Standart) ? "Cappuccino" : "Double cappuccino")
+	CCappuccino(Size size = Size::Standart)
+		: CCoffee((size == Size::Standart) ? "Cappuccino" : "Double cappuccino")
 		, m_size(size)
 	{
 	}
 
 	double GetCost() const override
 	{
-		return (m_size == CappuccinoSize::Standart) ? 80 : 120;
+		return (m_size == Size::Standart) ? 80 : 120;
 	}
 private:
-	CappuccinoSize m_size;
+	Size m_size;
 };
 
 class CLatte : public CCoffee
 {
 public:
-	enum class LatteSize
+	enum class Size
 	{
 		Standart,
 		Double
 	};
 
-	CLatte(LatteSize size = LatteSize::Standart)
-		: CCoffee((size == LatteSize::Standart) ? "Latte" : "Double latte")
+	CLatte(Size size = Size::Standart)
+		: CCoffee((size == Size::Standart) ? "Latte" : "Double latte")
 		, m_size(size)
 	{
 	}
 
 	double GetCost() const override
 	{
-		return (m_size == LatteSize::Standart) ? 90 : 130;
+		return (m_size == Size::Standart) ? 90 : 130;
 	}
 private:
-	LatteSize m_size;
+	Size m_size;
 };
 
 class CTea : public CBeverage
 {
 public:
-	enum class TeaVariety
+	enum class Variety
 	{
 		PalacePuer,
 		CeylonMaharaja,
@@ -88,7 +91,7 @@ public:
 		ChocolateTruffle
 	};
 
-	CTea(TeaVariety variety = TeaVariety::PalacePuer)
+	CTea(Variety variety = Variety::PalacePuer)
 		: CBeverage(GetTeaDescription(variety))
 	{
 	}
@@ -99,25 +102,29 @@ public:
 	}
 
 private:
-	std::string GetTeaDescription(TeaVariety variety)
+	std::string GetTeaDescription(Variety variety)
 	{
 		switch (variety)
 		{
-			case TeaVariety::PalacePuer:
+			case Variety::PalacePuer:
 			{
 				return "PalacePuer";
 			}
-			case TeaVariety::BaiMaoHou:
+			case Variety::BaiMaoHou:
 			{
 				return "BaiMaoHou";
 			}
-			case TeaVariety::CeylonMaharaja:
+			case Variety::CeylonMaharaja:
 			{
 				return "CeylonMaharaja";
 			}
-			case TeaVariety::ChocolateTruffle:
+			case Variety::ChocolateTruffle:
 			{
 				return "ChocolateTruffle";
+			}
+			default:
+			{
+				throw std::logic_error("Unknown tea variety!");
 			}
 		}
 	}
@@ -126,14 +133,14 @@ private:
 class CMilkshake : public CBeverage
 {
 public:
-	enum class MilkshakeSize
+	enum class Size
 	{
 		Small,
 		Medium,
 		Large
 	};
 
-	CMilkshake(MilkshakeSize size = MilkshakeSize::Medium)
+	CMilkshake(Size size = Size::Medium)
 		: CBeverage(GetMilkshakeDescription(size))
 		, m_size(size)
 	{
@@ -145,42 +152,50 @@ public:
 	}
 
 private:
-	MilkshakeSize m_size;
+	Size m_size;
 
-	std::string GetMilkshakeDescription(MilkshakeSize size) const
+	std::string GetMilkshakeDescription(Size size) const
 	{
 		switch (size)
 		{
-			case MilkshakeSize::Small:
+			case Size::Small:
 			{
 				return "Small milkshake";
 			}
-			case MilkshakeSize::Medium:
+			case Size::Medium:
 			{
 				return "Medium milkshake";
 			}
-			case MilkshakeSize::Large:
+			case Size::Large:
 			{
 				return "Large milkshake";
+			}
+			default:
+			{
+				throw std::logic_error("Unknown milkshake size!");
 			}
 		}
 	}
 
-	double GetMilkshakeCost(MilkshakeSize size) const
+	double GetMilkshakeCost(Size size) const
 	{
 		switch (size)
 		{
-			case MilkshakeSize::Small:
+			case Size::Small:
 			{
 				return 50;
 			}
-			case MilkshakeSize::Medium:
+			case Size::Medium:
 			{
 				return 60;
 			}
-			case MilkshakeSize::Large:
+			case Size::Large:
 			{
 				return 80;
+			}
+			default:
+			{
+				throw std::logic_error("Unknown milkshake size!");
 			}
 		}
 	}

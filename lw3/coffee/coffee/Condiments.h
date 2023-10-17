@@ -99,13 +99,13 @@ private:
 class CLiquor : public CCondimentDecorator
 {
 public:
-	enum class LiquorType
+	enum class Type
 	{
 		Chocolate,
 		Nut
 	};
 
-	CLiquor(IBeveragePtr&& beverage, LiquorType type = LiquorType::Nut)
+	CLiquor(IBeveragePtr&& beverage, Type type = Type::Nut)
 		: CCondimentDecorator(std::move(beverage))
 		, m_type(type)
 	{
@@ -118,10 +118,10 @@ protected:
 	}
 	std::string GetCondimentDescription()const override
 	{
-		return std::string(m_type == LiquorType::Nut ? "Nut" : "Chocolate") + " liquor";
+		return std::string(m_type == Type::Nut ? "Nut" : "Chocolate") + " liquor";
 	}
 private:
-	LiquorType m_type;
+	Type m_type;
 };
 
 // Лимонная добавка
