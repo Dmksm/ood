@@ -10,7 +10,7 @@ int main()
 	CShapeFactory factory;
 	CDesigner designer(factory);
 
-	sf::RenderWindow renderWindow(sf::VideoMode::getDesktopMode(), "The Shape",
+	sf::RenderWindow renderWindow(sf::VideoMode::getDesktopMode(), "The factory shape",
 		sf::Style::Fullscreen, sf::ContextSettings(24, 8, 16, 4, 6, 0, true));
 	CCanvas canvas(&renderWindow);
 
