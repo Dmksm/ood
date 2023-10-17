@@ -6,5 +6,4 @@ void CPainter::DrawPicture(CPictureDraft& draft, ICanvas& canvas) const
 	{
 		it.Draw(canvas);
 	}
-	canvas.Display();
 }

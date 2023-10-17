@@ -102,7 +102,7 @@ public:
         m_window->draw(line, 2, sf::Lines);
     }
 
-    void Display() override
+    void Display()
     {
         m_window->display();
     }

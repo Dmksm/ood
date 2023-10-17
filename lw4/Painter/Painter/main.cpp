@@ -19,6 +19,7 @@ int main()
 	{
 		CPictureDraft draft = designer.CreateDraft(std::cin);
 		painter.DrawPicture(draft, canvas);
+		canvas.Display();
 	}
 
 	return 0;
