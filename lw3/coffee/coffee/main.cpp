@@ -251,7 +251,7 @@ void DialogWithUser()
 			{
 				beverage = move(beverage) << MakeCondiment<CChocolate>(chocolateQuantity);
 			}
-			catch (std::exception e)
+			catch (std::exception& e)
 			{
 				std::cout << e.what() << std::endl;
 			}
