@@ -40,7 +40,7 @@ public:
         m_window->draw(ellipse);
     }
 
-    void DrawRegularPolygon(double radius, double vertexCount)
+    void DrawRegularPolygon(double radius, double vertexCount) override
     {
         sf::CircleShape regularPolygon(radius, vertexCount);
         regularPolygon.setPosition(m_position);

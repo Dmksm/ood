@@ -39,9 +39,9 @@ Color GetColorEnum(const std::string& color)
 
 std::unique_ptr<CShape> GetEllipse(Color color, std::stringstream& args)
 {
-	double cx, cy, rx, ry;
+	std::string cx, cy, rx, ry;
 	args >> cx >> cy >> rx >> ry;
-	return std::make_unique<CEllipse>(color, cx, cy, rx, ry);
+	return std::make_unique<CEllipse>(color, std::stod(cx), std::stod(cy), std::stod(rx), std::stod(ry));
 }
 
 std::unique_ptr<CShape> GetTriangle(Color color, std::stringstream& args)

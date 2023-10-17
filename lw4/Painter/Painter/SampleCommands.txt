@@ -1,2 +1,6 @@
-ellipse red 50 50 15 20
+ellipse red 1200 50 15 20
+ellipse yellow 170 32 96 58
+triangle green 10 30 50 55 10 25
+rectangle blue 550 190 50 30
+regularPolygon pink 100 10
 stop
