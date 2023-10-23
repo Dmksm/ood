@@ -22,6 +22,8 @@ namespace
 			AddMenuItem("setTitle", "Changes title. Args: <new title>", &CEditor::SetTitle);
 			AddMenuItem("insertParagraph", "Insert paragraph. Args: <position>|end <text>", &CEditor::InsertParagraph);
 			AddMenuItem("insertImage", "Insert image. Args: <position>|end <width> <height> <path>", &CEditor::InsertImage);
+			AddMenuItem("resizeImage", "Resize image. Args: <position> <width> <height>", &CEditor::ResizeImage);
+			AddMenuItem("replaceText", "Replace text. Args: <position> <text>", &CEditor::ReplaceText);
 			m_menu.AddItem("list", "Show document", bind(&CEditor::List, this, _1));
 			AddMenuItem("undo", "Undo command", &CEditor::Undo);
 			AddMenuItem("redo", "Redo undone command", &CEditor::Redo);
@@ -39,6 +41,55 @@ namespace
 		void AddMenuItem(const string& shortcut, const string& description, MenuHandler handler)
 		{
 			m_menu.AddItem(shortcut, description, bind(handler, this, _1));
+		}
+
+		void ReplaceText(istream& in)
+		{
+			string text;
+			string position;
+
+			in >> position >> text;
+			try
+			{
+				CDocumentItem item = m_document->GetItem(stoll(position) - 1);
+				if (!item.GetParagraph())
+				{
+					cout << "Element in position " << position << " is not a text!" << endl;
+				}
+				else
+				{
+					item.GetParagraph()->SetText(text);
+				}
+			}
+			catch (std::exception& e)
+			{
+				cout << e.what() << endl;
+			}
+		}
+
+		void ResizeImage(istream& in)
+		{
+			string width;
+			string height;
+			string position;
+
+			in >> position >> width >> height;
+			try
+			{
+				CDocumentItem item = m_document->GetItem(stoll(position) - 1);
+				if (!item.GetImage())
+				{
+					cout << "Element in position " << position << " is not an image!" << endl;
+				}
+				else
+				{
+					item.GetImage()->Resize(stoi(width), stoi(height));
+				}
+			}
+			catch (std::exception& e)
+			{
+				cout << e.what() << endl;
+			}
 		}
 
 		void InsertImage(istream& in)

@@ -5,3 +5,11 @@ insertParagraph 2 My
 insertParagraph 3 World
 insertImage end 1080 1024 MyImage.jpg
 list
+replaceText 4 Beautyfull
+replaceText 2 Beautyfull
+list
+insertParagraph 2 My
+list
+resizeImage 4 1000 700
+resizeImage 5 1000 700
+list
