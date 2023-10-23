@@ -13,3 +13,5 @@ list
 resizeImage 4 1000 700
 resizeImage 5 1000 700
 list
+deleteItem 1
+list

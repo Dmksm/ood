@@ -20,6 +20,7 @@ namespace
 			m_menu.AddItem("help", "Help", [this](istream&) { m_menu.ShowInstructions(); });
 			m_menu.AddItem("exit", "Exit", [this](istream&) { m_menu.Exit(); });
 			AddMenuItem("setTitle", "Changes title. Args: <new title>", &CEditor::SetTitle);
+			AddMenuItem("deleteItem", "Delete item. Args: <position>", &CEditor::DeleteItem);
 			AddMenuItem("insertParagraph", "Insert paragraph. Args: <position>|end <text>", &CEditor::InsertParagraph);
 			AddMenuItem("insertImage", "Insert image. Args: <position>|end <width> <height> <path>", &CEditor::InsertImage);
 			AddMenuItem("resizeImage", "Resize image. Args: <position> <width> <height>", &CEditor::ResizeImage);
@@ -41,6 +42,22 @@ namespace
 		void AddMenuItem(const string& shortcut, const string& description, MenuHandler handler)
 		{
 			m_menu.AddItem(shortcut, description, bind(handler, this, _1));
+		}
+
+		void DeleteItem(istream& in)
+		{
+			string text;
+			string position;
+
+			in >> position >> text;
+			try
+			{
+				m_document->DeleteItem(stoi(position) - 1);
+			}
+			catch (std::exception& e)
+			{
+				cout << e.what() << endl;
+			}
 		}
 
 		void ReplaceText(istream& in)
