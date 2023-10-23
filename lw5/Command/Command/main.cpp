@@ -14,12 +14,14 @@ namespace
 	class CEditor
 	{
 	public:
-		CEditor()  //-V730
+		CEditor() 
 			:m_document(make_unique<CDocument>())
 		{
 			m_menu.AddItem("help", "Help", [this](istream&) { m_menu.ShowInstructions(); });
 			m_menu.AddItem("exit", "Exit", [this](istream&) { m_menu.Exit(); });
 			AddMenuItem("setTitle", "Changes title. Args: <new title>", &CEditor::SetTitle);
+			AddMenuItem("insertParagraph", "Insert paragraph. Args: <position>|end <text>", &CEditor::InsertParagraph);
+			AddMenuItem("insertImage", "Insert image. Args: <position>|end <width> <height> <path>", &CEditor::InsertImage);
 			m_menu.AddItem("list", "Show document", bind(&CEditor::List, this, _1));
 			AddMenuItem("undo", "Undo command", &CEditor::Undo);
 			AddMenuItem("redo", "Redo undone command", &CEditor::Redo);
@@ -39,7 +41,54 @@ namespace
 			m_menu.AddItem(shortcut, description, bind(handler, this, _1));
 		}
 
-		// TODO: скипнуть первый пробел элегантнее
+		void InsertImage(istream& in)
+		{
+			string width;
+			string height;
+			string path;
+			string position;
+
+			in >> position >> width >> height >> path; 
+			try
+			{
+				if (position == "end")
+				{
+					m_document->InsertImage(path, stoi(width), stoi(height));
+				}
+				else
+				{
+					m_document->InsertImage(path, stoi(width), stoi(height), stoull(position) - 1);
+				}
+			}
+			catch (std::exception& e)
+			{
+				cout << e.what() << endl;
+			}
+		}
+
+		void InsertParagraph(istream& in)
+		{
+			string text;
+			string position;
+
+			in >> position >> text;
+			try
+			{
+				if (position == "end")
+				{
+					m_document->InsertParagraph(text);
+				}
+				else
+				{
+					m_document->InsertParagraph(text, stoull(position) - 1);
+				}
+			}
+			catch (std::exception& e)
+			{
+				cout << e.what() << endl;
+			}
+		}
+
 		void SetTitle(istream& in)
 		{
 			string head;
@@ -59,6 +108,21 @@ namespace
 			cout << "-------------" << endl;
 			cout << m_document->GetTitle() << endl;
 			cout << "-------------" << endl;
+			for (size_t position = 1; position <= m_document->GetItemsCount(); ++position)
+			{
+				CConstDocumentItem item = m_document->GetItem(position - 1);
+				cout << position << ". ";
+				if (item.GetImage())
+				{
+					cout << item.GetImage()->GetWidth() << " " 
+						<< item.GetImage()->GetHeight() << " "
+						<< item.GetImage()->GetPath() << endl;
+				}
+				if (item.GetParagraph())
+				{
+					cout << item.GetParagraph()->GetText() << endl;
+				}
+			}
 		}
 
 		void Undo(istream&)
