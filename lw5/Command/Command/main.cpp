@@ -1,20 +1,99 @@
-﻿// Command.cpp : Этот файл содержит функцию "main". Здесь начинается и заканчивается выполнение программы.
+﻿// ISpringWord.cpp : Defines the entry point for the console application.
 //
 
-#include <iostream>
+#include "stdafx.h"
+#include "Menu.h"
+#include "Document.h"
+
+using namespace std;
+using namespace std::placeholders;
+
+namespace
+{
+
+	class CEditor
+	{
+	public:
+		CEditor()  //-V730
+			:m_document(make_unique<CDocument>())
+		{
+			m_menu.AddItem("help", "Help", [this](istream&) { m_menu.ShowInstructions(); });
+			m_menu.AddItem("exit", "Exit", [this](istream&) { m_menu.Exit(); });
+			AddMenuItem("setTitle", "Changes title. Args: <new title>", &CEditor::SetTitle);
+			m_menu.AddItem("list", "Show document", bind(&CEditor::List, this, _1));
+			AddMenuItem("undo", "Undo command", &CEditor::Undo);
+			AddMenuItem("redo", "Redo undone command", &CEditor::Redo);
+		}
+
+		void Start()
+		{
+			m_menu.Run();
+		}
+
+	private:
+		// Указатель на метод класса CEditor, принимающий istream& и возвращающий void
+		typedef void (CEditor::* MenuHandler)(istream& in);
+
+		void AddMenuItem(const string& shortcut, const string& description, MenuHandler handler)
+		{
+			m_menu.AddItem(shortcut, description, bind(handler, this, _1));
+		}
+
+		// TODO: скипнуть первый пробел элегантнее
+		void SetTitle(istream& in)
+		{
+			string head;
+			string tail;
+
+			if (in >> head)
+			{
+				getline(in, tail);
+			}
+			string title = head + tail;
+
+			m_document->SetTitle(title);
+		}
+
+		void List(istream&)
+		{
+			cout << "-------------" << endl;
+			cout << m_document->GetTitle() << endl;
+			cout << "-------------" << endl;
+		}
+
+		void Undo(istream&)
+		{
+			if (m_document->CanUndo())
+			{
+				m_document->Undo();
+			}
+			else
+			{
+				cout << "Can't undo" << endl;
+			}
+		}
+
+		void Redo(istream&)
+		{
+			if (m_document->CanRedo())
+			{
+				m_document->Redo();
+			}
+			else
+			{
+				cout << "Can't redo" << endl;
+			}
+		}
+
+		CMenu m_menu;
+		unique_ptr<IDocument> m_document;
+	};
+
+}
 
 int main()
 {
-    std::cout << "Hello World!\n";
+	CEditor editor;
+	editor.Start();
+	return 0;
 }
-
-// Запуск программы: CTRL+F5 или меню "Отладка" > "Запуск без отладки"
-// Отладка программы: F5 или меню "Отладка" > "Запустить отладку"
-
-// Советы по началу работы 
-//   1. В окне обозревателя решений можно добавлять файлы и управлять ими.
-//   2. В окне Team Explorer можно подключиться к системе управления версиями.
-//   3. В окне "Выходные данные" можно просматривать выходные данные сборки и другие сообщения.
-//   4. В окне "Список ошибок" можно просматривать ошибки.
-//   5. Последовательно выберите пункты меню "Проект" > "Добавить новый элемент", чтобы создать файлы кода, или "Проект" > "Добавить существующий элемент", чтобы добавить в проект существующие файлы кода.
-//   6. Чтобы снова открыть этот проект позже, выберите пункты меню "Файл" > "Открыть" > "Проект" и выберите SLN-файл.
