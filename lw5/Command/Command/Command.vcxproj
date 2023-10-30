@@ -146,6 +146,7 @@
     <ClCompile Include="AbstractCommand.cpp" />
     <ClCompile Include="ChangeStringCommand.cpp" />
     <ClCompile Include="ConstDocumentItem.cpp" />
+    <ClCompile Include="DeleteItemCommand.cpp" />
     <ClCompile Include="Document.cpp" />
     <ClCompile Include="DocumentItem.cpp" />
     <ClCompile Include="History.cpp" />
@@ -162,6 +163,7 @@
     <ClInclude Include="AbstractCommand.h" />
     <ClInclude Include="ChangeStringCommand.h" />
     <ClInclude Include="ConstDocumentItem.h" />
+    <ClInclude Include="DeleteItemCommand.h" />
     <ClInclude Include="Document.h" />
     <ClInclude Include="DocumentItem.h" />
     <ClInclude Include="History.h" />

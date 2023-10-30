@@ -4,6 +4,7 @@
 #include "Paragraph.h"
 #include "ChangeStringCommand.h"
 #include "InsertParagraphCommand.h"
+#include "DeleteItemCommand.h"
 
 using namespace std;
 
@@ -54,8 +55,7 @@ CDocumentItem CDocument::GetItem(size_t index)
 void CDocument::DeleteItem(size_t index)
 {
 	ValidateIndex(index);
-	m_items.erase(m_items.begin() + index);
-	//m_history.AddAndExecuteCommand(make_unique<CDeleteItemCommand>(m_items, index));
+	m_history.AddAndExecuteCommand(make_unique<CDeleteItemCommand>(m_items, index));
 }
 
 void CDocument::Save(const Path& path)const
