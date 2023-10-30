@@ -2,6 +2,8 @@
 #include "History.h"
 #include "ICommand.h"
 
+const unsigned COMMANDS_BUFFER_SIZE = 10;
+
 CHistory::CHistory()
 {
 }
@@ -41,6 +43,11 @@ void CHistory::Redo()
 
 void CHistory::AddAndExecuteCommand(ICommandPtr&& command)
 {
+	if (m_commands.size() == COMMANDS_BUFFER_SIZE)
+	{
+		m_commands.erase(m_commands.begin());
+		m_nextCommandIndex = COMMANDS_BUFFER_SIZE - 1;
+	}
 	if (m_nextCommandIndex < m_commands.size()) // Не происходит расширения истории команд
 	{
 		command->Execute();	// может бросить исключение
