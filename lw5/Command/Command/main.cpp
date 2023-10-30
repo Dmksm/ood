@@ -84,15 +84,7 @@ namespace
 			in >> position >> text;
 			try
 			{
-				CDocumentItem item = m_document->GetItem(stoll(position) - 1);
-				if (!item.GetParagraph())
-				{
-					cout << "Element in position " << position << " is not a text!" << endl;
-				}
-				else
-				{
-					item.GetParagraph()->SetText(text);
-				}
+				m_document->ReplaceText(text, stoull(position) - 1);
 			}
 			catch (std::exception& e)
 			{

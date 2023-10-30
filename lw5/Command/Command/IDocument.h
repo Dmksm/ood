@@ -13,6 +13,8 @@ public:
 	virtual std::shared_ptr<IParagraph> InsertParagraph(const std::string& text,
 		boost::optional<size_t> position = boost::none) = 0;
 
+	virtual void ReplaceText(const std::string& text, size_t position) = 0;
+
 	virtual std::shared_ptr<IImage> InsertImage(const Path& path, int width, int height,
 		boost::optional<size_t> position = boost::none) = 0;
 

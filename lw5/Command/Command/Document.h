@@ -9,6 +9,8 @@ public:
 	std::shared_ptr<IParagraph> InsertParagraph(const std::string& text,
 		boost::optional<size_t> position = boost::none) override;
 
+	void ReplaceText(const std::string& text, size_t position) override;
+
 	std::shared_ptr<IImage> InsertImage(const Path& path, int width, int height,
 		boost::optional<size_t> position = boost::none) override;
 

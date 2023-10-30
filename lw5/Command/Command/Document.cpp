@@ -6,6 +6,7 @@
 #include "InsertParagraphCommand.h"
 #include "DeleteItemCommand.h"
 #include "InsertImageCommand.h"
+#include "ReplaceTextCommand.h"
 
 std::string ToHTML(CConstDocumentItem item);
 
@@ -17,6 +18,20 @@ std::shared_ptr<IParagraph> CDocument::InsertParagraph(const std::string& text,
 		std::make_unique<CInsertParagraphCommand>(m_items, paragraphPtr, position)
 	);
 	return paragraphPtr;
+}
+
+void CDocument::ReplaceText(const std::string& text, size_t position)
+{
+	if (!m_items.at(position).GetParagraph())
+	{
+		std::stringstream ss;
+		ss << "Element in position " << position << " is not a text!" << std::endl;
+		throw std::logic_error(ss.str());
+	}
+
+	m_history.AddAndExecuteCommand(
+		std::make_unique<CReplaceTextCommand>(m_items.at(position), text)
+	);
 }
 
 std::shared_ptr<IImage> CDocument::InsertImage(const Path& path, int width, int height,
