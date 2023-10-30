@@ -25,6 +25,7 @@ namespace
 			AddMenuItem("insertImage", "Insert image. Args: <position>|end <width> <height> <path>", &CEditor::InsertImage);
 			AddMenuItem("resizeImage", "Resize image. Args: <position> <width> <height>", &CEditor::ResizeImage);
 			AddMenuItem("replaceText", "Replace text. Args: <position> <text>", &CEditor::ReplaceText);
+			AddMenuItem("save", "Save document to html file. Args: <path>", &CEditor::Save);
 			m_menu.AddItem("list", "Show document", bind(&CEditor::List, this, _1));
 			AddMenuItem("undo", "Undo command", &CEditor::Undo);
 			AddMenuItem("redo", "Redo undone command", &CEditor::Redo);
@@ -42,6 +43,21 @@ namespace
 		void AddMenuItem(const string& shortcut, const string& description, MenuHandler handler)
 		{
 			m_menu.AddItem(shortcut, description, bind(handler, this, _1));
+		}
+
+		void Save(istream& in)
+		{
+			string path;
+
+			in >> path;
+			try
+			{
+				m_document->Save(path);
+			}
+			catch (std::exception& e)
+			{
+				cout << e.what() << endl;
+			}
 		}
 
 		void DeleteItem(istream& in)

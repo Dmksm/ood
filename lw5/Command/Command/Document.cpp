@@ -7,6 +7,8 @@
 #include "DeleteItemCommand.h"
 #include "InsertImageCommand.h"
 
+std::string ToHTML(CConstDocumentItem item);
+
 std::shared_ptr<IParagraph> CDocument::InsertParagraph(const std::string& text,
 	boost::optional<size_t> position) 
 {
@@ -50,7 +52,18 @@ void CDocument::DeleteItem(size_t index)
 
 void CDocument::Save(const Path& path)const
 {
+	std::ofstream file(path.string());
+	file << "<!DOCTYPE html><html><head><title>" << m_title << "</title></head><body>";
 
+	file << "<ol>";
+	for (auto item : m_items)
+	{
+		file << "<li>" << ToHTML(item) << "</li>";
+	}
+	file << "</ol>";
+
+	file << "</body></html>";
+	file.close();
 }
 
 void CDocument::SetTitle(const std::string& title)
@@ -91,4 +104,20 @@ void CDocument::ValidateIndex(size_t index) const
 		msg << "Index out of range! Given " << index;
 		throw std::logic_error(msg.str());
 	}
+}
+
+std::string ToHTML(CConstDocumentItem item)
+{
+	std::stringstream ss;
+	if (item.GetImage())
+	{
+		ss << "<img src=" << item.GetImage()->GetPath() << " width = " <<
+			item.GetImage()->GetWidth() << " height = " << item.GetImage()->GetHeight()
+			<< " alt = 'image' >";
+	}
+	else
+	{
+		ss << item.GetParagraph()->GetText();
+	}
+	return ss.str();
 }
