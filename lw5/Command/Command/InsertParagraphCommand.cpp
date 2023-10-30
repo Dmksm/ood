@@ -26,7 +26,7 @@ void CInsertParagraphCommand::DoExecute()
 
 void CInsertParagraphCommand::DoUnexecute()
 {
-	auto it = m_target.end();
+	auto it = m_target.end() - 1;
 	if (m_position.has_value())
 	{
 		it = m_target.begin() + m_position.get();

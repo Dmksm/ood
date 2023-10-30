@@ -5,20 +5,16 @@
 #include "DocumentItem.h"
 #include "stdafx.h"
 
-using namespace std;
-
 typedef boost::filesystem::path Path;
-using boost::optional;
-using boost::none;
 
 class IDocument
 {
 public:
-	virtual shared_ptr<IParagraph> InsertParagraph(const string& text,
-		optional<size_t> position = none) = 0;
+	virtual std::shared_ptr<IParagraph> InsertParagraph(const std::string& text,
+		boost::optional<size_t> position = boost::none) = 0;
 
-	virtual shared_ptr<IImage> InsertImage(const Path& path, int width, int height,
-		optional<size_t> position = none) = 0;
+	virtual std::shared_ptr<IImage> InsertImage(const Path& path, int width, int height,
+		boost::optional<size_t> position = boost::none) = 0;
 
 	virtual size_t GetItemsCount()const = 0;
 

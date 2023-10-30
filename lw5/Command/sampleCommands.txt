@@ -3,7 +3,7 @@ setTitle sample_test
 insertParagraph 1 Hello
 insertParagraph 2 My
 insertParagraph 3 World
-insertImage end 1080 1024 MyImage.jpg
+insertImage end 1080 1024 leopard-zadumchivo-smotrit-na-savannu.jpg
 list
 replaceText 4 Beautyfull
 replaceText 2 Beautyfull

@@ -6,11 +6,11 @@
 class CDocument : public IDocument
 {
 public:
-	shared_ptr<IParagraph> InsertParagraph(const string& text,
-		optional<size_t> position = none) override;
+	std::shared_ptr<IParagraph> InsertParagraph(const std::string& text,
+		boost::optional<size_t> position = boost::none) override;
 
-	shared_ptr<IImage> InsertImage(const Path& path, int width, int height,
-		optional<size_t> position = none) override;
+	std::shared_ptr<IImage> InsertImage(const Path& path, int width, int height,
+		boost::optional<size_t> position = boost::none) override;
 
 	size_t GetItemsCount()const override;
 

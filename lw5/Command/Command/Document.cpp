@@ -5,34 +5,24 @@
 #include "ChangeStringCommand.h"
 #include "InsertParagraphCommand.h"
 #include "DeleteItemCommand.h"
+#include "InsertImageCommand.h"
 
-using namespace std;
-
-shared_ptr<IParagraph> CDocument::InsertParagraph(const string& text,
-	optional<size_t> position) 
+std::shared_ptr<IParagraph> CDocument::InsertParagraph(const std::string& text,
+	boost::optional<size_t> position) 
 {
-	shared_ptr<IParagraph> paragraphPtr = std::make_shared<CParagraph>(text);
+	std::shared_ptr<IParagraph> paragraphPtr = std::make_shared<CParagraph>(text);
 	m_history.AddAndExecuteCommand(
-		make_unique<CInsertParagraphCommand>(m_items, paragraphPtr, position)
+		std::make_unique<CInsertParagraphCommand>(m_items, paragraphPtr, position)
 	);
 	return paragraphPtr;
 }
 
-shared_ptr<IImage> CDocument::InsertImage(const Path& path, int width, int height,
-	optional<size_t> position)
+std::shared_ptr<IImage> CDocument::InsertImage(const Path& path, int width, int height,
+	boost::optional<size_t> position)
 {
-	shared_ptr<IImage> imagePtr = std::make_shared<CImage>(path, width, height);
-	if (!position.has_value())
-	{
-		m_items.push_back(imagePtr);
-	}
-	else
-	{
-		m_items.insert(m_items.begin() + position.get(), imagePtr);
-	}
+	std::shared_ptr<IImage> imagePtr = std::make_shared<CImage>(path, width, height);
+	m_history.AddAndExecuteCommand(std::make_unique<CInsertImageCommand>(m_items, imagePtr, position));
 	return imagePtr;
-
-	//m_history.AddAndExecuteCommand(make_unique<CInsertImageCommand>(m_items, index));
 }
 
 size_t CDocument::GetItemsCount()const
@@ -97,7 +87,7 @@ void CDocument::ValidateIndex(size_t index) const
 {
 	if (index > m_items.size() || (index == m_items.size() && m_items.size() > 0))
 	{
-		stringstream msg;
+		std::stringstream msg;
 		msg << "Index out of range! Given " << index;
 		throw std::logic_error(msg.str());
 	}

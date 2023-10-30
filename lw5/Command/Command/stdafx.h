@@ -14,6 +14,8 @@
 #include <vector>
 #include <memory>
 #include <iostream>
+#include <filesystem>
+#include <fstream>
 #include <boost/range/algorithm/find_if.hpp>
 #include <functional>
 #include <sstream>
@@ -23,6 +25,9 @@
 #include <boost/optional.hpp>
 #include <boost/filesystem.hpp>
 #include <boost\none.hpp>
-
+#include <boost/uuid/uuid.hpp>
+#include <boost/uuid/uuid_generators.hpp>
+#include <boost/lexical_cast.hpp>
+#include <boost/uuid/uuid_io.hpp>
 
 // TODO: reference additional headers your program requires here
