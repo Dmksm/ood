@@ -1,9 +1,14 @@
 list
 setTitle sample_test
 insertParagraph 1 Hello
-insertParagraph 2 My
+insertImage 2 1080 1024 leopard-zadumchivo-smotrit-na-savannu.jpg
 insertParagraph 3 World
-insertImage end 1080 1024 leopard-zadumchivo-smotrit-na-savannu.jpg
+insertImage end 800 600 cat.png
+deleteItem 2
+undo
+undo
+resizeImage 2 800 600
+
 list
 replaceText 4 Beautyfull
 replaceText 2 Beautyfull
@@ -11,6 +16,7 @@ list
 insertParagraph 2 My
 list
 resizeImage 4 1000 700
+resizeImage 5 10001 700
 resizeImage 5 1000 700
 list
 deleteItem 1
