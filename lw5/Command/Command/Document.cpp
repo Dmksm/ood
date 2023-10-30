@@ -3,6 +3,7 @@
 #include "Image.h"
 #include "Paragraph.h"
 #include "ChangeStringCommand.h"
+#include "InsertParagraphCommand.h"
 
 using namespace std;
 
@@ -10,14 +11,9 @@ shared_ptr<IParagraph> CDocument::InsertParagraph(const string& text,
 	optional<size_t> position) 
 {
 	shared_ptr<IParagraph> paragraphPtr = std::make_shared<CParagraph>(text);
-	if (!position.has_value())
-	{
-		m_items.push_back(paragraphPtr);
-	}
-	else
-	{
-		m_items.insert(m_items.begin() + position.get(), paragraphPtr);
-	}
+	m_history.AddAndExecuteCommand(
+		make_unique<CInsertParagraphCommand>(m_items, paragraphPtr, position)
+	);
 	return paragraphPtr;
 }
 
@@ -34,6 +30,8 @@ shared_ptr<IImage> CDocument::InsertImage(const Path& path, int width, int heigh
 		m_items.insert(m_items.begin() + position.get(), imagePtr);
 	}
 	return imagePtr;
+
+	//m_history.AddAndExecuteCommand(make_unique<CInsertImageCommand>(m_items, index));
 }
 
 size_t CDocument::GetItemsCount()const
@@ -57,6 +55,7 @@ void CDocument::DeleteItem(size_t index)
 {
 	ValidateIndex(index);
 	m_items.erase(m_items.begin() + index);
+	//m_history.AddAndExecuteCommand(make_unique<CDeleteItemCommand>(m_items, index));
 }
 
 void CDocument::Save(const Path& path)const

@@ -151,6 +151,7 @@
     <ClCompile Include="History.cpp" />
     <ClCompile Include="Image.cpp" />
     <ClCompile Include="ImageImpl.cpp" />
+    <ClCompile Include="InsertParagraphCommand.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Menu.cpp" />
     <ClCompile Include="Paragraph.cpp" />
@@ -170,6 +171,7 @@
     <ClInclude Include="IImage.h" />
     <ClInclude Include="Image.h" />
     <ClInclude Include="ImageImpl.h" />
+    <ClInclude Include="InsertParagraphCommand.h" />
     <ClInclude Include="IParagraph.h" />
     <ClInclude Include="Menu.h" />
     <ClInclude Include="Paragraph.h" />

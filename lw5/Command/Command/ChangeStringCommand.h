@@ -1,5 +1,6 @@
 #pragma once
 #include "AbstractCommand.h"
+#include "stdafx.h"
 class CChangeStringCommand :
 	public CAbstractCommand
 {
