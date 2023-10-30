@@ -18,6 +18,8 @@ public:
 	virtual std::shared_ptr<IImage> InsertImage(const Path& path, int width, int height,
 		boost::optional<size_t> position = boost::none) = 0;
 
+	virtual void ResizeImage(size_t position, int width, int height) = 0;
+
 	virtual size_t GetItemsCount()const = 0;
 
 	virtual CConstDocumentItem GetItem(size_t index)const = 0;

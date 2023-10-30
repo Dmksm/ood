@@ -101,15 +101,7 @@ namespace
 			in >> position >> width >> height;
 			try
 			{
-				CDocumentItem item = m_document->GetItem(stoll(position) - 1);
-				if (!item.GetImage())
-				{
-					cout << "Element in position " << position << " is not an image!" << endl;
-				}
-				else
-				{
-					item.GetImage()->Resize(stoi(width), stoi(height));
-				}
+				m_document->ResizeImage(stoull(position) - 1, stoi(width), stoi(height));
 			}
 			catch (std::exception& e)
 			{

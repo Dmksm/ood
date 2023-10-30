@@ -159,6 +159,7 @@
     <ClCompile Include="Paragraph.cpp" />
     <ClCompile Include="ParagraphImpl.cpp" />
     <ClCompile Include="ReplaceTextCommand.cpp" />
+    <ClCompile Include="ResizeImageCommand.cpp" />
     <ClCompile Include="stdafx.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -182,6 +183,7 @@
     <ClInclude Include="Paragraph.h" />
     <ClInclude Include="ParagraphImpl.h" />
     <ClInclude Include="ReplaceTextCommand.h" />
+    <ClInclude Include="ResizeImageCommand.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="targetver.h" />
   </ItemGroup>

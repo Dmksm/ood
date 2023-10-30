@@ -7,6 +7,7 @@
 #include "DeleteItemCommand.h"
 #include "InsertImageCommand.h"
 #include "ReplaceTextCommand.h"
+#include "ResizeImageCommand.h"
 
 std::string ToHTML(CConstDocumentItem item);
 
@@ -40,6 +41,20 @@ std::shared_ptr<IImage> CDocument::InsertImage(const Path& path, int width, int 
 	std::shared_ptr<IImage> imagePtr = std::make_shared<CImage>(path, width, height);
 	m_history.AddAndExecuteCommand(std::make_unique<CInsertImageCommand>(m_items, imagePtr, position));
 	return imagePtr;
+}
+
+void CDocument::ResizeImage(size_t position, int width, int height)
+{
+	if (!m_items.at(position).GetImage())
+	{
+		std::stringstream ss;
+		ss << "Element in position " << position << " is not a image!" << std::endl;
+		throw std::logic_error(ss.str());
+	}
+
+	m_history.AddAndExecuteCommand(
+		std::make_unique<CResizeImageCommand>(m_items.at(position), width, height)
+	);
 }
 
 size_t CDocument::GetItemsCount()const

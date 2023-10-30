@@ -14,6 +14,8 @@ public:
 	std::shared_ptr<IImage> InsertImage(const Path& path, int width, int height,
 		boost::optional<size_t> position = boost::none) override;
 
+	void ResizeImage(size_t position, int width, int height) override;
+
 	size_t GetItemsCount()const override;
 
 	CConstDocumentItem GetItem(size_t index)const override;
