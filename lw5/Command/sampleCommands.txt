@@ -13,7 +13,7 @@ list
 replaceText 4 Beautyfull
 replaceText 2 Beautyfull
 list
-insertParagraph 2 My
+insertParagraph 2 My 
 list
 resizeImage 4 1000 700
 resizeImage 5 10001 700
@@ -21,3 +21,5 @@ resizeImage 5 1000 700
 list
 deleteItem 1
 list
+
+insertParagraph end "<Quick>“brown“'fox'overthelazydog~!"

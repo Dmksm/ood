@@ -204,8 +204,16 @@ SCENARIO("Document operations")
 
 				REQUIRE(doc.m_items.size() == 1);
 				REQUIRE_NOTHROW(doc.InsertParagraph("TEXT", boost::none));
+				REQUIRE(doc.GetItem(1).GetParagraph()->GetText() == "TEXT");
 
-
+				REQUIRE(doc.m_items.size() == 2);
+				REQUIRE_THROWS(doc.DeleteItem(2));
+				REQUIRE_NOTHROW(doc.DeleteItem(1));
+				REQUIRE(doc.m_items.size() == 1);
+				
+				REQUIRE(doc.m_title == "");
+				REQUIRE_NOTHROW(doc.SetTitle("MyTitle"));
+				REQUIRE(doc.m_title == "MyTitle");
 			}
 		}
 	}
@@ -300,6 +308,7 @@ SCENARIO("History limit operations")
 					REQUIRE(it.GetParagraph()->GetText() == std::to_string(++position));
 				}
 				REQUIRE(position == 11);
+
 
 				REQUIRE_NOTHROW(doc.Undo());
 				REQUIRE_NOTHROW(doc.Undo());

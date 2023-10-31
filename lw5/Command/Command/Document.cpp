@@ -11,6 +11,8 @@
 
 std::string ToHTML(CConstDocumentItem item);
 
+std::string CodeText(std::string text);
+
 std::shared_ptr<IParagraph> CDocument::InsertParagraph(const std::string& text,
 	boost::optional<size_t> position) 
 {
@@ -147,7 +149,33 @@ std::string ToHTML(CConstDocumentItem item)
 	}
 	else
 	{
-		ss << item.GetParagraph()->GetText();
+		ss << CodeText(item.GetParagraph()->GetText());
 	}
 	return ss.str();
+}
+
+std::string CodeText(std::string text)
+{
+	std::vector<std::pair<char, std::string>> regexToReplaceMap = {
+		{'<', "&lt;"},
+		{'>', "&gt;"},
+		{'\"', "&quot;"},
+		{'\'', "&apos;"},
+	};
+
+	std::string htmlText = text;
+	for (auto it : regexToReplaceMap)
+	{
+		auto pos = htmlText.find(it.first);
+		std::cout << pos << '\n';
+		while (pos != std::string::npos)
+		{
+			std::cout << it.first << " " << it.second << '\n';
+			htmlText.replace(pos, 1, it.second);
+			std::cout << htmlText << '\n';
+
+			pos = htmlText.find(it.first, pos);
+		}
+	}
+	return htmlText;
 }
