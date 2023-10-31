@@ -166,7 +166,7 @@ SCENARIO("Document operations")
 	GIVEN("Document")
 	{
 		CMockDocument doc;
-		WHEN("Given wrong type from input")
+		WHEN("Initialized document")
 		{
 			REQUIRE(doc.CanRedo() == false);
 			REQUIRE(doc.CanUndo() == false);
@@ -181,7 +181,7 @@ SCENARIO("Document operations")
 			REQUIRE_NOTHROW(doc.m_history.Redo());
 			REQUIRE_NOTHROW(doc.m_history.Undo());
 
-			THEN("Throw error and catch it and handling it to get output mesage")
+			THEN("Can use methods without errors")
 			{
 				REQUIRE_THROWS(doc.InsertImage("testUnexisted.jpg", 100, 50, boost::none));
 				REQUIRE_THROWS(doc.InsertImage("test.jpg", 100, 50, 2));
@@ -198,9 +198,152 @@ SCENARIO("Document operations")
 
 				REQUIRE(doc.m_history.CanUndo() == true);
 				REQUIRE(doc.m_history.CanRedo() == false);
-				REQUIRE_NOTHROW(doc.m_history.Redo());
-				REQUIRE_NOTHROW(doc.m_history.Undo());
-				REQUIRE_NOTHROW(doc.m_history.Redo());
+
+				REQUIRE_THROWS(doc.InsertParagraph("TEXT", -1));
+				REQUIRE_THROWS(doc.InsertParagraph("TEXT", 3));
+
+				REQUIRE(doc.m_items.size() == 1);
+				REQUIRE_NOTHROW(doc.InsertParagraph("TEXT", boost::none));
+
+
+			}
+		}
+	}
+}
+
+SCENARIO("History limit operations")
+{
+	GIVEN("Document")
+	{
+		CMockDocument doc;
+		WHEN("Initialized document")
+		{
+			REQUIRE(doc.m_history.CanUndo() == false);
+			REQUIRE(doc.m_history.CanRedo() == false);
+			REQUIRE_NOTHROW(doc.m_history.Redo());
+			REQUIRE_NOTHROW(doc.m_history.Undo());
+			REQUIRE_NOTHROW(doc.m_history.Redo());
+
+			THEN("Throw error and catch it and handling it to get output mesage")
+			{
+				REQUIRE_NOTHROW(doc.InsertParagraph("1", boost::none));
+				REQUIRE_NOTHROW(doc.InsertParagraph("2", boost::none));
+				REQUIRE_NOTHROW(doc.InsertParagraph("3", boost::none));
+				REQUIRE_NOTHROW(doc.InsertParagraph("4", boost::none));
+				REQUIRE_NOTHROW(doc.InsertParagraph("5", boost::none));
+				REQUIRE_NOTHROW(doc.InsertParagraph("6", boost::none));
+				REQUIRE_NOTHROW(doc.InsertParagraph("7", boost::none));
+				REQUIRE_NOTHROW(doc.InsertParagraph("8", boost::none));
+				REQUIRE_NOTHROW(doc.InsertParagraph("9", boost::none));
+				REQUIRE_NOTHROW(doc.InsertParagraph("10", boost::none));
+
+				unsigned position = 0;
+				for (auto it : doc.m_items)
+				{
+					REQUIRE(it.GetImage() == nullptr);
+					REQUIRE(it.GetParagraph() != nullptr);
+					REQUIRE(it.GetParagraph()->GetText() == std::to_string(++position));
+				}
+				REQUIRE(position == 10);
+
+				REQUIRE_NOTHROW(doc.Undo());
+				REQUIRE_NOTHROW(doc.Undo());
+				REQUIRE_NOTHROW(doc.Undo());
+				REQUIRE_NOTHROW(doc.Undo());
+				REQUIRE_NOTHROW(doc.Undo());
+				REQUIRE_NOTHROW(doc.Undo());
+				REQUIRE_NOTHROW(doc.Undo());
+				REQUIRE_NOTHROW(doc.Undo());
+				REQUIRE_NOTHROW(doc.Undo());
+				REQUIRE(doc.CanUndo() == true);
+				REQUIRE_NOTHROW(doc.Undo());
+				REQUIRE(doc.CanUndo() == false);
+
+				position = 0;
+				for (auto it : doc.m_items)
+				{
+					REQUIRE(it.GetImage() == nullptr);
+					REQUIRE(it.GetParagraph() != nullptr);
+					REQUIRE(it.GetParagraph()->GetText() == std::to_string(++position));
+				}
+				REQUIRE(position == 0);
+
+				REQUIRE_NOTHROW(doc.Redo());
+				REQUIRE_NOTHROW(doc.Redo());
+				REQUIRE_NOTHROW(doc.Redo());
+				REQUIRE_NOTHROW(doc.Redo());
+				REQUIRE_NOTHROW(doc.Redo());
+				REQUIRE_NOTHROW(doc.Redo());
+				REQUIRE_NOTHROW(doc.Redo());
+				REQUIRE_NOTHROW(doc.Redo());
+				REQUIRE_NOTHROW(doc.Redo());
+				REQUIRE(doc.CanRedo() == true);
+				REQUIRE_NOTHROW(doc.Redo());
+				REQUIRE(doc.CanRedo() == false);
+
+				position = 0;
+				for (auto it : doc.m_items)
+				{
+					REQUIRE(it.GetImage() == nullptr);
+					REQUIRE(it.GetParagraph() != nullptr);
+					REQUIRE(it.GetParagraph()->GetText() == std::to_string(++position));
+				}
+				REQUIRE(position == 10);
+
+				REQUIRE_NOTHROW(doc.InsertParagraph("11", boost::none));
+
+				position = 0;
+				for (auto it : doc.m_items)
+				{
+					REQUIRE(it.GetImage() == nullptr);
+					REQUIRE(it.GetParagraph() != nullptr);
+					REQUIRE(it.GetParagraph()->GetText() == std::to_string(++position));
+				}
+				REQUIRE(position == 11);
+
+				REQUIRE_NOTHROW(doc.Undo());
+				REQUIRE_NOTHROW(doc.Undo());
+				REQUIRE_NOTHROW(doc.Undo());
+				REQUIRE_NOTHROW(doc.Undo());
+				REQUIRE_NOTHROW(doc.Undo());
+				REQUIRE_NOTHROW(doc.Undo());
+				REQUIRE_NOTHROW(doc.Undo());
+				REQUIRE_NOTHROW(doc.Undo());
+				REQUIRE_NOTHROW(doc.Undo());
+				REQUIRE(doc.CanUndo() == true);
+				REQUIRE_NOTHROW(doc.Undo());
+				REQUIRE(doc.CanUndo() == false);
+
+				position = 0;
+				for (auto it : doc.m_items)
+				{
+					REQUIRE(it.GetImage() == nullptr);
+					REQUIRE(it.GetParagraph() != nullptr);
+					REQUIRE(it.GetParagraph()->GetText() == std::to_string(++position));
+				}
+				REQUIRE(position == 1);
+
+				REQUIRE_NOTHROW(doc.Redo());
+				REQUIRE_NOTHROW(doc.Redo());
+				REQUIRE_NOTHROW(doc.Redo());
+				REQUIRE_NOTHROW(doc.Redo());
+				REQUIRE_NOTHROW(doc.Redo());
+				REQUIRE_NOTHROW(doc.Redo());
+				REQUIRE_NOTHROW(doc.Redo());
+				REQUIRE_NOTHROW(doc.Redo());
+				REQUIRE_NOTHROW(doc.Redo());
+				REQUIRE(doc.CanRedo() == true);
+				REQUIRE_NOTHROW(doc.Redo());
+				REQUIRE(doc.CanRedo() == false);
+
+				position = 0;
+				for (auto it : doc.m_items)
+				{
+					REQUIRE(it.GetImage() == nullptr);
+					REQUIRE(it.GetParagraph() != nullptr);
+					REQUIRE(it.GetParagraph()->GetText() == std::to_string(++position));
+				}
+				REQUIRE(position == 11);
 			}
 		}
 	}
