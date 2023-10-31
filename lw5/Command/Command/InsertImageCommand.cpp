@@ -20,7 +20,7 @@ CInsertImageCommand::CInsertImageCommand(
 	std::string newFileName = SUB_FOLDER + CATALOG_SEPARATOR + boost::uuids::to_string(u)
 		+ FORMAT_SEPARATOR + format;
 
-	std::filesystem::copy_file(fileName, newFileName);
+	boost::filesystem::copy_file(fileName, newFileName);
 	m_fileName = newFileName;
 }
 

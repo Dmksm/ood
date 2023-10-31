@@ -77,7 +77,7 @@ CDocumentItem CDocument::GetItem(size_t index)
 void CDocument::DeleteItem(size_t index)
 {
 	ValidateIndex(index);
-	m_history.AddAndExecuteCommand(make_unique<CDeleteItemCommand>(m_items, index));
+	m_history.AddAndExecuteCommand(std::make_unique<CDeleteItemCommand>(m_items, index));
 }
 
 void CDocument::Save(const Path& path)const
@@ -98,7 +98,7 @@ void CDocument::Save(const Path& path)const
 
 void CDocument::SetTitle(const std::string& title)
 {
-	m_history.AddAndExecuteCommand(make_unique<CChangeStringCommand>(m_title, title));
+	m_history.AddAndExecuteCommand(std::make_unique<CChangeStringCommand>(m_title, title));
 }
 
 std::string CDocument::GetTitle() const
