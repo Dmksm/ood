@@ -19,6 +19,12 @@ public:
 		boost::optional<size_t> position)
 	{
 		std::shared_ptr<IParagraph> paragraphPtr = std::make_shared<CParagraph>(text);
+		if (position.has_value() && !m_items.at(position.get()).GetParagraph())
+		{
+			std::stringstream ss;
+			ss << "Element in position " << position << " is not a text!" << std::endl;
+			throw std::logic_error(ss.str());
+		}
 		m_history.AddAndExecuteCommand(
 			std::make_unique<CInsertParagraphCommand>(m_items, paragraphPtr, position)
 		);
@@ -43,6 +49,12 @@ public:
 		boost::optional<size_t> position)
 	{
 		std::shared_ptr<IImage> imagePtr = std::make_shared<CImage>(path, width, height);
+		if (position.has_value() && !m_items.at(position.get()).GetImage())
+		{
+			std::stringstream ss;
+			ss << "Element in position " << position << " is not a image!" << std::endl;
+			throw std::logic_error(ss.str());
+		}
 		m_history.AddAndExecuteCommand(std::make_unique<CInsertImageCommand>(m_items, imagePtr, position));
 		return imagePtr;
 	}
@@ -158,15 +170,38 @@ SCENARIO("Document operations")
 		{
 			REQUIRE(doc.CanRedo() == false);
 			REQUIRE(doc.CanUndo() == false);
+			REQUIRE_THROWS_AS(doc.GetItem(1), std::logic_error);
+			REQUIRE(doc.GetItemsCount() == 0);
+			REQUIRE(doc.GetTitle() == "");
+			REQUIRE_NOTHROW(doc.Redo());
+			REQUIRE_NOTHROW(doc.Undo());
+
+			REQUIRE(doc.m_history.CanUndo() == false);
+			REQUIRE(doc.m_history.CanRedo() == false);
+			REQUIRE_NOTHROW(doc.m_history.Redo());
+			REQUIRE_NOTHROW(doc.m_history.Undo());
 
 			THEN("Throw error and catch it and handling it to get output mesage")
 			{
+				REQUIRE_THROWS(doc.InsertImage("testUnexisted.jpg", 100, 50, boost::none));
+				REQUIRE_THROWS(doc.InsertImage("test.jpg", 100, 50, 2));
+				REQUIRE_THROWS(doc.InsertImage("test.jpg", 0, 50, boost::none));
+				REQUIRE_THROWS(doc.InsertImage("test.jpg", 100, 0, boost::none));
+				REQUIRE_THROWS(doc.InsertImage("test.jpg", 10001, 50, boost::none));
+				REQUIRE_THROWS(doc.InsertImage("test.jpg", 100, 10001, boost::none));
+
+				REQUIRE_NOTHROW(doc.InsertImage("test.jpg", 10000, 1, boost::none));
+
+				REQUIRE(doc.m_items.front().GetImage()->GetWidth() == 10000);
+				REQUIRE(doc.m_items.front().GetImage()->GetHeight() == 1);
+				REQUIRE(doc.m_items.front().GetImage()->GetPath() == "test.jpg");
+
+				REQUIRE(doc.m_history.CanUndo() == true);
+				REQUIRE(doc.m_history.CanRedo() == false);
+				REQUIRE_NOTHROW(doc.m_history.Redo());
+				REQUIRE_NOTHROW(doc.m_history.Undo());
+				REQUIRE_NOTHROW(doc.m_history.Redo());
 			}
 		}
 	}
-}
-
-SCENARIO("Picture draft adding shapes and it can be walked in a loop")
-{
-
 }

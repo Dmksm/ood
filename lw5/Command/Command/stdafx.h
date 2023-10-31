@@ -23,6 +23,7 @@
 #include <cassert>
 #include <boost/scope_exit.hpp>
 #include <boost/optional.hpp>
+#include <boost/optional/optional_io.hpp>
 #include <boost/filesystem.hpp>
 #include <boost\none.hpp>
 #include <boost/uuid/uuid.hpp>
