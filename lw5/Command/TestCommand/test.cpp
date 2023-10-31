@@ -348,3 +348,59 @@ SCENARIO("History limit operations")
 		}
 	}
 }
+
+SCENARIO("History delete old operations in redo state")
+{
+	GIVEN("Some operations in document")
+	{
+		CMockDocument doc;
+		REQUIRE_NOTHROW(doc.InsertParagraph("1", boost::none));
+		REQUIRE_NOTHROW(doc.InsertParagraph("2", boost::none));
+		REQUIRE_NOTHROW(doc.InsertParagraph("3", boost::none));
+		REQUIRE_NOTHROW(doc.InsertParagraph("4", boost::none));
+		REQUIRE_NOTHROW(doc.InsertParagraph("5", boost::none));
+		REQUIRE_NOTHROW(doc.InsertParagraph("6", boost::none));
+		REQUIRE_NOTHROW(doc.InsertParagraph("7", boost::none));
+		REQUIRE_NOTHROW(doc.InsertParagraph("8", boost::none));
+		REQUIRE_NOTHROW(doc.InsertParagraph("9", boost::none));
+		REQUIRE_NOTHROW(doc.InsertParagraph("10", boost::none));
+
+		WHEN("Undo operation and add new")
+		{
+			REQUIRE_NOTHROW(doc.Undo());
+			REQUIRE_NOTHROW(doc.Undo());
+			REQUIRE_NOTHROW(doc.Undo());
+
+			unsigned position = 0;
+			for (auto it : doc.m_items)
+			{
+				REQUIRE(it.GetImage() == nullptr);
+				REQUIRE(it.GetParagraph() != nullptr);
+				REQUIRE(it.GetParagraph()->GetText() == std::to_string(++position));
+			}
+			REQUIRE(position == 7);
+
+			REQUIRE_NOTHROW(doc.InsertParagraph("11", boost::none));
+			REQUIRE(doc.m_items.size() == 8);
+			THEN("New operation replace olds")
+			{
+				position = 0;
+				for (auto it : doc.m_items)
+				{
+					REQUIRE(it.GetImage() == nullptr);
+					REQUIRE(it.GetParagraph() != nullptr);
+					++position;
+					if (position == 8)
+					{
+						REQUIRE(it.GetParagraph()->GetText() == "11");
+					}
+					else
+					{
+						REQUIRE(it.GetParagraph()->GetText() == std::to_string(position));
+					}
+				}
+				REQUIRE(position == 8);
+			}
+		}
+	}
+}

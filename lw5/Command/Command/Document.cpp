@@ -15,13 +15,6 @@ std::shared_ptr<IParagraph> CDocument::InsertParagraph(const std::string& text,
 	boost::optional<size_t> position) 
 {
 	std::shared_ptr<IParagraph> paragraphPtr = std::make_shared<CParagraph>(text);
-	if (position.has_value() && !m_items.at(position.get()).GetParagraph())
-	{
-		std::stringstream ss;
-		ss << "Element in position " << position << " is not a text!" << std::endl;
-		throw std::logic_error(ss.str());
-	}
-
 	m_history.AddAndExecuteCommand(
 		std::make_unique<CInsertParagraphCommand>(m_items, paragraphPtr, position)
 	);
@@ -46,13 +39,6 @@ std::shared_ptr<IImage> CDocument::InsertImage(const Path& path, int width, int 
 	boost::optional<size_t> position)
 {
 	std::shared_ptr<IImage> imagePtr = std::make_shared<CImage>(path, width, height);
-	if (position.has_value() && !m_items.at(position.get()).GetImage())
-	{
-		std::stringstream ss;
-		ss << "Element in position " << position << " is not a image!" << std::endl;
-		throw std::logic_error(ss.str());
-	}
-
 	m_history.AddAndExecuteCommand(std::make_unique<CInsertImageCommand>(m_items, imagePtr, position));
 	return imagePtr;
 }
