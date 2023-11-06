@@ -82,7 +82,7 @@ void CDocument::DeleteItem(size_t index)
 	m_history.AddAndExecuteCommand(std::make_unique<CDeleteItemCommand>(m_items, index));
 }
 
-void CDocument::Save(const Path& path)const
+void CDocument::Save(const Path& path)const //документ это только контейнер он не должен работать с отображением
 {
 	std::ofstream file(path.string());
 	file << "<!DOCTYPE html><html><head><title>" << m_title << "</title></head><body>";

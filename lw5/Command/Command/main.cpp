@@ -11,7 +11,7 @@ using namespace std::placeholders;
 namespace
 {
 
-	class CEditor
+	class CEditor //вынести в отдельный класс
 	{
 	public:
 		CEditor() 
@@ -192,7 +192,7 @@ namespace
 				}
 			}
 		}
-
+  
 		void Undo(istream&)
 		{
 			if (m_document->CanUndo())
