@@ -136,14 +136,16 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp" />
-    <ClCompile Include="modern_graphics_lib_pro.h" />
+    <ClCompile Include="ModernGraphicsLibPro.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="app.h" />
-    <ClInclude Include="graphics_lib.h" />
-    <ClInclude Include="graphics_lib_pro.h" />
-    <ClInclude Include="modern_graphics_lib.h" />
-    <ClInclude Include="shape_drawing_lib.h" />
+    <ClInclude Include="App.h" />
+    <ClInclude Include="AppProEdition.h" />
+    <ClInclude Include="GraphicsLib.h" />
+    <ClInclude Include="GraphicsLibPro.h" />
+    <ClInclude Include="ModernGraphicsLib.h" />
+    <ClInclude Include="ShapeDrawingLib.h" />
+    <ClInclude Include="ShapeDrawingLibPro.h" />
     <ClInclude Include="stdafx.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

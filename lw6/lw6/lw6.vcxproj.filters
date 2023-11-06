@@ -18,7 +18,7 @@
     <ClCompile Include="main.cpp">
       <Filter>Исходные файлы</Filter>
     </ClCompile>
-    <ClCompile Include="modern_graphics_lib_pro.h">
+    <ClCompile Include="ModernGraphicsLibPro.h">
       <Filter>Файлы заголовков</Filter>
     </ClCompile>
   </ItemGroup>
@@ -26,19 +26,25 @@
     <ClInclude Include="stdafx.h">
       <Filter>Файлы заголовков</Filter>
     </ClInclude>
-    <ClInclude Include="graphics_lib.h">
+    <ClInclude Include="GraphicsLib.h">
       <Filter>Файлы заголовков</Filter>
     </ClInclude>
-    <ClInclude Include="shape_drawing_lib.h">
+    <ClInclude Include="ShapeDrawingLib.h">
       <Filter>Файлы заголовков</Filter>
     </ClInclude>
-    <ClInclude Include="modern_graphics_lib.h">
+    <ClInclude Include="ModernGraphicsLib.h">
       <Filter>Файлы заголовков</Filter>
     </ClInclude>
-    <ClInclude Include="app.h">
+    <ClInclude Include="App.h">
       <Filter>Файлы заголовков</Filter>
     </ClInclude>
-    <ClInclude Include="graphics_lib_pro.h">
+    <ClInclude Include="GraphicsLibPro.h">
+      <Filter>Файлы заголовков</Filter>
+    </ClInclude>
+    <ClInclude Include="AppProEdition.h">
+      <Filter>Файлы заголовков</Filter>
+    </ClInclude>
+    <ClInclude Include="ShapeDrawingLibPro.h">
       <Filter>Файлы заголовков</Filter>
     </ClInclude>
   </ItemGroup>

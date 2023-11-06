@@ -1,10 +1,8 @@
 #pragma once
 #include "stdafx.h"
-#include "modern_graphics_lib_pro.h"
-#include "shape_drawing_lib.h"
-#include "graphics_lib.h"
-#include "modern_graphics_lib.h"
-#include "graphics_lib_pro.h"
+#include "ShapeDrawingLib.h"
+#include "GraphicsLib.h"
+#include "ModernGraphicsLib.h"
 
 // Пространство имен приложения (доступно для модификации)
 namespace app
@@ -41,10 +39,10 @@ namespace app
 			updateCurrentPosition(x, y);
 		}
 	private:
-		int m_startX;
-		int m_startY;
-		int m_currX;
-		int m_currY;
+		int m_startX = 0;
+		int m_startY = 0;
+		int m_currX = 0;
+		int m_currY = 0;
 
 		void updateCurrentPosition(int x, int y)
 		{
@@ -85,10 +83,10 @@ namespace app
 			updateCurrentPosition(x, y);
 		}
 	private:
-		int m_startX;
-		int m_startY;
-		int m_currX;
-		int m_currY;
+		int m_startX = 0;
+		int m_startY = 0;
+		int m_currX = 0;
+		int m_currY = 0;
 		modern_graphics_lib::CModernGraphicsRenderer& m_adaptee;
 
 		void updateCurrentPosition(int x, int y)
@@ -100,10 +98,8 @@ namespace app
 
 	void PaintPicture(shape_drawing_lib::CCanvasPainter& painter)
 	{
-		using namespace shape_drawing_lib;
-
-		CTriangle triangle({ 10, 15 }, { 100, 200 }, { 150, 250 });
-		CRectangle rectangle({ 30, 40 }, 18, 24);
+		shape_drawing_lib::CTriangle triangle({ 10, 15 }, { 100, 200 }, { 150, 250 });
+		shape_drawing_lib::CRectangle rectangle({ 30, 40 }, 18, 24);
 
 		painter.Draw(triangle);
 		painter.Draw(rectangle);
