@@ -4,3 +4,4 @@
 #include <string>
 #include <boost/format.hpp>
 #include <cstdint>
+#include <fstream>
