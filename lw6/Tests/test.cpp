@@ -61,13 +61,12 @@ SCENARIO("Adapter operations")
 	{
 		std::stringstream ss;
 		std::stringstream ss2;
-
-		int x = 10;
-		int y = 15;
-		int x2 = 10;
-		int y2 = 15;
 		WHEN("Draw on canvas and canvas adapter")
 		{
+			int x = 10;
+			int y = 15;
+			int x2 = 20;
+			int y2 = 35;
 			{
 				modern_graphics_lib::CModernGraphicsRenderer renderer(ss);
 				CMockCanvas canvas(ss2);
@@ -92,7 +91,7 @@ SCENARIO("Adapter operations")
 
 				std::stringstream outStream2;
 				outStream2 << "MoveTo (" << x << ", " << y << ")" << std::endl
-					<< "LineTo (" << x << ", " << y << ")" << std::endl;
+					<< "LineTo (" << x2 << ", " << y2 << ")" << std::endl;
 				REQUIRE(ss2.str() == outStream2.str());
 			}
 		}
@@ -106,13 +105,12 @@ SCENARIO("Class adapter operations")
 		std::stringstream ss;
 		std::stringstream ss2;
 
-		//размещать ближе к  месту назначения в гифен только то что везде используем в сценарии
-		int x = 10;
-		int y = 15;
-		int x2 = 10;
-		int y2 = 15;
 		WHEN("Draw on canvas and canvas adapter")
 		{
+			int x = 10;
+			int y = 15;
+			int x2 = 20;
+			int y2 = 35;
 			{
 				app::CCanvasClassAdapter adapter(ss);
 				CMockCanvas canvas(ss2);
@@ -132,7 +130,7 @@ SCENARIO("Class adapter operations")
 
 				std::stringstream outStream2;
 				outStream2 << "MoveTo (" << x << ", " << y << ")" << std::endl
-					<< "LineTo (" << x << ", " << y << ")" << std::endl;
+					<< "LineTo (" << x2 << ", " << y2 << ")" << std::endl;
 				REQUIRE(ss2.str() == outStream2.str());
 			}
 		}
@@ -145,14 +143,13 @@ SCENARIO("Pro adapter operations")
 	{
 		std::stringstream ss;
 		std::stringstream ss2;
-
-		int x = 10;
-		int y = 15;
-		int x2 = 10;
-		int y2 = 15;
-		uint32_t color = 256 * 256 * 256 - 1;
 		WHEN("Draw on canvas and canvas adapter")
 		{
+			int x = 10;
+			int y = 15;
+			int x2 = 30;
+			int y2 = 65;
+			uint32_t color = 256 * 256 * 256 - 1;
 			{
 				modern_graphics_lib_pro::CModernGraphicsRenderer renderer(ss);
 				CMockCanvasPro canvas(ss2);
@@ -182,7 +179,7 @@ SCENARIO("Pro adapter operations")
 				std::stringstream outStream2;
 				outStream2 << "SetColor (" << color << ")" << std::endl
 					<< "MoveTo (" << x << ", " << y << ")" << std::endl
-					<< "LineTo (" << x << ", " << y << ")" << std::endl;
+					<< "LineTo (" << x2 << ", " << y2 << ")" << std::endl;
 				REQUIRE(ss2.str() == outStream2.str());
 			}
 		}
@@ -195,14 +192,13 @@ SCENARIO("Pro class adapter operations")
 	{
 		std::stringstream ss;
 		std::stringstream ss2;
-
-		int x = 10;
-		int y = 15;
-		int x2 = 10;
-		int y2 = 15;
-		uint32_t color = 256 * 256 * 256 - 1;
 		WHEN("Draw on canvas and canvas adapter")
 		{
+			int x = 1;
+			int y = 5;
+			int x2 = 10;
+			int y2 = 15;
+			uint32_t color = 256 * 256 * 256 - 1;
 			{
 				modern_graphics_lib_pro::CModernGraphicsRenderer renderer(ss);
 				app_pro::CCanvasClassAdapter adapter(ss);
@@ -231,7 +227,7 @@ SCENARIO("Pro class adapter operations")
 				std::stringstream outStream2;
 				outStream2 << "SetColor (" << color << ")" << std::endl
 					<< "MoveTo (" << x << ", " << y << ")" << std::endl
-					<< "LineTo (" << x << ", " << y << ")" << std::endl;
+					<< "LineTo (" << x2 << ", " << y2 << ")" << std::endl;
 				REQUIRE(ss2.str() == outStream2.str());
 			}
 		}
