@@ -73,10 +73,10 @@ SCENARIO("Adapter operations")
 				CMockCanvas canvas(ss2);
 				app::CCanvasAdapter adapter(renderer);
 				REQUIRE_THROWS(adapter.LineTo(x2, y2));
-				adapter.BeginDraw();
+				renderer.BeginDraw();
 				adapter.MoveTo(x, y);
 				adapter.LineTo(x2, y2);
-				adapter.EndDraw();
+				renderer.EndDraw();
 
 				canvas.MoveTo(x, y);
 				canvas.LineTo(x2, y2);
@@ -106,6 +106,7 @@ SCENARIO("Class adapter operations")
 		std::stringstream ss;
 		std::stringstream ss2;
 
+		//размещать ближе к  месту назначения в гифен только то что везде используем в сценарии
 		int x = 10;
 		int y = 15;
 		int x2 = 10;
@@ -158,10 +159,10 @@ SCENARIO("Pro adapter operations")
 				app_pro::CCanvasAdapter adapter(renderer);
 				adapter.SetColor(color);
 				REQUIRE_THROWS(adapter.LineTo(x, y));
-				adapter.BeginDraw();
+				renderer.BeginDraw();
 				adapter.MoveTo(x, y);
 				adapter.LineTo(x2, y2);
-				adapter.EndDraw();
+				renderer.EndDraw();
 
 				canvas.SetColor(color);
 				canvas.MoveTo(x, y);

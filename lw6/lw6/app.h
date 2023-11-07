@@ -20,10 +20,8 @@ namespace app
 
 		void MoveTo(int x, int y) override
 		{
-			m_startX = x;
-			m_startY = y;
-
-			updateCurrentPosition(x, y);
+			m_currX = x;
+			m_currY = y;
 		}
 
 		void LineTo(int x, int y) override
@@ -31,20 +29,13 @@ namespace app
 			DrawLine(
 				modern_graphics_lib::CPoint(m_currX, m_currY),
 				modern_graphics_lib::CPoint(x, y)
-			);
-			updateCurrentPosition(x, y);
-		}
-	private:
-		int m_startX = 0;
-		int m_startY = 0;
-		int m_currX = 0;
-		int m_currY = 0;
-
-		void updateCurrentPosition(int x, int y)
-		{
+			); 
 			m_currX = x;
 			m_currY = y;
 		}
+	private:
+		int m_currX = 0;
+		int m_currY = 0;
 	};
 
 	class CCanvasAdapter : public graphics_lib::ICanvas
@@ -57,17 +48,10 @@ namespace app
 		{
 		}
 
-		void BeginDraw()
-		{
-			m_adaptee.BeginDraw();
-		}
-
 		void MoveTo(int x, int y) override
 		{
-			m_startX = x;
-			m_startY = y;
-
-			updateCurrentPosition(x, y);
+			m_currX = x;
+			m_currY = y;
 		}
 
 		void LineTo(int x, int y) override
@@ -76,25 +60,14 @@ namespace app
 				modern_graphics_lib::CPoint(m_currX, m_currY),
 				modern_graphics_lib::CPoint(x, y)
 			);
-			updateCurrentPosition(x, y);
-		}
-
-		void EndDraw()
-		{
-			m_adaptee.EndDraw();
-		}
-	private:
-		int m_startX = 0;
-		int m_startY = 0;
-		int m_currX = 0;
-		int m_currY = 0;
-		modern_graphics_lib::CModernGraphicsRenderer& m_adaptee;
-
-		void updateCurrentPosition(int x, int y)
-		{
 			m_currX = x;
 			m_currY = y;
 		}
+
+	private:
+		int m_currX = 0;
+		int m_currY = 0;
+		modern_graphics_lib::CModernGraphicsRenderer& m_adaptee;
 	};
 
 	void PaintPicture(shape_drawing_lib::CCanvasPainter& painter)
@@ -118,9 +91,9 @@ namespace app
 		modern_graphics_lib::CModernGraphicsRenderer renderer(std::cout);
 		CCanvasAdapter canvasAdapter(renderer);
 		shape_drawing_lib::CCanvasPainter painterWithAdapter(canvasAdapter);
-		canvasAdapter.BeginDraw();
+		renderer.BeginDraw();
 		PaintPicture(painterWithAdapter);
-		canvasAdapter.EndDraw();
+		renderer.EndDraw();
 
 		std::cout << "..............................." << std::endl;
 		CCanvasClassAdapter canvasClassAdapter(std::cout);

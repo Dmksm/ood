@@ -20,15 +20,13 @@ namespace app_pro
 
 		void SetColor(uint32_t rgbColor) override
 		{
-			m_color = toRGBA(rgbColor);
+			m_color = ToRGBA(rgbColor);
 		}
 
 		void MoveTo(int x, int y) override
 		{
-			m_startX = x;
-			m_startY = y;
-
-			updateCurrentPosition(x, y);
+			m_currX = x;
+			m_currY = y;
 		}
 
 		void LineTo(int x, int y) override
@@ -38,23 +36,16 @@ namespace app_pro
 				modern_graphics_lib_pro::CPoint(x, y),
 				m_color
 			);
-			updateCurrentPosition(x, y);
-		}
-
-	private:
-		modern_graphics_lib_pro::CRGBAColor m_color = { 0.0, 0.0, 0.0, 0.0 };
-		int m_startX = 0;
-		int m_startY = 0;
-		int m_currX = 0;
-		int m_currY = 0;
-
-		void updateCurrentPosition(int x, int y)
-		{
 			m_currX = x;
 			m_currY = y;
 		}
 
-		modern_graphics_lib_pro::CRGBAColor toRGBA(uint32_t rgbColor)
+	private:
+		modern_graphics_lib_pro::CRGBAColor m_color = { 0.0, 0.0, 0.0, 0.0 };
+		int m_currX = 0;
+		int m_currY = 0;
+
+		static modern_graphics_lib_pro::CRGBAColor ToRGBA(uint32_t rgbColor)
 		{
 			const int MAX_COLOR_VALUE = 0xff;
 			const float MAX_RGBA_COLOR_VALUE = 1.0f;
@@ -78,22 +69,15 @@ namespace app_pro
 		{
 		}
 
-		void BeginDraw()
-		{
-			m_adaptee.BeginDraw();
-		}
-
 		void SetColor(uint32_t rgbColor) override
 		{
-			m_color = toRGBA(rgbColor);
+			m_color = ToRGBA(rgbColor);
 		}
 
 		void MoveTo(int x, int y) override
 		{
-			m_startX = x;
-			m_startY = y;
-
-			updateCurrentPosition(x, y);
+			m_currX = x;
+			m_currY = y;
 		}
 
 		void LineTo(int x, int y) override
@@ -103,28 +87,16 @@ namespace app_pro
 				modern_graphics_lib_pro::CPoint(x, y),
 				m_color
 			);
-			updateCurrentPosition(x, y);
-		}
-
-		void EndDraw()
-		{
-			m_adaptee.EndDraw();
+			m_currX = x;
+			m_currY = y;
 		}
 	private:
 		modern_graphics_lib_pro::CRGBAColor m_color = { 0.0, 0.0, 0.0, 0.0 };
-		int m_startX = 0;
-		int m_startY = 0;
 		int m_currX = 0;
 		int m_currY = 0;
 		modern_graphics_lib_pro::CModernGraphicsRenderer& m_adaptee;
 
-		void updateCurrentPosition(int x, int y)
-		{
-			m_currX = x;
-			m_currY = y;
-		}
-
-		modern_graphics_lib_pro::CRGBAColor toRGBA(uint32_t rgbColor)
+		static modern_graphics_lib_pro::CRGBAColor ToRGBA(uint32_t rgbColor)
 		{
 			const int MAX_COLOR_VALUE = 0xff;
 			const float MAX_RGBA_COLOR_VALUE = 1.0f;
@@ -159,9 +131,9 @@ namespace app_pro
 		modern_graphics_lib_pro::CModernGraphicsRenderer renderer(std::cout);
 		CCanvasAdapter canvasAdapter(renderer);
 		shape_drawing_lib_pro::CCanvasPainter painterWithAdapter(canvasAdapter);
-		canvasAdapter.BeginDraw();
+		renderer.BeginDraw();
 		PaintPicture(painterWithAdapter);
-		canvasAdapter.EndDraw();
+		renderer.EndDraw();
 
 		std::cout << "..............................." << std::endl;
 		CCanvasClassAdapter canvasClassAdapter(std::cout);
