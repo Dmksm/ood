@@ -57,15 +57,10 @@ namespace
 
 SCENARIO("Adapter operations")
 {
-	GIVEN("Adapter and Canvas and Recangle state")
+	GIVEN("Streams and line points")
 	{
 		std::stringstream ss;
-		modern_graphics_lib::CModernGraphicsRenderer renderer(ss);
-
 		std::stringstream ss2;
-		CMockCanvas canvas(ss2);
-
-		app::CCanvasAdapter adapter(renderer);
 
 		int x = 10;
 		int y = 15;
@@ -73,10 +68,19 @@ SCENARIO("Adapter operations")
 		int y2 = 15;
 		WHEN("Draw on canvas and canvas adapter")
 		{
-			adapter.MoveTo(x, y);
-			adapter.LineTo(x2, y2);
-			canvas.MoveTo(x, y);
-			canvas.LineTo(x2, y2);
+			{
+				modern_graphics_lib::CModernGraphicsRenderer renderer(ss);
+				CMockCanvas canvas(ss2);
+				app::CCanvasAdapter adapter(renderer);
+				REQUIRE_THROWS(adapter.LineTo(x2, y2));
+				adapter.BeginDraw();
+				adapter.MoveTo(x, y);
+				adapter.LineTo(x2, y2);
+				adapter.EndDraw();
+
+				canvas.MoveTo(x, y);
+				canvas.LineTo(x2, y2);
+			}
 			THEN("get old graphic output and modern graphic output")
 			{
 				std::stringstream outStream;
@@ -97,13 +101,10 @@ SCENARIO("Adapter operations")
 
 SCENARIO("Class adapter operations")
 {
-	GIVEN("Class adapter")
+	GIVEN("Streams and line points")
 	{
 		std::stringstream ss;
-		app::CCanvasClassAdapter adapter(ss);
-
 		std::stringstream ss2;
-		CMockCanvas canvas(ss2);
 
 		int x = 10;
 		int y = 15;
@@ -111,10 +112,14 @@ SCENARIO("Class adapter operations")
 		int y2 = 15;
 		WHEN("Draw on canvas and canvas adapter")
 		{
-			adapter.MoveTo(x, y);
-			adapter.LineTo(x2, y2);
-			canvas.MoveTo(x, y);
-			canvas.LineTo(x2, y2);
+			{
+				app::CCanvasClassAdapter adapter(ss);
+				CMockCanvas canvas(ss2);
+				adapter.MoveTo(x, y);
+				adapter.LineTo(x2, y2);
+				canvas.MoveTo(x, y);
+				canvas.LineTo(x2, y2);
+			}
 			THEN("get old graphic output and modern graphic output")
 			{
 				std::stringstream outStream;
@@ -135,15 +140,10 @@ SCENARIO("Class adapter operations")
 
 SCENARIO("Pro adapter operations")
 {
-	GIVEN("Pro adapter")
+	GIVEN("Streams and line points and color")
 	{
 		std::stringstream ss;
-		modern_graphics_lib_pro::CModernGraphicsRenderer renderer(ss);
-
 		std::stringstream ss2;
-		CMockCanvasPro canvas(ss2);
-
-		app_pro::CCanvasAdapter adapter(renderer);
 
 		int x = 10;
 		int y = 15;
@@ -152,13 +152,21 @@ SCENARIO("Pro adapter operations")
 		uint32_t color = 256 * 256 * 256 - 1;
 		WHEN("Draw on canvas and canvas adapter")
 		{
-			adapter.SetColor(color);
-			adapter.MoveTo(x, y);
-			adapter.LineTo(x2, y2);
+			{
+				modern_graphics_lib_pro::CModernGraphicsRenderer renderer(ss);
+				CMockCanvasPro canvas(ss2);
+				app_pro::CCanvasAdapter adapter(renderer);
+				adapter.SetColor(color);
+				REQUIRE_THROWS(adapter.LineTo(x, y));
+				adapter.BeginDraw();
+				adapter.MoveTo(x, y);
+				adapter.LineTo(x2, y2);
+				adapter.EndDraw();
 
-			canvas.SetColor(color);
-			canvas.MoveTo(x, y);
-			canvas.LineTo(x2, y2);
+				canvas.SetColor(color);
+				canvas.MoveTo(x, y);
+				canvas.LineTo(x2, y2);
+			}
 			THEN("get old graphic output and modern graphic output")
 			{
 				std::stringstream outStream;
@@ -166,6 +174,55 @@ SCENARIO("Pro adapter operations")
 					<< "  <line fromX=\"" << x << "\" fromY=\"" << y
 					<< "\" toX=\"" << x2 << "\" toY=\"" << y2 << "\">"
 					<< "<color r=\"" << 1 << "\" g=\"" << 1 << "\" b=\"" << 1 
+					<< "\" a=\"" << 1 << "\"/><line/>" << std::endl
+					<< "</draw>" << std::endl;
+				REQUIRE(ss.str() == outStream.str());
+
+				std::stringstream outStream2;
+				outStream2 << "SetColor (" << color << ")" << std::endl
+					<< "MoveTo (" << x << ", " << y << ")" << std::endl
+					<< "LineTo (" << x << ", " << y << ")" << std::endl;
+				REQUIRE(ss2.str() == outStream2.str());
+			}
+		}
+	}
+}
+
+SCENARIO("Pro class adapter operations")
+{
+	GIVEN("Streams and line points")
+	{
+		std::stringstream ss;
+		std::stringstream ss2;
+
+		int x = 10;
+		int y = 15;
+		int x2 = 10;
+		int y2 = 15;
+		uint32_t color = 256 * 256 * 256 - 1;
+		WHEN("Draw on canvas and canvas adapter")
+		{
+			{
+				modern_graphics_lib_pro::CModernGraphicsRenderer renderer(ss);
+				app_pro::CCanvasClassAdapter adapter(ss);
+
+				CMockCanvasPro canvas(ss2);
+				adapter.SetColor(color);
+				adapter.MoveTo(x, y);
+				adapter.LineTo(x2, y2);
+
+				canvas.SetColor(color);
+				canvas.MoveTo(x, y);
+				canvas.LineTo(x2, y2);
+			}
+			THEN("get old graphic output and modern graphic output")
+			{
+
+				std::stringstream outStream;
+				outStream << "<draw>" << std::endl
+					<< "  <line fromX=\"" << x << "\" fromY=\"" << y
+					<< "\" toX=\"" << x2 << "\" toY=\"" << y2 << "\">"
+					<< "<color r=\"" << 1 << "\" g=\"" << 1 << "\" b=\"" << 1
 					<< "\" a=\"" << 1 << "\"/><line/>" << std::endl
 					<< "</draw>" << std::endl;
 				REQUIRE(ss.str() == outStream.str());

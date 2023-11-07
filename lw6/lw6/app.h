@@ -9,17 +9,17 @@ namespace app
 {
 	class CCanvasClassAdapter
 		: public graphics_lib::ICanvas
-		, public modern_graphics_lib::CModernGraphicsRenderer
+		, private modern_graphics_lib::CModernGraphicsRenderer
 	{
 	public:
 		CCanvasClassAdapter(std::ostream& strm)
 			: modern_graphics_lib::CModernGraphicsRenderer(strm)
 		{
+			BeginDraw();
 		}
 
 		void MoveTo(int x, int y) override
 		{
-			BeginDraw();
 			m_startX = x;
 			m_startY = y;
 
@@ -32,10 +32,6 @@ namespace app
 				modern_graphics_lib::CPoint(m_currX, m_currY),
 				modern_graphics_lib::CPoint(x, y)
 			);
-			if (m_startX == x && m_startY == y)
-			{
-				EndDraw();
-			}
 			updateCurrentPosition(x, y);
 		}
 	private:
@@ -61,9 +57,13 @@ namespace app
 		{
 		}
 
-		void MoveTo(int x, int y) override
+		void BeginDraw()
 		{
 			m_adaptee.BeginDraw();
+		}
+
+		void MoveTo(int x, int y) override
+		{
 			m_startX = x;
 			m_startY = y;
 
@@ -76,11 +76,12 @@ namespace app
 				modern_graphics_lib::CPoint(m_currX, m_currY),
 				modern_graphics_lib::CPoint(x, y)
 			);
-			if (m_startX == x && m_startY == y)
-			{
-				m_adaptee.EndDraw();
-			}
 			updateCurrentPosition(x, y);
+		}
+
+		void EndDraw()
+		{
+			m_adaptee.EndDraw();
 		}
 	private:
 		int m_startX = 0;
@@ -117,7 +118,9 @@ namespace app
 		modern_graphics_lib::CModernGraphicsRenderer renderer(std::cout);
 		CCanvasAdapter canvasAdapter(renderer);
 		shape_drawing_lib::CCanvasPainter painterWithAdapter(canvasAdapter);
+		canvasAdapter.BeginDraw();
 		PaintPicture(painterWithAdapter);
+		canvasAdapter.EndDraw();
 
 		std::cout << "..............................." << std::endl;
 		CCanvasClassAdapter canvasClassAdapter(std::cout);
