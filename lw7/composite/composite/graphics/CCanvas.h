@@ -46,18 +46,24 @@ public:
 
             m_lines.clear();
         }
+        m_window->display();
     }
 
-    void DrawEllipse(double cx, double cy, double rx, double ry) override
+    void DrawEllipse(double left, double top, double width, double height) override
     {
-        EllipseShape ellipse(sf::Vector2f(rx, ry));
+        EllipseShape ellipse(sf::Vector2f(left, top));
         ellipse.setPosition(m_position);
-        ellipse.move(sf::Vector2f(cx, cy));
+        ellipse.move(sf::Vector2f(left + width, top + height));
         ellipse.setOutlineThickness(OUTLINE_THICKNESS);
         ellipse.setOutlineColor(m_lineColor);
         ellipse.setFillColor(m_fillColor);
         m_window->setActive(true);
         m_window->draw(ellipse);
+    }
+
+    void EndDraw() override
+    {
+        m_window->display();
     }
 
 private:

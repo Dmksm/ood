@@ -2,6 +2,7 @@
 #include "../stdafx.h"
 #include "../graphics/CommonTypes.h"
 #include "../graphics/Canvas.h"
+#include "../graphics/Style.h"
 
 class IGroupShape;
 
@@ -11,18 +12,6 @@ public:
 	virtual void Draw(ICanvas& canvas) const = 0;
 
 	virtual ~IDrawable() = default;
-};
-
-class IStyle
-{
-public:
-	virtual std::optional<bool> IsEnabled()const = 0;
-	virtual void Enable(bool enable) = 0;
-
-	virtual std::optional<RGBAColor> GetColor()const = 0;
-	virtual void SetColor(RGBAColor color) = 0;
-
-	virtual ~IStyle() = default;
 };
 
 class IShape : public IDrawable
@@ -69,42 +58,21 @@ public:
 	virtual double GetWidth()const = 0;
 	virtual double GetHeight()const = 0;
 
-	virtual IShapes& GetShapes()const = 0;
+	virtual std::vector<std::shared_ptr<IShape>> GetShapes()const = 0;
 
 	virtual ~ISlide() = default;
-};
-
-class CStyle : public IStyle
-{
-public:
-	std::optional<bool> IsEnabled()const override
-	{
-		return m_isEnable;
-	}
-
-	void Enable(bool enable) override
-	{
-		m_isEnable = enable;
-	}
-
-	std::optional<RGBAColor> GetColor()const override
-	{
-		return m_color;
-	}
-
-	void SetColor(RGBAColor color) override
-	{
-		m_color = color;
-	}
-
-private:
-	RGBAColor m_color;
-	std::optional<bool> m_isEnable = std::nullopt;
 };
 
 class CShape : public IShape
 {
 public:
+	CShape(CSimpleFillStyle fillStyle, CSimpleLineStyle lineStyle, RectD frame)
+		: m_fillStyle(fillStyle)
+		, m_lineStyle(lineStyle)
+		, m_frame(frame)
+	{
+	}
+
 	RectD GetFrame() override
 	{
 		return m_frame;
@@ -135,42 +103,55 @@ public:
 		return m_fillStyle;
 	}
 
-	void SetOutlineStyle(const CStyle& style)
+	void SetOutlineStyle(const CSimpleLineStyle& style)
 	{
 		m_lineStyle = style;
 	}
 
-	void SetFillStyle(const CStyle& style)
+	void SetFillStyle(const CSimpleFillStyle& style)
 	{
 		m_fillStyle = style;
+	}
+
+	std::shared_ptr<IGroupShape> GetGroup() override
+	{
+		return std::shared_ptr<IGroupShape>();
+	}
+
+	std::shared_ptr<const IGroupShape> GetGroup() const override
+	{
+		return std::shared_ptr<IGroupShape>();
 	}
 
 	virtual void Draw(ICanvas& canvas) const = 0;
 	virtual ~CShape() = default;
 private:
-	CStyle m_fillStyle;
-	CStyle m_lineStyle;
+	CSimpleFillStyle m_fillStyle;
+	CSimpleLineStyle m_lineStyle;
 	RectD m_frame;
 };
 
 class CRectangle : public CShape
 {
 public:
-	CRectangle(double left, double top, double width, double height)
-		: m_left(left)
+	CRectangle(CSimpleFillStyle fillStyle, CSimpleLineStyle lineStyle, double left, double top, double width, double height)
+		: CShape(fillStyle, lineStyle, { left, top, width, height })
+		, m_left(left)
 		, m_top(top)
 		, m_width(width)
 		, m_height(height)
 	{
 	}
 
-	void Draw(ICanvas& canvas) const final
+	void Draw(ICanvas& canvas) const override final
 	{
+		canvas.BeginFill(GetFillStyle().GetColor().value());
 		canvas.MoveTo(m_left, m_top);
 		canvas.LineTo(m_left + m_width, m_top);
 		canvas.LineTo(m_left + m_width, m_top + m_height);
 		canvas.LineTo(m_left, m_top + m_height);
 		canvas.LineTo(m_left, m_top);
+		canvas.EndFill();
 	}
 
 private:
@@ -183,17 +164,21 @@ private:
 class CEllipse : public CShape
 {
 public:
-	CEllipse(double left, double top, double width, double height)
-		: m_left(left)
+	CEllipse(CSimpleFillStyle fillStyle, CSimpleLineStyle lineStyle, 
+		double left, double top, double width, double height)
+		: CShape(fillStyle, lineStyle, { left, top, width, height })
+		, m_left(left)
 		, m_top(top)
 		, m_width(width)
 		, m_height(height)
 	{
 	}
 
-	void Draw(ICanvas& canvas) const final
+	void Draw(ICanvas& canvas) const override final
 	{
+		canvas.BeginFill(GetFillStyle().GetColor().value());
 		canvas.DrawEllipse(m_left, m_top, m_width, m_height);
+		canvas.EndFill();
 	}
 
 private:
@@ -206,8 +191,16 @@ private:
 class CTriangle : public CShape
 {
 public:
-	CTriangle(double x1, double y1, double x2, double y2, double x3, double y3)
-		: m_x1(x1)
+	CTriangle(CSimpleFillStyle fillStyle, CSimpleLineStyle lineStyle, 
+		double x1, double y1, double x2, double y2, double x3, double y3)
+		: CShape(fillStyle, lineStyle, {
+				std::min(x1, std::min(x2, x3)),
+				std::min(y1, std::min(y2, y3)),
+				std::max(x1, std::max(x2, x3)) - std::min(x1, std::min(x2, x3)),
+				std::max(y1, std::max(y2, y3)) - std::min(y1, std::min(y2, y3))
+			}
+		)
+		, m_x1(x1)
 		, m_y1(y1)
 		, m_x2(x2)
 		, m_y2(y2)
@@ -216,12 +209,14 @@ public:
 	{
 	}
 
-	void Draw(ICanvas& canvas) const final
+	void Draw(ICanvas& canvas) const override final
 	{
+		canvas.BeginFill(GetFillStyle().GetColor().value());
 		canvas.MoveTo(m_x1, m_y1);
 		canvas.LineTo(m_x2, m_y2);
 		canvas.LineTo(m_x3, m_y3);
 		canvas.LineTo(m_x1, m_y1);
+		canvas.EndFill();
 	}
 
 private:
@@ -233,12 +228,72 @@ private:
 	double m_y3;
 };
 
-class CSlide: public ISlide, public IGroupShape
+class CGroupShape 
+	: public IGroupShape
+	, public std::enable_shared_from_this<IGroupShape>
+	, private ILineStyleEnumerator
+	, private IFillStyleEnumerator
 {
 public:
+	void EnumerateAllLineStyle(std::function<void(IStyle&)> callback) override
+	{
+		for (auto it : m_shapes)
+		{
+			callback(it->GetlineStyle());
+		}
+	}
+
+	void EnumerateAllFillStyle(std::function<void(IStyle&)> callback) override
+	{
+		for (auto it : m_shapes)
+		{
+			callback(it->GetFillStyle());
+		}
+	}
+
+	RectD GetFrame() override
+	{
+		return m_frame;
+	}
+
+	void SetFrame(const RectD& rect) override
+	{
+		m_frame = rect;
+	}
+
+	IStyle& GetlineStyle() override
+	{
+		return m_lineStyle;
+	}
+
+	const IStyle& GetlineStyle()const override
+	{
+		return m_lineStyle;
+	}
+
+	IStyle& GetFillStyle() override
+	{
+		return m_fillStyle;
+	}
+	
+	const IStyle& GetFillStyle()const override
+	{
+		return m_fillStyle;
+	}
+
+	std::shared_ptr<IGroupShape> GetGroup() override
+	{
+		return shared_from_this();
+	}
+
+	std::shared_ptr<const IGroupShape> GetGroup() const override
+	{
+		return shared_from_this();
+	}
+
 	size_t GetShapesCount()const override
 	{
-
+		return m_shapes.size();
 	}
 
 	void InsertShape(
@@ -246,22 +301,36 @@ public:
 		size_t position = std::numeric_limits<size_t>::max()
 	) override
 	{
-
+		m_shapes.insert(m_shapes.begin() + position, shape);
 	}
 
 	std::shared_ptr<IShape> GetShapeAtIndex(size_t index) override
 	{
-
+		return m_shapes.at(index);
 	}
 
 	void RemoveShapeAtIndex(size_t index) override
 	{
-
+		m_shapes.erase(m_shapes.begin() + index);
 	}
-	
-	IShapes& GetShapes()const override
+private:
+	std::vector<std::shared_ptr<IShape>> m_shapes;
+	RectD m_frame;
+	CCompositeLineStyle m_lineStyle;
+	CCompositeFillStyle m_fillStyle;
+};
+
+class CSlide: public ISlide
+{
+public:
+	CSlide(std::vector<std::shared_ptr<IShape>> shapes)
+		: m_shapes(shapes)
 	{
-		//return m_shapes;
+	}
+
+	std::vector<std::shared_ptr<IShape>> GetShapes()const override
+	{
+		return m_shapes;
 	}
 
 	double GetWidth()const override
@@ -284,15 +353,15 @@ public:
 		m_backgroundColor = color;
 	}
 
-	void Draw(ICanvas& canvas)
+	void Draw(ICanvas& canvas)const override
 	{
 		for (auto& it : m_shapes)
 		{
-			it.Draw(canvas);
+			it->Draw(canvas);
 		}
 	}
 private:
-	std::vector<IShape> m_shapes;
+	std::vector<std::shared_ptr<IShape>> m_shapes;
 	RGBAColor m_backgroundColor;
 	double m_width;
 	double m_height;
