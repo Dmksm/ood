@@ -16,13 +16,13 @@ int main()
 	CRectangle rectangle{ fillStyle, lineStyle, 100, 250, 150, 200 };
 
 
-	triangle.Draw(canvas);
+	rectangle.Draw(canvas);
 
 	/*std::vector<std::shared_ptr<IShape>> shapes;
 	shapes.push_back(std::make_shared<CTriangle>(triangle));
 	shapes.push_back(std::make_shared<CRectangle>(rectangle));
 	CSlide slide(shapes);
 	slide.Draw(canvas);*/
-
-	system("pause");
+	
+	std::getchar();
 }

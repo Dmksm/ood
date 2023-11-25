@@ -18,12 +18,16 @@ class ILineStyleEnumerator
 {
 public:
 	virtual void EnumerateAllLineStyle(std::function<void(IStyle&)> callback) = 0;
+
+	virtual ~ILineStyleEnumerator() = default;
 };
 
 class IFillStyleEnumerator
 {
 public:
 	virtual void EnumerateAllFillStyle(std::function<void(IStyle&)> callback) = 0;
+
+	virtual ~IFillStyleEnumerator() = default;
 };
 
 class CSimpleFillStyle : public IStyle
