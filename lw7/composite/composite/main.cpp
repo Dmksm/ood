@@ -15,8 +15,7 @@ int main()
 	CTriangle triangle{ fillStyle, lineStyle, 100, 100, 150, 250, 100, 400 };
 	CRectangle rectangle{ fillStyle, lineStyle, 100, 250, 150, 200 };
 
-
-	rectangle.Draw(canvas);
+	triangle.Draw(canvas);
 
 	/*std::vector<std::shared_ptr<IShape>> shapes;
 	shapes.push_back(std::make_shared<CTriangle>(triangle));
@@ -24,5 +23,5 @@ int main()
 	CSlide slide(shapes);
 	slide.Draw(canvas);*/
 	
-	std::getchar();
+	system("pause");
 }

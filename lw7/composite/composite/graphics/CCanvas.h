@@ -31,7 +31,7 @@ public:
      
     void LineTo(double x, double y) override
     {
-        m_lines.push_back((sf::Vector2f(x, y)));
+        m_lines.push_back(sf::Vector2f(x, y));
         m_position = sf::Vector2f(x, y);
     }
 
@@ -39,11 +39,19 @@ public:
     {
         if (!m_lines.empty())
         {
-            int vertexCount = m_lines.size();
-            sf::Vertex* vertices = &m_lines[0];
-            vertices->color = m_fillColor;
-            m_window->draw(vertices, vertexCount, sf::Lines);
+            sf::ConvexShape convex;
 
+            convex.setPointCount(m_lines.size());
+            convex.setFillColor(m_fillColor);
+
+            convex.setOutlineColor(m_lineColor);
+            convex.setOutlineThickness(m_thickness);
+            
+            for (int i = 0; i < m_lines.size(); i++)
+            {
+                convex.setPoint(i, m_lines[i].position);
+            }
+            m_window->draw(convex);
             m_lines.clear();
         }
         m_window->display();
@@ -54,21 +62,22 @@ public:
         EllipseShape ellipse(sf::Vector2f(left, top));
         ellipse.setPosition(m_position);
         ellipse.move(sf::Vector2f(left + width, top + height));
-        ellipse.setOutlineThickness(OUTLINE_THICKNESS);
+        ellipse.setOutlineThickness(m_thickness);
         ellipse.setOutlineColor(m_lineColor);
         ellipse.setFillColor(m_fillColor);
         m_window->setActive(true);
         m_window->draw(ellipse);
     }
 
-    void EndDraw() override
+    void SetThickness(float thickness) override
     {
-        m_window->display();
+        m_thickness = thickness;
     }
 
 private:
-    const float OUTLINE_THICKNESS = 1.0f;
+    const float DEFAULT_OUTLINE_THICKNESS = 1.0f;
 
+    float m_thickness = DEFAULT_OUTLINE_THICKNESS;
     sf::Color m_lineColor;
     sf::Color m_fillColor;
     sf::Vector2f m_position;
