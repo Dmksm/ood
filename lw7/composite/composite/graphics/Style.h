@@ -14,20 +14,13 @@ public:
 	virtual ~IStyle() = default;
 };
 
-class ILineStyleEnumerator
+class IStyleEnumerator
 {
 public:
 	virtual void EnumerateAllLineStyle(std::function<void(IStyle&)> callback) = 0;
-
-	virtual ~ILineStyleEnumerator() = default;
-};
-
-class IFillStyleEnumerator
-{
-public:
 	virtual void EnumerateAllFillStyle(std::function<void(IStyle&)> callback) = 0;
 
-	virtual ~IFillStyleEnumerator() = default;
+	virtual ~IStyleEnumerator() = default;
 };
 
 class CSimpleFillStyle : public IStyle
@@ -97,7 +90,7 @@ private:
 class CCompositeLineStyle: public IStyle
 {
 public:
-	CCompositeLineStyle(std::shared_ptr<ILineStyleEnumerator> styleEnumerator) 
+	CCompositeLineStyle(std::shared_ptr<IStyleEnumerator> styleEnumerator)
 		: m_styleEnumerator(styleEnumerator)
 	{
 	};
@@ -153,14 +146,14 @@ public:
 		});
 	}
 private:
-	std::shared_ptr<ILineStyleEnumerator> m_styleEnumerator;
+	std::shared_ptr<IStyleEnumerator> m_styleEnumerator;
 };
 
 
 class CCompositeFillStyle : public IStyle
 {
 public:
-	CCompositeFillStyle(std::shared_ptr<IFillStyleEnumerator> styleEnumerator) 
+	CCompositeFillStyle(std::shared_ptr<IStyleEnumerator> styleEnumerator)
 		: m_styleEnumerator(styleEnumerator)
 	{
 	};
@@ -216,5 +209,5 @@ public:
 			});
 	}
 private:
-	std::shared_ptr<IFillStyleEnumerator> m_styleEnumerator;
+	std::shared_ptr<IStyleEnumerator> m_styleEnumerator;
 };

@@ -26,9 +26,6 @@ public:
 	virtual IStyle& GetFillStyle() = 0;
 	virtual const IStyle& GetFillStyle()const = 0;
 
-	virtual std::shared_ptr<IGroupShape> GetGroup() = 0;
-	virtual std::shared_ptr<const IGroupShape> GetGroup() const = 0;
-
 	virtual ~IShape() = default;
 };
 
@@ -113,16 +110,6 @@ public:
 		m_fillStyle = style;
 	}
 
-	std::shared_ptr<IGroupShape> GetGroup() override
-	{
-		return std::shared_ptr<IGroupShape>();
-	}
-
-	std::shared_ptr<const IGroupShape> GetGroup() const override
-	{
-		return std::shared_ptr<IGroupShape>();
-	}
-
 	virtual void Draw(ICanvas& canvas) const = 0;
 	virtual ~CShape() = default;
 private:
@@ -191,7 +178,7 @@ private:
 class CTriangle : public CShape
 {
 public:
-	CTriangle(CSimpleFillStyle fillStyle, CSimpleLineStyle lineStyle, 
+	CTriangle(CSimpleFillStyle fillStyle, CSimpleLineStyle lineStyle,
 		double x1, double y1, double x2, double y2, double x3, double y3)
 		: CShape(fillStyle, lineStyle, {
 				std::min(x1, std::min(x2, x3)),
@@ -230,11 +217,17 @@ private:
 
 class CGroupShape 
 	: public IGroupShape
-	, public std::enable_shared_from_this<IGroupShape>
-	, private ILineStyleEnumerator
-	, private IFillStyleEnumerator
+	, public std::enable_shared_from_this<IStyleEnumerator>
+	, private IStyleEnumerator
 {
 public:
+	CGroupShape(std::vector<std::shared_ptr<IShape>> shapes)
+		: m_shapes(shapes)
+		, m_lineStyle(shared_from_this())
+		, m_fillStyle(shared_from_this())
+	{
+	}
+
 	void EnumerateAllLineStyle(std::function<void(IStyle&)> callback) override
 	{
 		for (auto it : m_shapes)
@@ -281,16 +274,6 @@ public:
 		return m_fillStyle;
 	}
 
-	std::shared_ptr<IGroupShape> GetGroup() override
-	{
-		return shared_from_this();
-	}
-
-	std::shared_ptr<const IGroupShape> GetGroup() const override
-	{
-		return shared_from_this();
-	}
-
 	size_t GetShapesCount()const override
 	{
 		return m_shapes.size();
@@ -312,6 +295,14 @@ public:
 	void RemoveShapeAtIndex(size_t index) override
 	{
 		m_shapes.erase(m_shapes.begin() + index);
+	}
+
+	void Draw(ICanvas& canvas)const override
+	{
+		for (auto& it : m_shapes)
+		{
+			it->Draw(canvas);
+		}
 	}
 private:
 	std::vector<std::shared_ptr<IShape>> m_shapes;
