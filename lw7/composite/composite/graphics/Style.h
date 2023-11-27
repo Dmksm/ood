@@ -90,7 +90,7 @@ private:
 class CCompositeLineStyle: public IStyle
 {
 public:
-	CCompositeLineStyle(std::shared_ptr<IStyleEnumerator> styleEnumerator)
+	CCompositeLineStyle(IStyleEnumerator* styleEnumerator)
 		: m_styleEnumerator(styleEnumerator)
 	{
 	};
@@ -153,7 +153,7 @@ private:
 class CCompositeFillStyle : public IStyle
 {
 public:
-	CCompositeFillStyle(std::shared_ptr<IStyleEnumerator> styleEnumerator)
+	CCompositeFillStyle(IStyleEnumerator* styleEnumerator)
 		: m_styleEnumerator(styleEnumerator)
 	{
 	};

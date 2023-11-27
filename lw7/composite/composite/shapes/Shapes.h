@@ -43,7 +43,8 @@ public:
 	virtual ~IShapes() = default;
 };
 
-class IGroupShape : public IShape, public IShapes
+class IGroupShape : public IShape, public IShapes, public IStyleEnumerator
+	, public std::enable_shared_from_this<IGroupShape>
 {
 public:
 	virtual ~IGroupShape() = default;
@@ -215,16 +216,13 @@ private:
 	double m_y3;
 };
 
-class CGroupShape 
-	: public IGroupShape
-	, public std::enable_shared_from_this<IStyleEnumerator>
-	, private IStyleEnumerator
+class CGroupShape : public IGroupShape
 {
 public:
 	CGroupShape(std::vector<std::shared_ptr<IShape>> shapes)
 		: m_shapes(shapes)
-		, m_lineStyle(shared_from_this())
-		, m_fillStyle(shared_from_this())
+		, m_lineStyle(this)
+		, m_fillStyle(this)
 	{
 	}
 
@@ -246,12 +244,52 @@ public:
 
 	RectD GetFrame() override
 	{
-		return m_frame;
+		RectD frame = {std::numeric_limits<double>::max(), std::numeric_limits<double>::max(), 0 ,0};
+		for (auto it : m_shapes)
+		{
+			if (frame.left > it->GetFrame().left)
+			{
+				frame.left = it->GetFrame().left;
+			}
+			if (frame.top > it->GetFrame().top)
+			{
+				frame.top = it->GetFrame().top;
+			}
+			if (frame.left + frame.width < it->GetFrame().left + it->GetFrame().width)
+			{
+				frame.width = it->GetFrame().left + it->GetFrame().width - frame.left;
+			}
+			if (frame.top + frame.height < it->GetFrame().top + it->GetFrame().height)
+			{
+				frame.height = it->GetFrame().top + it->GetFrame().height - frame.top;
+			}
+		}
+		return frame;
 	}
 
 	void SetFrame(const RectD& rect) override
 	{
-		m_frame = rect;
+		struct Point {
+			double x;
+			double y;
+		};
+		Point leftTopCurr = { GetFrame().left,  GetFrame().top };
+		Point bottomRightCurr = { GetFrame().left + GetFrame().width,  GetFrame().top + GetFrame().height };
+
+		Point leftTop = { rect.left, rect.top };
+		Point bottomRight = { rect.left + rect.width, rect.top + rect.height };
+
+		Point scalableLeftTop = { leftTop.x / leftTopCurr.x, leftTop.y / leftTopCurr.y };
+		Point scalableBottomRight = { bottomRight.x / bottomRightCurr.x, bottomRight.y / bottomRightCurr.y };
+		for (auto& it : m_shapes)
+		{
+			RectD frame = it->GetFrame();
+			frame.left *= scalableLeftTop.x;
+			frame.top *= scalableLeftTop.y;
+			frame.width *= scalableBottomRight.x;
+			frame.height *= scalableBottomRight.y;
+			it->SetFrame(frame);
+		}
 	}
 
 	IStyle& GetlineStyle() override
@@ -281,7 +319,7 @@ public:
 
 	void InsertShape(
 		const std::shared_ptr<IShape>& shape,
-		size_t position = std::numeric_limits<size_t>::max()
+		size_t position = 0
 	) override
 	{
 		m_shapes.insert(m_shapes.begin() + position, shape);
@@ -306,7 +344,6 @@ public:
 	}
 private:
 	std::vector<std::shared_ptr<IShape>> m_shapes;
-	RectD m_frame;
 	CCompositeLineStyle m_lineStyle;
 	CCompositeFillStyle m_fillStyle;
 };
