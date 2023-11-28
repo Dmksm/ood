@@ -11,7 +11,7 @@ public:
 	virtual void SetThickness(float thickness) = 0;
 	virtual void MoveTo(double x, double y) = 0;
 	virtual void LineTo(double x, double y) = 0;
-	virtual void DrawEllipse(double left, double top, double width, double height) = 0;
+	virtual void DrawEllipse(double cx, double cy, double rx, double ry) = 0;
 
 	virtual ~ICanvas() = default;
 };

@@ -57,11 +57,11 @@ public:
         m_window->display();
     }
 
-    void DrawEllipse(double left, double top, double width, double height) override
+    void DrawEllipse(double cx, double cy, double rx, double ry) override
     {
         EllipseShape ellipse;
-        ellipse.setPosition(sf::Vector2f(left, top));
-        ellipse.setRadius(sf::Vector2f(width / 2, height / 2));
+        ellipse.setPosition(sf::Vector2f(cx, cy));
+        ellipse.setRadius(sf::Vector2f(rx, ry));
         ellipse.setOutlineThickness(m_thickness);
         ellipse.setOutlineColor(m_lineColor);
         ellipse.setFillColor(m_fillColor);

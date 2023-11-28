@@ -64,22 +64,15 @@ public:
 class CShape : public IShape
 {
 public:
-	CShape(CSimpleFillStyle fillStyle, CSimpleLineStyle lineStyle, RectD frame)
+	CShape(CSimpleFillStyle fillStyle, CSimpleLineStyle lineStyle)
 		: m_fillStyle(fillStyle)
 		, m_lineStyle(lineStyle)
-		, m_frame(frame)
 	{
 	}
 
-	RectD GetFrame() override
-	{
-		return m_frame;
-	}
+	virtual RectD GetFrame() = 0;
 
-	void SetFrame(const RectD& rect) override
-	{
-		m_frame = rect;
-	}
+	virtual void SetFrame(const RectD& rect) = 0;
 
 	IStyle& GetlineStyle() override
 	{
@@ -116,14 +109,14 @@ public:
 private:
 	CSimpleFillStyle m_fillStyle;
 	CSimpleLineStyle m_lineStyle;
-	RectD m_frame;
 };
 
 class CRectangle : public CShape
 {
 public:
 	CRectangle(CSimpleFillStyle fillStyle, CSimpleLineStyle lineStyle, double left, double top, double width, double height)
-		: CShape(fillStyle, lineStyle, { left, top, width, height })
+		: CShape(fillStyle, lineStyle)
+		, m_frame({ left, top, width, height })
 		, m_left(left)
 		, m_top(top)
 		, m_width(width)
@@ -131,9 +124,31 @@ public:
 	{
 	}
 
+	RectD GetFrame() override
+	{
+		return m_frame;
+	}
+
+	void SetFrame(const RectD& rect) override
+	{
+		m_left = rect.left;
+		m_top = rect.top;
+		m_height = rect.height;
+		m_width = rect.width;
+		m_frame = rect;
+	}
+
 	void Draw(ICanvas& canvas) const override final
 	{
 		canvas.BeginFill(GetFillStyle().GetColor().value());
+		if (GetlineStyle().GetColor().has_value())
+		{
+			canvas.SetLineColor(GetlineStyle().GetColor().value());
+		}
+		if (GetlineStyle().GetThickness().has_value())
+		{
+			canvas.SetThickness(GetlineStyle().GetThickness().value());
+		}
 		canvas.MoveTo(m_left, m_top);
 		canvas.LineTo(m_left + m_width, m_top);
 		canvas.LineTo(m_left + m_width, m_top + m_height);
@@ -147,6 +162,7 @@ private:
 	double m_top;
 	double m_width;
 	double m_height;
+	RectD m_frame;
 };
 
 class CEllipse : public CShape
@@ -154,7 +170,8 @@ class CEllipse : public CShape
 public:
 	CEllipse(CSimpleFillStyle fillStyle, CSimpleLineStyle lineStyle, 
 		double left, double top, double width, double height)
-		: CShape(fillStyle, lineStyle, { left, top, width, height })
+		: CShape(fillStyle, lineStyle)
+		, m_frame({ left, top, width, height })
 		, m_left(left)
 		, m_top(top)
 		, m_width(width)
@@ -162,10 +179,32 @@ public:
 	{
 	}
 
+	RectD GetFrame() override
+	{
+		return m_frame;
+	}
+
+	void SetFrame(const RectD& rect) override
+	{
+		m_left = rect.left; 
+		m_top = rect.top;
+		m_height = rect.height;
+		m_width = rect.width;
+		m_frame = rect;
+	}
+
 	void Draw(ICanvas& canvas) const override final
 	{
 		canvas.BeginFill(GetFillStyle().GetColor().value());
-		canvas.DrawEllipse(m_left, m_top, m_width, m_height);
+		if (GetlineStyle().GetColor().has_value())
+		{
+			canvas.SetLineColor(GetlineStyle().GetColor().value());
+		}
+		if (GetlineStyle().GetThickness().has_value())
+		{
+			canvas.SetThickness(GetlineStyle().GetThickness().value());
+		}
+		canvas.DrawEllipse(m_left, m_top, m_width / 2, m_height / 2);
 		canvas.EndFill();
 	}
 
@@ -174,6 +213,7 @@ private:
 	double m_top;
 	double m_width;
 	double m_height;
+	RectD m_frame;
 };
 
 class CTriangle : public CShape
@@ -181,25 +221,57 @@ class CTriangle : public CShape
 public:
 	CTriangle(CSimpleFillStyle fillStyle, CSimpleLineStyle lineStyle,
 		double x1, double y1, double x2, double y2, double x3, double y3)
-		: CShape(fillStyle, lineStyle, {
+		: CShape(fillStyle, lineStyle)
+		, m_frame({
 				std::min(x1, std::min(x2, x3)),
 				std::min(y1, std::min(y2, y3)),
 				std::max(x1, std::max(x2, x3)) - std::min(x1, std::min(x2, x3)),
 				std::max(y1, std::max(y2, y3)) - std::min(y1, std::min(y2, y3))
-			}
-		)
-		, m_x1(x1)
-		, m_y1(y1)
-		, m_x2(x2)
-		, m_y2(y2)
-		, m_x3(x3)
-		, m_y3(y3)
+			})
 	{
+		if (x1 == x2 == x3 || y1 == y2 == y3)
+		{
+			throw std::logic_error("shape are not a triangle!");
+		}
+		m_x1 = x1;
+		m_x2 = x2;
+		m_x3 = x3;
+		m_y1 = y1;
+		m_y2 = y2;
+		m_y3 = y3;
+	}
+
+	RectD GetFrame() override
+	{
+		return m_frame;
+	}
+
+	void SetFrame(const RectD& rect) override
+	{
+		m_x1 -= rect.left;
+		m_x2 -= rect.left;
+		m_x3 -= rect.left;
+		m_y1 -= rect.top;
+		m_y2 -= rect.top;
+		m_y3 -= rect.top;
+
+		TransformPoints(m_x1, m_x2, m_x3, rect.left, rect.width);
+		TransformPoints(m_y1, m_y2, m_y3, rect.top, rect.height);
+
+		m_frame = rect;
 	}
 
 	void Draw(ICanvas& canvas) const override final
 	{
 		canvas.BeginFill(GetFillStyle().GetColor().value());
+		if (GetlineStyle().GetColor().has_value())
+		{
+			canvas.SetLineColor(GetlineStyle().GetColor().value());
+		}
+		if (GetlineStyle().GetThickness().has_value())
+		{
+			canvas.SetThickness(GetlineStyle().GetThickness().value());
+		}
 		canvas.MoveTo(m_x1, m_y1);
 		canvas.LineTo(m_x2, m_y2);
 		canvas.LineTo(m_x3, m_y3);
@@ -214,6 +286,47 @@ private:
 	double m_y2;
 	double m_x3;
 	double m_y3;
+	RectD m_frame;
+
+	void TransformPoints(double& d1, double& d2, double& d3, double point, double size)
+	{
+		if (d1 <= d2 <= d3)
+		{
+			d1 = point;
+			d3 = point + size;
+			d2 = point + size * (d1 / d3);
+		}
+		if (d1 <= d3 <= d2)
+		{
+			d1 = point;
+			d2 = point + size;
+			d3 = point + size * (d1 / d2);
+		}
+		if (d2 <= d1 <= d3)
+		{
+			d2 = point;
+			d3 = point + size;
+			d1 = point + size * (d2 / d3);
+		}
+		if (d2 <= d3 <= d1)
+		{
+			d2 = point;
+			d1 = point + size;
+			d3 = point + size * (d2 / d1);
+		}
+		if (d3 <= d1 <= d2)
+		{
+			d3 = point;
+			d2 = point + size;
+			d1 = point + size * (d3 / d2);
+		}
+		if (d3 <= d2 <= d1)
+		{
+			d3 = point;
+			d1 = point + size;
+			d2 = point + size * (d3 / d1);
+		}
+	}
 };
 
 class CGroupShape : public IGroupShape
@@ -269,25 +382,13 @@ public:
 
 	void SetFrame(const RectD& rect) override
 	{
-		struct Point {
-			double x;
-			double y;
-		};
-		Point leftTopCurr = { GetFrame().left,  GetFrame().top };
-		Point bottomRightCurr = { GetFrame().left + GetFrame().width,  GetFrame().top + GetFrame().height };
-
-		Point leftTop = { rect.left, rect.top };
-		Point bottomRight = { rect.left + rect.width, rect.top + rect.height };
-
-		Point scalableLeftTop = { leftTop.x / leftTopCurr.x, leftTop.y / leftTopCurr.y };
-		Point scalableBottomRight = { bottomRight.x / bottomRightCurr.x, bottomRight.y / bottomRightCurr.y };
 		for (auto& it : m_shapes)
 		{
 			RectD frame = it->GetFrame();
-			frame.left *= scalableLeftTop.x;
-			frame.top *= scalableLeftTop.y;
-			frame.width *= scalableBottomRight.x;
-			frame.height *= scalableBottomRight.y;
+			frame.left += rect.left - frame.left;
+			frame.top += rect.top - frame.top;
+			frame.width *= rect.width / frame.width;
+			frame.height *= rect.height / frame.height;
 			it->SetFrame(frame);
 		}
 	}

@@ -8,3 +8,6 @@
 #include <numeric>
 #include <string>
 #include <boost/enable_shared_from_this.hpp>
+#include <vector>
+#include <map>
+#include <stdexcept>
