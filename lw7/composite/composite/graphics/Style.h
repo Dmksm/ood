@@ -119,13 +119,35 @@ public:
 	{
 	};
 
+	//проверку на всех а не на последнего делать
 	std::optional<bool> IsEnabled()const override
 	{
-		std::optional<bool> isEnabled = std::nullopt;
-		m_styleEnumerator->EnumerateAllLineStyle([&isEnabled](IStyle& a) mutable {
-			isEnabled = a.IsEnabled();
-		});
-		return isEnabled;
+		std::optional<bool> result = std::nullopt;
+		bool isEnabled = true;
+		bool isFirst = true;
+		m_styleEnumerator->EnumerateAllLineStyle([&result, &isEnabled, &isFirst](IStyle& a) {
+			if (!a.IsEnabled().has_value())
+			{
+				isEnabled = false;
+			}
+			if (isFirst)
+			{
+				result = a.IsEnabled();
+				isFirst = false;
+			}
+			else
+			{
+				if (a.IsEnabled() != isEnabled)
+				{
+					isEnabled = false;
+				}
+			}
+			});
+		if (!isEnabled)
+		{
+			return std::nullopt;
+		}
+		return result;
 	}
 
 	void Enable(bool enable)
@@ -140,11 +162,11 @@ public:
 		bool isEnable = true;
 		std::optional<RGBAColor> color = std::nullopt;
 		bool isFirst = true;
-		m_styleEnumerator->EnumerateAllLineStyle([&color, &isFirst](IStyle& a) mutable {
+		bool isEnabled = true;
+		m_styleEnumerator->EnumerateAllLineStyle([&color, &isFirst, &isEnabled](IStyle& a) {
 			if (!a.IsEnabled().has_value())
 			{
-				color = std::nullopt;
-				return;
+				isEnabled = false;
 			}
 			if (isFirst)
 			{
@@ -155,11 +177,14 @@ public:
 			{
 				if (a.GetColor() != color)
 				{
-					color = std::nullopt;
-					return;
+					isEnabled = false;
 				}
 			}
 		});
+		if (!isEnabled)
+		{
+			return std::nullopt;
+		}
 		return color;
 	}
 
@@ -175,11 +200,11 @@ public:
 		bool isEnable = true;
 		std::optional<double> m_thickness = std::nullopt;
 		bool isFirst = true;
-		m_styleEnumerator->EnumerateAllLineStyle([&m_thickness, &isFirst](IStyle& a) mutable {
+		bool isEnabled = true;
+		m_styleEnumerator->EnumerateAllLineStyle([&m_thickness, &isFirst, &isEnabled](IStyle& a) {
 			if (!a.IsEnabled().has_value())
 			{
-				m_thickness = std::nullopt;
-				return;
+				isEnabled = false;
 			}
 			if (isFirst)
 			{
@@ -190,11 +215,14 @@ public:
 			{
 				if (a.GetThickness() != m_thickness)
 				{
-					m_thickness = std::nullopt;
-					return;
+					isEnabled = false;
 				}
 			}
-			});
+		});
+		if (!isEnabled)
+		{
+			return std::nullopt;
+		}
 		return m_thickness;
 	}
 
@@ -219,11 +247,32 @@ public:
 
 	std::optional<bool> IsEnabled()const override
 	{
-		std::optional<bool> isEnabled = std::nullopt;
-		m_styleEnumerator->EnumerateAllFillStyle([&isEnabled](IStyle& a) mutable {
-			isEnabled = a.IsEnabled();
+		std::optional<bool> result = std::nullopt;
+		bool isEnabled = true;
+		bool isFirst = true;
+		m_styleEnumerator->EnumerateAllLineStyle([&result, &isEnabled, &isFirst](IStyle& a) {
+			if (!a.IsEnabled().has_value())
+			{
+				isEnabled = false;
+			}
+			if (isFirst)
+			{
+				result = a.IsEnabled();
+				isFirst = false;
+			}
+			else
+			{
+				if (a.IsEnabled() != isEnabled)
+				{
+					isEnabled = false;
+				}
+			}
 			});
-		return isEnabled;
+		if (!isEnabled)
+		{
+			return std::nullopt;
+		}
+		return result;
 	}
 
 	void Enable(bool enable)
@@ -238,11 +287,11 @@ public:
 		bool isEnable = true;
 		std::optional<RGBAColor> color = std::nullopt;
 		bool isFirst = true;
-		m_styleEnumerator->EnumerateAllFillStyle([&color, &isFirst](IStyle& a) mutable {
+		bool isEnabled = true;
+		m_styleEnumerator->EnumerateAllFillStyle([&color, &isFirst, &isEnabled](IStyle& a) {
 			if (!a.IsEnabled().has_value())
 			{
-				color = std::nullopt;
-				return;
+				isEnabled = false;
 			}
 			if (isFirst)
 			{
@@ -253,11 +302,14 @@ public:
 			{
 				if (a.GetColor() != color)
 				{
-					color = std::nullopt;
-					return;
+					isEnabled = false;
 				}
 			}
 			});
+		if (!isEnabled)
+		{
+			return std::nullopt;
+		}
 		return color;
 	}
 

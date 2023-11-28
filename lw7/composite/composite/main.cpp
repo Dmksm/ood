@@ -33,7 +33,7 @@ int main()
 	shapes.push_back(std::make_shared<CEllipse>(ellipse));
 	shapes.push_back(std::make_shared<CRectangle>(rectangle2));
 
-	CSlide slide(shapes);
+	CSlide slide(shapes, {200u * 200 * 200}, 1000, 600);
 	slide.Draw(canvas);
 	system("pause");
 

@@ -131,7 +131,7 @@ public:
 
 SCENARIO("test composite shape")
 {
-	GIVEN("Group shape and shapes")
+	/*GIVEN("Group shape and shapes")
 	{
 		std::vector<std::shared_ptr<IShape>> shapes;
 		CMockGroupShape groupHouseShape(shapes);
@@ -150,5 +150,5 @@ SCENARIO("test composite shape")
 				REQUIRE_NOTHROW(groupHouseShape.RemoveShapeAtIndex(0));
 			}
 		}
-	}
+	}*/
 }

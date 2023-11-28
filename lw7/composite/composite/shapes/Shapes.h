@@ -43,8 +43,8 @@ public:
 	virtual ~IShapes() = default;
 };
 
+//наследовать  std::enable_shared_from_this<IGroupShape> от конкретной группы так как там используем
 class IGroupShape : public IShape, public IShapes, public IStyleEnumerator
-	, public std::enable_shared_from_this<IGroupShape>
 {
 public:
 	virtual ~IGroupShape() = default;
@@ -229,7 +229,7 @@ public:
 				std::max(y1, std::max(y2, y3)) - std::min(y1, std::min(y2, y3))
 			})
 	{
-		if (x1 == x2 == x3 || y1 == y2 == y3)
+		if ((x1 == x2 && x2 == x3) || (y1 == y2 && y2 == y3))
 		{
 			throw std::logic_error("shape are not a triangle!");
 		}
@@ -290,37 +290,37 @@ private:
 
 	void TransformPoints(double& d1, double& d2, double& d3, double point, double size)
 	{
-		if (d1 <= d2 <= d3)
+		if (d1 <= d2 && d1 <= d3)
 		{
 			d1 = point;
 			d3 = point + size;
 			d2 = point + size * (d1 / d3);
 		}
-		if (d1 <= d3 <= d2)
+		if (d1 <= d3 && d3 <= d2)
 		{
 			d1 = point;
 			d2 = point + size;
 			d3 = point + size * (d1 / d2);
 		}
-		if (d2 <= d1 <= d3)
+		if (d2 <= d1 && d1 <= d3)
 		{
 			d2 = point;
 			d3 = point + size;
 			d1 = point + size * (d2 / d3);
 		}
-		if (d2 <= d3 <= d1)
+		if (d2 <= d3 && d3 <= d1)
 		{
 			d2 = point;
 			d1 = point + size;
 			d3 = point + size * (d2 / d1);
 		}
-		if (d3 <= d1 <= d2)
+		if (d3 <= d1 && d1 <= d2)
 		{
 			d3 = point;
 			d2 = point + size;
 			d1 = point + size * (d3 / d2);
 		}
-		if (d3 <= d2 <= d1)
+		if (d3 <= d2 && d2 <= d1)
 		{
 			d3 = point;
 			d1 = point + size;
@@ -329,7 +329,7 @@ private:
 	}
 };
 
-class CGroupShape : public IGroupShape
+class CGroupShape : public IGroupShape, public std::enable_shared_from_this<IGroupShape>
 {
 public:
 	CGroupShape(std::vector<std::shared_ptr<IShape>> shapes)
@@ -355,11 +355,20 @@ public:
 		}
 	}
 
+	//обработать ситуацию для пустой группы иначе вернется и обруботать пустую группу
 	RectD GetFrame() override
 	{
+		if (m_shapes.empty())
+		{
+			return {0,0,0,0};
+		}
 		RectD frame = {std::numeric_limits<double>::max(), std::numeric_limits<double>::max(), 0 ,0};
 		for (auto it : m_shapes)
 		{
+			if (it->GetFrame().height == 0 && it->GetFrame().width == 0)
+			{
+				continue;
+			}
 			if (frame.left > it->GetFrame().left)
 			{
 				frame.left = it->GetFrame().left;
@@ -380,6 +389,7 @@ public:
 		return frame;
 	}
 
+	//фигуры должны сохранять свое относительное положение относительно группы
 	void SetFrame(const RectD& rect) override
 	{
 		RectD currFrame = GetFrame();
@@ -453,8 +463,11 @@ private:
 class CSlide: public ISlide
 {
 public:
-	CSlide(std::vector<std::shared_ptr<IShape>> shapes)
+	CSlide(std::vector<std::shared_ptr<IShape>> shapes, RGBAColor backgroundColor, double width, double height)
 		: m_shapes(shapes)
+		, m_backgroundColor(backgroundColor)
+		, m_width(width)
+		, m_height(height)
 	{
 	}
 

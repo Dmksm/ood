@@ -21,7 +21,7 @@ public:
 
     void MoveTo(double x, double y) override
     {
-        m_position = sf::Vector2f(x, y);
+        m_position = sf::Vector2f((float)x, (float)y);
     }
 
     void SetLineColor(RGBAColor color) override
@@ -31,8 +31,8 @@ public:
      
     void LineTo(double x, double y) override
     {
-        m_lines.push_back(sf::Vector2f(x, y));
-        m_position = sf::Vector2f(x, y);
+        m_lines.push_back(sf::Vector2f((float)x, (float)y));
+        m_position = sf::Vector2f((float)x, (float)y);
     }
 
     void EndFill() override
@@ -60,17 +60,17 @@ public:
     void DrawEllipse(double cx, double cy, double rx, double ry) override
     {
         EllipseShape ellipse;
-        ellipse.setPosition(sf::Vector2f(cx, cy));
-        ellipse.setRadius(sf::Vector2f(rx, ry));
+        ellipse.setPosition(sf::Vector2f((float)cx, (float)cy));
+        ellipse.setRadius(sf::Vector2f((float)rx, (float)ry));
         ellipse.setOutlineThickness(m_thickness);
         ellipse.setOutlineColor(m_lineColor);
         ellipse.setFillColor(m_fillColor);
         m_window->draw(ellipse);
     }
 
-    void SetThickness(float thickness) override
+    void SetThickness(double thickness) override
     {
-        m_thickness = thickness;
+        m_thickness = (float)thickness;
     }
 
 private:
