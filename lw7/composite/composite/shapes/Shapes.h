@@ -382,13 +382,14 @@ public:
 
 	void SetFrame(const RectD& rect) override
 	{
+		RectD currFrame = GetFrame();
 		for (auto& it : m_shapes)
 		{
 			RectD frame = it->GetFrame();
-			frame.left += rect.left - frame.left;
-			frame.top += rect.top - frame.top;
-			frame.width *= rect.width / frame.width;
-			frame.height *= rect.height / frame.height;
+			frame.left += rect.left - currFrame.left;
+			frame.top += rect.top - currFrame.top;
+			frame.width *= rect.width / currFrame.width;
+			frame.height *= rect.height / currFrame.height;
 			it->SetFrame(frame);
 		}
 	}
