@@ -134,7 +134,10 @@ Machine is %3%
 		unsigned m_count;	// Количество шариков
 		State m_state = State::SoldOut;
 	};
+}
 
+namespace naive_multi
+{
 	class CMultiGumballMachine
 	{
 	public:
@@ -258,24 +261,17 @@ Machine is %3%
 				if (m_count == 0)
 				{
 					std::cout << "Oops, out of gumballs\n";
-					if (m_quarterCount == 0)
-					{
-						m_state = State::SoldOut;
-					}
-					else
-					{
-						m_state = State::HasQuarter;
-					}
+					m_state = State::SoldOut;
 				}
 				else
 				{
-					if (m_quarterCount == 0)
+					if (m_quarterCount > 0)
 					{
-						m_state = State::NoQuarter;
+						m_state = State::HasQuarter;
 					}
 					else
 					{
-						m_state = State::HasQuarter;
+						m_state = State::NoQuarter;
 					}
 				}
 				break;
