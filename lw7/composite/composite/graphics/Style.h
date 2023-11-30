@@ -159,7 +159,6 @@ public:
 
 	std::optional<RGBAColor> GetColor()const
 	{
-		bool isEnable = true;
 		std::optional<RGBAColor> color = std::nullopt;
 		bool isFirst = true;
 		bool isEnabled = true;
@@ -197,7 +196,6 @@ public:
 
 	std::optional<double> GetThickness()const override
 	{
-		bool isEnable = true;
 		std::optional<double> m_thickness = std::nullopt;
 		bool isFirst = true;
 		bool isEnabled = true;
@@ -284,7 +282,6 @@ public:
 
 	std::optional<RGBAColor> GetColor()const
 	{
-		bool isEnable = true;
 		std::optional<RGBAColor> color = std::nullopt;
 		bool isFirst = true;
 		bool isEnabled = true;

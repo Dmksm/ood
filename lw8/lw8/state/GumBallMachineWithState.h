@@ -1,5 +1,5 @@
 #pragma once
-#include <iostream>
+#include "stdafx.h"
 
 namespace with_state
 {

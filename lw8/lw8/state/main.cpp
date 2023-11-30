@@ -1,24 +1,23 @@
 #include "NaiveGumBallMachine.h"
 #include "GumBallMachineWithState.h"
 #include "GumBallMachineWithDynamicallyCreatedState.h"
-
-using namespace std;
+#include "stdafx.h"
 
 template <typename GumballMachineType>
 void TestGumballMachine(GumballMachineType& m)
 {
-	cout << m.ToString() << endl;
+	std::cout << m.ToString() << std::endl;
 
 	m.InsertQuarter();
 	m.TurnCrank();
 
-	cout << m.ToString() << endl;
+	std::cout << m.ToString() << std::endl;
 
 	m.InsertQuarter();
 	m.EjectQuarter();
 	m.TurnCrank();
 
-	cout << m.ToString() << endl;
+	std::cout << m.ToString() << std::endl;
 
 	m.InsertQuarter();
 	m.TurnCrank();
@@ -26,7 +25,7 @@ void TestGumballMachine(GumballMachineType& m)
 	m.TurnCrank();
 	m.EjectQuarter();
 
-	cout << m.ToString() << endl;
+	std::cout << m.ToString() << std::endl;
 
 	m.InsertQuarter();
 	m.InsertQuarter();
@@ -36,7 +35,7 @@ void TestGumballMachine(GumballMachineType& m)
 	m.InsertQuarter();
 	m.TurnCrank();
 
-	cout << m.ToString() << endl;
+	std::cout << m.ToString() << std::endl;
 }
 
 void TestNaiveGumballMachine()
@@ -61,10 +60,10 @@ int main()
 {
 	TestNaiveGumballMachine();
 
-	cout << "\n-----------------\n";
+	std::cout << "\n-----------------\n";
 	TestGumballMachineWithState();
 
-	cout << "\n-----------------\n";
+	std::cout << "\n-----------------\n";
 	TestGumballMachineWithDynamicState();
 
 	return 0;

@@ -29,5 +29,8 @@
     <ClInclude Include="..\state\NaiveGumBallMachine.h">
       <Filter>Файлы заголовков</Filter>
     </ClInclude>
+    <ClInclude Include="..\state\stdafx.h">
+      <Filter>Файлы заголовков</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

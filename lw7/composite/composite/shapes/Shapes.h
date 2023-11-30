@@ -356,6 +356,7 @@ public:
 	}
 
 	//обработать ситуацию для пустой группы иначе вернется и обруботать пустую группу
+	//метод не работает проверять тесты 
 	RectD GetFrame() override
 	{
 		if (m_shapes.empty())
@@ -389,21 +390,6 @@ public:
 		return frame;
 	}
 
-	//фигуры должны сохранять свое относительное положение относительно группы
-	void SetFrame(const RectD& rect) override
-	{
-		RectD currFrame = GetFrame();
-		for (auto& it : m_shapes)
-		{
-			RectD frame = it->GetFrame();
-			frame.left += rect.left - currFrame.left;
-			frame.top += rect.top - currFrame.top;
-			frame.width *= rect.width / currFrame.width;
-			frame.height *= rect.height / currFrame.height;
-			it->SetFrame(frame);
-		}
-	}
-
 	IStyle& GetlineStyle() override
 	{
 		return m_lineStyle;
@@ -427,6 +413,21 @@ public:
 	size_t GetShapesCount()const override
 	{
 		return m_shapes.size();
+	}
+
+	//фигуры должны сохранять свое относительное положение относительно группы
+	void SetFrame(const RectD& rect) override
+	{
+		RectD currFrame = GetFrame();
+		for (auto& it : m_shapes)
+		{
+			RectD frame = it->GetFrame();
+			frame.left += rect.left - currFrame.left;
+			frame.top += rect.top - currFrame.top;
+			frame.width *= rect.width / currFrame.width;
+			frame.height *= rect.height / currFrame.height;
+			it->SetFrame(frame);
+		}
 	}
 
 	void InsertShape(
