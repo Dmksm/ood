@@ -7,40 +7,23 @@
 
 namespace with_state_mock
 {
-	struct IMockState
-	{
-		virtual void InsertQuarter() = 0;
-		virtual void EjectQuarter() = 0;
-		virtual void TurnCrank() = 0;
-		virtual void Dispense() = 0;
-		virtual std::string ToString()const = 0;
-		virtual ~IMockState() = default;
-	};
-
-	struct IMockGumballMachine
-	{
-		virtual void ReleaseBall() = 0;
-		virtual unsigned GetBallCount()const = 0;
-
-		virtual void SetSoldOutState() = 0;
-		virtual void SetNoQuarterState() = 0;
-		virtual void SetSoldState() = 0;
-		virtual void SetHasQuarterState() = 0;
-
-		virtual ~IMockGumballMachine() = default;
-	};
-
-	class CMockSoldState : public IMockState
+	class CMockSoldState : public with_state::IState
 	{
 	public:
-		CMockSoldState(IMockGumballMachine& gumballMachine, std::stringstream& ss)
+		CMockSoldState(with_state::IGumballMachine& gumballMachine, std::stringstream& ss)
 			:m_gumballMachine(gumballMachine)
 			, m_out(ss)
 		{}
-
 		void InsertQuarter() override
 		{
-			m_out << "Please wait, we're already giving you a gumball\n";
+			if (m_gumballMachine.IncrementQuaterCount())
+			{
+				m_out << "You inserted a quarter\n";
+			}
+			else
+			{
+				m_out << "Please wait, we're already giving you a gumball\n";
+			}
 		}
 		void EjectQuarter() override
 		{
@@ -60,8 +43,19 @@ namespace with_state_mock
 			}
 			else
 			{
-				m_gumballMachine.SetNoQuarterState();
+				if (m_gumballMachine.GetQuaterCount() > 0)
+				{
+					m_gumballMachine.SetHasQuarterState();
+				}
+				else
+				{
+					m_gumballMachine.SetNoQuarterState();
+				}
 			}
+		}
+		void Refill(unsigned numBalls)
+		{
+			m_out << "You can't refill, you haven't get a gumball yet\n";
 		}
 		std::string ToString() const override
 		{
@@ -69,24 +63,31 @@ namespace with_state_mock
 		}
 	private:
 		std::stringstream& m_out;
-		IMockGumballMachine& m_gumballMachine;
+		with_state::IGumballMachine& m_gumballMachine;
 	};
 
-	class CMockSoldOutState : public IMockState
+	class CMockSoldOutState : public with_state::IState
 	{
 	public:
-		CMockSoldOutState(IMockGumballMachine& gumballMachine, std::stringstream& ss)
+		CMockSoldOutState(with_state::IGumballMachine& gumballMachine, std::stringstream& ss)
 			:m_gumballMachine(gumballMachine)
 			, m_out(ss)
 		{}
-
 		void InsertQuarter() override
 		{
 			m_out << "You can't insert a quarter, the machine is sold out\n";
 		}
 		void EjectQuarter() override
 		{
-			m_out << "You can't eject, you haven't inserted a quarter yet\n";
+			if (m_gumballMachine.GetQuaterCount() > 0)
+			{
+				m_out << "Quarter returned\n";
+				m_gumballMachine.EjectAllQuarters();
+			}
+			else
+			{
+				m_out << "You can't eject, you haven't inserted a quarter yet\n";
+			}
 		}
 		void TurnCrank() override
 		{
@@ -96,30 +97,45 @@ namespace with_state_mock
 		{
 			m_out << "No gumball dispensed\n";
 		}
+		void Refill(unsigned numBalls)
+		{
+			m_out << "You refilled machine\n";
+			m_gumballMachine.RefillNumballs(numBalls);
+			m_gumballMachine.GetQuaterCount() > 0
+				? m_gumballMachine.SetHasQuarterState()
+				: m_gumballMachine.SetNoQuarterState();
+		}
 		std::string ToString() const override
 		{
 			return "sold out";
 		}
 	private:
 		std::stringstream& m_out;
-		IMockGumballMachine& m_gumballMachine;
+		with_state::IGumballMachine& m_gumballMachine;
 	};
 
-	class CMockHasQuarterState : public IMockState
+	class CMockHasQuarterState : public with_state::IState
 	{
 	public:
-		CMockHasQuarterState(IMockGumballMachine& gumballMachine, std::stringstream& ss)
+		CMockHasQuarterState(with_state::IGumballMachine& gumballMachine, std::stringstream& ss)
 			:m_gumballMachine(gumballMachine)
 			, m_out(ss)
 		{}
-
 		void InsertQuarter() override
 		{
-			m_out << "You can't insert another quarter\n";
+			if (m_gumballMachine.IncrementQuaterCount())
+			{
+				m_out << "You inserted a quarter\n";
+			}
+			else
+			{
+				m_out << "You can't insert another quarter\n";
+			}
 		}
 		void EjectQuarter() override
 		{
 			m_out << "Quarter returned\n";
+			m_gumballMachine.EjectAllQuarters();
 			m_gumballMachine.SetNoQuarterState();
 		}
 		void TurnCrank() override
@@ -131,23 +147,27 @@ namespace with_state_mock
 		{
 			m_out << "No gumball dispensed\n";
 		}
+		void Refill(unsigned numBalls)
+		{
+			m_out << "You refilled machine\n";
+			m_gumballMachine.RefillNumballs(numBalls);
+		}
 		std::string ToString() const override
 		{
 			return "waiting for turn of crank";
 		}
 	private:
 		std::stringstream& m_out;
-		IMockGumballMachine& m_gumballMachine;
+		with_state::IGumballMachine& m_gumballMachine;
 	};
 
-	class CMockNoQuarterState : public IMockState
+	class CMockNoQuarterState : public with_state::IState
 	{
 	public:
-		CMockNoQuarterState(IMockGumballMachine& gumballMachine, std::stringstream& ss)
+		CMockNoQuarterState(with_state::IGumballMachine& gumballMachine, std::stringstream& ss)
 			: m_gumballMachine(gumballMachine)
 			, m_out(ss)
 		{}
-
 		void InsertQuarter() override
 		{
 			m_out << "You inserted a quarter\n";
@@ -165,16 +185,21 @@ namespace with_state_mock
 		{
 			m_out << "You need to pay first\n";
 		}
+		void Refill(unsigned numBalls)
+		{
+			m_out << "You refilled machine\n";
+			m_gumballMachine.RefillNumballs(numBalls);
+		}
 		std::string ToString() const override
 		{
 			return "waiting for quarter";
 		}
 	private:
 		std::stringstream& m_out;
-		IMockGumballMachine& m_gumballMachine;
+		with_state::IGumballMachine& m_gumballMachine;
 	};
 
-	class CMockGumballMachine : private IMockGumballMachine
+	class CMockGumballMachine : private with_state::IGumballMachine
 	{
 	public:
 		CMockGumballMachine(unsigned numBalls, std::stringstream& ss)
@@ -190,6 +215,10 @@ namespace with_state_mock
 			{
 				m_state = &m_noQuarterState;
 			}
+		}
+		void Refill(unsigned numBalls)
+		{
+			m_state->Refill(numBalls);
 		}
 		void EjectQuarter()
 		{
@@ -215,14 +244,12 @@ Machine is %3%
 			return (fmt % m_count % (m_count != 1 ? "s" : "") % m_state->ToString()).str();
 		}
 
-		IMockState* m_state;
+		const static unsigned MAX_QUARTER_COUNT = 5;
+		unsigned m_quaterCount = 0;
+		unsigned m_count = 0;
 		std::stringstream& m_out;
+		with_state::IState* m_state;
 
-		void SetSoldState() override
-		{
-			m_state = &m_soldState;
-		}
-	private:
 		unsigned GetBallCount() const override
 		{
 			return m_count;
@@ -243,13 +270,50 @@ Machine is %3%
 		{
 			m_state = &m_noQuarterState;
 		}
-		
+		void SetSoldState() override
+		{
+			m_state = &m_soldState;
+		}
 		void SetHasQuarterState() override
 		{
 			m_state = &m_hasQuarterState;
 		}
 
-		unsigned m_count = 0;
+		bool DecrementQuaterCount() override
+		{
+			if (m_quaterCount == 0)
+			{
+				return false;
+			}
+			m_quaterCount--;
+			return true;
+		};
+
+		bool IncrementQuaterCount() override
+		{
+			if (m_quaterCount == MAX_QUARTER_COUNT)
+			{
+				return false;
+			}
+			m_quaterCount++;
+			return true;
+		};
+
+		unsigned GetQuaterCount() override
+		{
+			return m_quaterCount;
+		}
+
+		void EjectAllQuarters() override
+		{
+			m_quaterCount = 0;
+		}
+
+		void RefillNumballs(unsigned numBalls) override
+		{
+			m_count = numBalls;
+		}
+
 		CMockSoldState m_soldState;
 		CMockSoldOutState m_soldOutState;
 		CMockNoQuarterState m_noQuarterState;
@@ -258,162 +322,216 @@ Machine is %3%
 
 }
 
-class CMockGumballMachine
+namespace naive_mock
 {
-public:
-	enum class State
+	class CMockGumballMachine
 	{
-		SoldOut,		// Жвачка закончилась
-		NoQuarter,		// Нет монетки
-		HasQuarter,		// Есть монетка
-		Sold,			// Монетка выдана
-	};
-
-	CMockGumballMachine(unsigned count, std::stringstream& strm)
-		: m_count(count)
-		, m_state(count > 0 ? State::NoQuarter : State::SoldOut)
-		, m_out(strm)
-	{
-	}
-
-	void InsertQuarter()
-	{
-		switch (m_state)
+	public:
+		enum class State
 		{
-		case State::SoldOut:
-			m_out << "You can't insert a quarter, the machine is sold out\n";
-			break;
-		case State::NoQuarter:
-			m_out << "You inserted a quarter\n";
-			m_state = State::HasQuarter;
-			break;
-		case State::HasQuarter:
-			m_out << "You can't insert another quarter\n";
-			break;
-		case State::Sold:
-			m_out << "Please wait, we're already giving you a gumball\n";
-			break;
-		}
-	}
+			SoldOut,		// Жвачка закончилась
+			NoQuarter,		// Нет монетки
+			HasQuarter,		// Есть монетка
+			Sold,			// Монетка выдана
+		};
 
-	void EjectQuarter()
-	{
-		switch (m_state)
+		CMockGumballMachine(unsigned count, std::stringstream& strm)
+			: m_count(count)
+			, m_state(count > 0 ? State::NoQuarter : State::SoldOut)
+			, m_quarterCount(0)
+			, m_out(strm)
 		{
-		case State::HasQuarter:
-			m_out << "Quarter returned\n";
-			m_state = State::NoQuarter;
-			break;
-		case State::NoQuarter:
-			m_out << "You haven't inserted a quarter\n";
-			break;
-		case State::Sold:
-			m_out << "Sorry you already turned the crank\n";
-			break;
-		case State::SoldOut:
-			m_out << "You can't eject, you haven't inserted a quarter yet\n";
-			break;
 		}
-	}
 
-	void TurnCrank()
-	{
-		switch (m_state)
+		void InsertQuarter()
 		{
-		case State::SoldOut:
-			m_out << "You turned but there's no gumballs\n";
-			break;
-		case State::NoQuarter:
-			m_out << "You turned but there's no quarter\n";
-			break;
-		case State::HasQuarter:
-			m_out << "You turned...\n";
-			m_state = State::Sold;
-			Dispense();
-			break;
-		case State::Sold:
-			m_out << "Turning twice doesn't get you another gumball\n";
-			break;
+			switch (m_state)
+			{
+			case State::SoldOut:
+				m_out << "You can't insert a quarter, the machine is sold out\n";
+				break;
+			case State::NoQuarter:
+				m_quarterCount++;
+				m_out << "You inserted a quarter\n";
+				m_state = State::HasQuarter;
+				break;
+			case State::HasQuarter:
+				if (m_quarterCount == MAX_QUARTER_COUNT)
+				{
+					m_out << "You can't insert another quarter\n";
+				}
+				else
+				{
+					m_quarterCount++;
+					m_out << "You inserted a quarter\n";
+				}
+				break;
+			case State::Sold:
+				if (m_quarterCount < MAX_QUARTER_COUNT)
+				{
+					++m_quarterCount;
+					m_out << "You inserted a quarter\n";
+				}
+				else
+				{
+					m_out << "Please wait, we're already giving you a gumball\n";
+				}
+				break;
+			}
 		}
-	}
 
-	void Refill(unsigned numBalls)
-	{
-		m_count = numBalls;
-		m_state = numBalls > 0 ? State::NoQuarter : State::SoldOut;
-	}
+		void EjectQuarter()
+		{
+			switch (m_state)
+			{
+			case State::HasQuarter:
+				m_quarterCount = 0;
+				m_out << "Quarter returned\n";
+				m_state = State::NoQuarter;
+				break;
+			case State::NoQuarter:
+				m_out << "You haven't inserted a quarter\n";
+				break;
+			case State::Sold:
+				m_out << "Sorry you already turned the crank\n";
+				break;
+			case State::SoldOut:
+				if (m_quarterCount > 0)
+				{
+					m_quarterCount = 0;
+					m_out << "Quarter returned\n";
+				}
+				else
+				{
+					m_out << "You can't eject, you haven't inserted a quarter yet\n";
+				}
+				break;
+			}
+		}
 
-	std::string ToString()const
-	{
-		std::string state =
-			(m_state == State::SoldOut) ? "sold out" :
-			(m_state == State::NoQuarter) ? "waiting for quarter" :
-			(m_state == State::HasQuarter) ? "waiting for turn of crank"
-			: "delivering a gumball";
-		auto fmt = boost::format(R"(
+		void TurnCrank()
+		{
+			switch (m_state)
+			{
+			case State::SoldOut:
+				m_out << "You turned but there's no gumballs\n";
+				break;
+			case State::NoQuarter:
+				m_out << "You turned but there's no quarter\n";
+				break;
+			case State::HasQuarter:
+				m_out << "You turned...\n";
+				m_state = State::Sold;
+				Dispense();
+				break;
+			case State::Sold:
+				m_out << "Turning twice doesn't get you another gumball\n";
+				break;
+			}
+		}
+
+		void Refill(unsigned numBalls)
+		{
+			switch (m_state)
+			{
+			case State::SoldOut:
+				m_out << "You refilled machine\n";
+				m_count = numBalls;
+				m_state = m_quarterCount > 0 ? State::HasQuarter : State::NoQuarter;
+				break;
+			case State::NoQuarter:
+			case State::HasQuarter:
+				m_out << "You refilled machine\n";
+				m_count = numBalls;
+				break;
+			case State::Sold:
+				m_out << "You can't refill, you haven't get a gumball yet\n";
+				break;
+			}
+		}
+
+		std::string ToString()const
+		{
+			std::string state =
+				(m_state == State::SoldOut) ? "sold out" :
+				(m_state == State::NoQuarter) ? "waiting for quarter" :
+				(m_state == State::HasQuarter) ? "waiting for turn of crank"
+				: "delivering a gumball";
+			auto fmt = boost::format(R"(
 Mighty Gumball, Inc.
 C++-enabled Standing Gumball Model #2016
 Inventory: %1% gumball%2%
 Machine is %3%
 )");
-		return (fmt % m_count % (m_count != 1 ? "s" : "") % state).str();
-	}
-
-	std::stringstream& m_out;
-	void Dispense()
-	{
-		switch (m_state)
-		{
-		case State::Sold:
-			m_out << "A gumball comes rolling out the slot\n";
-			--m_count;
-			if (m_count == 0)
-			{
-				m_out << "Oops, out of gumballs\n";
-				m_state = State::SoldOut;
-			}
-			else
-			{
-				m_state = State::NoQuarter;
-			}
-			break;
-		case State::NoQuarter:
-			m_out << "You need to pay first\n";
-			break;
-		case State::SoldOut:
-		case State::HasQuarter:
-			m_out << "No gumball dispensed\n";
-			break;
+			return (fmt % m_count % (m_count != 1 ? "s" : "") % state).str();
 		}
-	}
+		std::stringstream& m_out;
+		const unsigned MAX_QUARTER_COUNT = 5;
 
-	unsigned m_count;	// Количество шариков
-	State m_state = State::SoldOut;
-};
+		unsigned m_count;	// Количество шариков
+		unsigned m_quarterCount;	// Количество монеток
+		State m_state = State::SoldOut;
+
+		void Dispense()
+		{
+			switch (m_state)
+			{
+			case State::Sold:
+				--m_quarterCount;
+				m_out << "A gumball comes rolling out the slot\n";
+				--m_count;
+				if (m_count == 0)
+				{
+					m_out << "Oops, out of gumballs\n";
+					m_state = State::SoldOut;
+				}
+				else
+				{
+					if (m_quarterCount > 0)
+					{
+						m_state = State::HasQuarter;
+					}
+					else
+					{
+						m_state = State::NoQuarter;
+					}
+				}
+				break;
+			case State::NoQuarter:
+				m_out << "You need to pay first\n";
+				break;
+			case State::SoldOut:
+			case State::HasQuarter:
+				m_out << "No gumball dispensed\n";
+				break;
+			}
+		}
+	};
+}
 
 SCENARIO("Work with SoldOut state")
 {
 	GIVEN("Streams and line points")
 	{
 		std::stringstream ss, comparedStream;
-		CMockGumballMachine machine(0, ss);
+		naive_mock::CMockGumballMachine machine(0, ss);
 		WHEN("State is SoldOut")
 		{
-			REQUIRE(machine.m_state == CMockGumballMachine::State::SoldOut);
+			REQUIRE(machine.m_state == naive_mock::CMockGumballMachine::State::SoldOut);
 			REQUIRE(machine.m_out.str() == "");
 			THEN("All method working without erorrs")
 			{
 				machine.Dispense();
-				REQUIRE(machine.m_state == CMockGumballMachine::State::SoldOut);
+				REQUIRE(machine.m_state == naive_mock::CMockGumballMachine::State::SoldOut);
 
 				machine.TurnCrank();
-				REQUIRE(machine.m_state == CMockGumballMachine::State::SoldOut);
+				REQUIRE(machine.m_state == naive_mock::CMockGumballMachine::State::SoldOut);
 
 				machine.EjectQuarter();
-				REQUIRE(machine.m_state == CMockGumballMachine::State::SoldOut);
+				REQUIRE(machine.m_state == naive_mock::CMockGumballMachine::State::SoldOut);
 
 				machine.InsertQuarter();
-				REQUIRE(machine.m_state == CMockGumballMachine::State::SoldOut);
+				REQUIRE(machine.m_state == naive_mock::CMockGumballMachine::State::SoldOut);
 
 				comparedStream 
 					<< "No gumball dispensed\n" 
@@ -423,18 +541,33 @@ SCENARIO("Work with SoldOut state")
 				REQUIRE(machine.m_out.str() == comparedStream.str());
 			}
 		}
-		WHEN("Refill machine")
+		WHEN("Refill machine with quater")
 		{
-			THEN("State will be no quater")
+			THEN("State will be has quater or sold out")
 			{
 				machine.Refill(0);
-				REQUIRE(machine.m_state == CMockGumballMachine::State::SoldOut);
+				REQUIRE(machine.m_state == naive_mock::CMockGumballMachine::State::SoldOut);
 
 				machine.Refill(1);
-				REQUIRE(machine.m_state == CMockGumballMachine::State::NoQuarter);
+				REQUIRE(machine.m_state == naive_mock::CMockGumballMachine::State::HasQuarter);
 
 				machine.Refill(0);
-				REQUIRE(machine.m_state == CMockGumballMachine::State::SoldOut);
+				REQUIRE(machine.m_state == naive_mock::CMockGumballMachine::State::SoldOut);
+			}
+		}
+		WHEN("Refill machine without quater")
+		{
+			THEN("State will be no quater or sold out")
+			{
+				machine.EjectQuarter();
+				machine.Refill(0);
+				REQUIRE(machine.m_state == naive_mock::CMockGumballMachine::State::SoldOut);
+
+				machine.Refill(1);
+				REQUIRE(machine.m_state == naive_mock::CMockGumballMachine::State::NoQuarter);
+
+				machine.Refill(0);
+				REQUIRE(machine.m_state == naive_mock::CMockGumballMachine::State::SoldOut);
 			}
 		}
 	}
@@ -445,23 +578,23 @@ SCENARIO("Work with NoQuarter state")
 	GIVEN("Streams and line points")
 	{
 		std::stringstream ss, comparedStream;
-		CMockGumballMachine machine(2, ss);
+		naive_mock::CMockGumballMachine machine(2, ss);
 		WHEN("State is NoQuarter")
 		{
-			REQUIRE(machine.m_state == CMockGumballMachine::State::NoQuarter);
+			REQUIRE(machine.m_state == naive_mock::CMockGumballMachine::State::NoQuarter);
 			THEN("All method working without erorrs")
 			{
 				machine.Dispense();
-				REQUIRE(machine.m_state == CMockGumballMachine::State::NoQuarter);
+				REQUIRE(machine.m_state == naive_mock::CMockGumballMachine::State::NoQuarter);
 
 				machine.TurnCrank();
-				REQUIRE(machine.m_state == CMockGumballMachine::State::NoQuarter);
+				REQUIRE(machine.m_state == naive_mock::CMockGumballMachine::State::NoQuarter);
 
 				machine.EjectQuarter();
-				REQUIRE(machine.m_state == CMockGumballMachine::State::NoQuarter);
+				REQUIRE(machine.m_state == naive_mock::CMockGumballMachine::State::NoQuarter);
 
 				machine.InsertQuarter();
-				REQUIRE(machine.m_state == CMockGumballMachine::State::HasQuarter);
+				REQUIRE(machine.m_state == naive_mock::CMockGumballMachine::State::HasQuarter);
 
 				comparedStream 
 					<< "You need to pay first\n" 
@@ -479,33 +612,33 @@ SCENARIO("Work with HasQuarter state")
 	GIVEN("Streams and line points")
 	{
 		std::stringstream ss, comparedStream;
-		CMockGumballMachine machine(2, ss);
+		naive_mock::CMockGumballMachine machine(2, ss);
 		WHEN("State is HasQuarter")
 		{
 			machine.InsertQuarter();
-			REQUIRE(machine.m_state == CMockGumballMachine::State::HasQuarter);
+			REQUIRE(machine.m_state == naive_mock::CMockGumballMachine::State::HasQuarter);
 			THEN("All method working without erorrs")
 			{
 				machine.InsertQuarter();
-				REQUIRE(machine.m_state == CMockGumballMachine::State::HasQuarter);
+				REQUIRE(machine.m_state == naive_mock::CMockGumballMachine::State::HasQuarter);
 
 				machine.EjectQuarter();
-				REQUIRE(machine.m_state == CMockGumballMachine::State::NoQuarter);
+				REQUIRE(machine.m_state == naive_mock::CMockGumballMachine::State::NoQuarter);
 
 				machine.InsertQuarter();
-				REQUIRE(machine.m_state == CMockGumballMachine::State::HasQuarter);
+				REQUIRE(machine.m_state == naive_mock::CMockGumballMachine::State::HasQuarter);
 
 				machine.Dispense();
-				REQUIRE(machine.m_state == CMockGumballMachine::State::HasQuarter);
+				REQUIRE(machine.m_state == naive_mock::CMockGumballMachine::State::HasQuarter);
 
 				machine.TurnCrank();
-				REQUIRE(machine.m_state == CMockGumballMachine::State::NoQuarter);
+				REQUIRE(machine.m_state == naive_mock::CMockGumballMachine::State::NoQuarter);
 
 				machine.InsertQuarter();
-				REQUIRE(machine.m_state == CMockGumballMachine::State::HasQuarter);
+				REQUIRE(machine.m_state == naive_mock::CMockGumballMachine::State::HasQuarter);
 
 				machine.TurnCrank();
-				REQUIRE(machine.m_state == CMockGumballMachine::State::SoldOut);
+				REQUIRE(machine.m_state == naive_mock::CMockGumballMachine::State::SoldOut);
 
 				comparedStream
 					<< "You inserted a quarter\n"
@@ -530,24 +663,24 @@ SCENARIO("Work with Sold state")
 	GIVEN("Streams and line points")
 	{
 		std::stringstream ss, comparedStream;
-		CMockGumballMachine machine(2, ss);
+		naive_mock::CMockGumballMachine machine(2, ss);
 		WHEN("State is Sold")
 		{
-			machine.m_state = CMockGumballMachine::State::Sold;
-			REQUIRE(machine.m_state == CMockGumballMachine::State::Sold);
+			machine.m_state = naive_mock::CMockGumballMachine::State::Sold;
+			REQUIRE(machine.m_state == naive_mock::CMockGumballMachine::State::Sold);
 			THEN("All method working without erorrs")
 			{
 				machine.EjectQuarter();
-				REQUIRE(machine.m_state == CMockGumballMachine::State::Sold);
+				REQUIRE(machine.m_state == naive_mock::CMockGumballMachine::State::Sold);
 
 				machine.InsertQuarter();
-				REQUIRE(machine.m_state == CMockGumballMachine::State::Sold);
+				REQUIRE(machine.m_state == naive_mock::CMockGumballMachine::State::Sold);
 
 				machine.TurnCrank();
-				REQUIRE(machine.m_state == CMockGumballMachine::State::Sold);
+				REQUIRE(machine.m_state == naive_mock::CMockGumballMachine::State::Sold);
 
 				machine.Dispense();
-				REQUIRE(machine.m_state == CMockGumballMachine::State::NoQuarter);
+				REQUIRE(machine.m_state == naive_mock::CMockGumballMachine::State::NoQuarter);
 
 				comparedStream
 					<< "Sorry you already turned the crank\n"
@@ -661,7 +794,7 @@ SCENARIO("Machine with state: Work with HasQuarter state")
 
 				comparedStream
 					<< "You inserted a quarter\n"
-					<< "You can't insert another quarter\n"
+					<< "You inserted a quarter\n"
 					<< "Quarter returned\n"
 					<< "You inserted a quarter\n"
 					<< "You turned...\n"
@@ -695,11 +828,11 @@ SCENARIO("Machine with state: Work with Sold state")
 				REQUIRE(machine.m_state->ToString() == "delivering a gumball");
 
 				machine.TurnCrank();
-				REQUIRE(machine.m_state->ToString() == "waiting for quarter");
+				REQUIRE(machine.m_state->ToString() == "waiting for turn of crank");
 
 				comparedStream
 					<< "Sorry you already turned the crank\n"
-					<< "Please wait, we're already giving you a gumball\n"
+					<< "You inserted a quarter\n"
 					<< "Turning twice doesn't get you another gumball\n"
 					<< "A gumball comes rolling out the slot...\n";
 				REQUIRE(machine.m_out.str() == comparedStream.str());
