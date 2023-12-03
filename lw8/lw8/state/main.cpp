@@ -2,6 +2,7 @@
 #include "GumBallMachineWithState.h"
 #include "GumBallMachineWithDynamicallyCreatedState.h"
 #include "stdafx.h"
+#include "CController.h"
 
 template <typename GumballMachineType>
 void TestGumballMachine(GumballMachineType& m)
@@ -65,6 +66,18 @@ int main()
 
 	std::cout << "\n-----------------\n";
 	TestGumballMachineWithDynamicState();
+
+	CController controller(std::make_unique<with_state::CGumballMachine>(5),
+		std::cin, std::cout);
+
+	while (!std::cin.eof() && !std::cin.fail())
+	{
+		std::cout << "> ";
+		if (!controller.HandleCommand())
+		{
+			std::cout << "Unknown command!" << std::endl;
+		}
+	}
 
 	return 0;
 }
