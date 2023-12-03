@@ -101,9 +101,12 @@ namespace with_state_mock
 		{
 			m_out << "You refilled machine\n";
 			m_gumballMachine.RefillNumballs(numBalls);
-			m_gumballMachine.GetQuaterCount() > 0
-				? m_gumballMachine.SetHasQuarterState()
-				: m_gumballMachine.SetNoQuarterState();
+			if (m_gumballMachine.GetBallCount() != 0)
+			{
+				m_gumballMachine.GetQuaterCount() > 0
+					? m_gumballMachine.SetHasQuarterState()
+					: m_gumballMachine.SetNoQuarterState();
+			}
 		}
 		std::string ToString() const override
 		{
@@ -151,6 +154,10 @@ namespace with_state_mock
 		{
 			m_out << "You refilled machine\n";
 			m_gumballMachine.RefillNumballs(numBalls);
+			if (m_gumballMachine.GetBallCount() == 0)
+			{
+				m_gumballMachine.SetSoldOutState();
+			}
 		}
 		std::string ToString() const override
 		{
@@ -189,6 +196,10 @@ namespace with_state_mock
 		{
 			m_out << "You refilled machine\n";
 			m_gumballMachine.RefillNumballs(numBalls);
+			if (m_gumballMachine.GetBallCount() == 0)
+			{
+				m_gumballMachine.SetSoldOutState();
+			}
 		}
 		std::string ToString() const override
 		{
@@ -437,12 +448,19 @@ namespace naive_mock
 			case State::SoldOut:
 				m_out << "You refilled machine\n";
 				m_count = numBalls;
-				m_state = m_quarterCount > 0 ? State::HasQuarter : State::NoQuarter;
+				if (numBalls > 0)
+				{
+					m_state = m_quarterCount > 0 ? State::HasQuarter : State::NoQuarter;
+				}
 				break;
 			case State::NoQuarter:
 			case State::HasQuarter:
 				m_out << "You refilled machine\n";
 				m_count = numBalls;
+				if (numBalls == 0)
+				{
+					m_state = State::SoldOut;
+				}
 				break;
 			case State::Sold:
 				m_out << "You can't refill, you haven't get a gumball yet\n";
@@ -543,6 +561,8 @@ SCENARIO("Work with SoldOut state")
 		}
 		WHEN("Refill machine with quater")
 		{
+			machine.m_quarterCount = 2;
+			REQUIRE(machine.m_quarterCount > 0);
 			THEN("State will be has quater or sold out")
 			{
 				machine.Refill(0);
@@ -557,9 +577,10 @@ SCENARIO("Work with SoldOut state")
 		}
 		WHEN("Refill machine without quater")
 		{
+			machine.EjectQuarter();
+			REQUIRE(machine.m_quarterCount == 0);
 			THEN("State will be no quater or sold out")
 			{
-				machine.EjectQuarter();
 				machine.Refill(0);
 				REQUIRE(machine.m_state == naive_mock::CMockGumballMachine::State::SoldOut);
 
@@ -642,7 +663,7 @@ SCENARIO("Work with HasQuarter state")
 
 				comparedStream
 					<< "You inserted a quarter\n"
-					<< "You can't insert another quarter\n"
+					<< "You inserted a quarter\n"
 					<< "Quarter returned\n"
 					<< "You inserted a quarter\n"
 					<< "No gumball dispensed\n"
@@ -684,7 +705,7 @@ SCENARIO("Work with Sold state")
 
 				comparedStream
 					<< "Sorry you already turned the crank\n"
-					<< "Please wait, we're already giving you a gumball\n"
+					<< "You inserted a quarter\n"
 					<< "Turning twice doesn't get you another gumball\n"
 					<< "A gumball comes rolling out the slot\n";
 				REQUIRE(machine.m_out.str() == comparedStream.str());

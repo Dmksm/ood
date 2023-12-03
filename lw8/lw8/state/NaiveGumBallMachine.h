@@ -115,12 +115,19 @@ namespace naive
 			case State::SoldOut:
 				std::cout << "You refilled machine\n";
 				m_count = numBalls;
-				m_state = m_quarterCount > 0 ? State::HasQuarter : State::NoQuarter;
+				if (numBalls > 0)
+				{
+					m_state = m_quarterCount > 0 ? State::HasQuarter : State::NoQuarter;
+				}
 				break;
 			case State::NoQuarter:
 			case State::HasQuarter:
 				std::cout << "You refilled machine\n";
 				m_count = numBalls;
+				if (numBalls == 0)
+				{
+					m_state = State::SoldOut;
+				}
 				break;
 			case State::Sold:
 				std::cout << "You can't refill, you haven't get a gumball yet\n";

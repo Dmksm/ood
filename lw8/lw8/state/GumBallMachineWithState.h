@@ -124,9 +124,12 @@ namespace with_state
 		{
 			std::cout << "You refilled machine\n";
 			m_gumballMachine.RefillNumballs(numBalls);
-			m_gumballMachine.GetQuaterCount() > 0 
-				? m_gumballMachine.SetHasQuarterState()
-				: m_gumballMachine.SetNoQuarterState();
+			if (m_gumballMachine.GetBallCount() != 0)
+			{
+				m_gumballMachine.GetQuaterCount() > 0
+					? m_gumballMachine.SetHasQuarterState()
+					: m_gumballMachine.SetNoQuarterState();
+			}
 		}
 		std::string ToString() const override
 		{
@@ -173,6 +176,10 @@ namespace with_state
 		{
 			std::cout << "You refilled machine\n";
 			m_gumballMachine.RefillNumballs(numBalls);
+			if (m_gumballMachine.GetBallCount() == 0)
+			{
+				m_gumballMachine.SetSoldOutState();
+			}
 		}
 		std::string ToString() const override
 		{
@@ -210,6 +217,10 @@ namespace with_state
 		{
 			std::cout << "You refilled machine\n";
 			m_gumballMachine.RefillNumballs(numBalls);
+			if (m_gumballMachine.GetBallCount() == 0)
+			{
+				m_gumballMachine.SetSoldOutState();
+			}
 		}
 		std::string ToString() const override
 		{
