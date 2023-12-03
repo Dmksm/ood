@@ -16,6 +16,8 @@ struct Size
 class IImage
 {
 public:
+	virtual void SetPixel(char color) = 0;
+	virtual char GetPixel()const = 0;
 	virtual Size GetSize()const = 0;
 	virtual void Draw() const = 0;
 	virtual ~IImage() = default;
@@ -28,6 +30,16 @@ public:
 	{
 		// Декодируем изображение
 	}
+
+	void SetPixel(char color) override
+	{
+
+	};
+
+	char GetPixel()const override
+	{
+
+	};
 
 	void Draw() const override
 	{
