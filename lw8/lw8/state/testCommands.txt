@@ -1,0 +1,12 @@
+InsertQuarter
+EjectQuarter
+TurnCrank
+ToString
+InsertQuarter
+InsertQuarter
+TurnCrank
+ToString
+Refill 0
+ToString
+Refill 1
+ToString
