@@ -162,6 +162,14 @@
     <ClInclude Include="lib\Shape\gfx\Color.h" />
     <ClInclude Include="lib\Shape\gfx\EllipseShape.h" />
     <ClInclude Include="lib\Shape\gfx\ICanvas.h" />
+    <ClInclude Include="lib\Shape\shapes\Picture.h" />
+    <ClInclude Include="lib\Shape\shapes\Shape.h" />
+    <ClInclude Include="lib\Shape\shapes\strategy\EllipseDrawingStrategy.h" />
+    <ClInclude Include="lib\Shape\shapes\strategy\IDrawingStrategy.h" />
+    <ClInclude Include="lib\Shape\shapes\strategy\LineDrawingStrategy.h" />
+    <ClInclude Include="lib\Shape\shapes\strategy\RectangleDrawingStrategy.h" />
+    <ClInclude Include="lib\Shape\shapes\strategy\TextDrawingStrategy.h" />
+    <ClInclude Include="lib\Shape\shapes\strategy\TriangleDrawingStrategy.h" />
     <ClInclude Include="lib\Shape\stdafx.h" />
     <ClInclude Include="shapes\Shapes.h" />
   </ItemGroup>
@@ -177,6 +185,9 @@
     <None Include="sfml-system-d-2.dll" />
     <None Include="sfml-window-2.dll" />
     <None Include="sfml-window-d-2.dll" />
+  </ItemGroup>
+  <ItemGroup>
+    <Font Include="ArialMT.ttf" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

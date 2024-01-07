@@ -9,6 +9,13 @@ using namespace std::string_literals;
 class CCanvas : public ICanvas
 {
 public:
+    enum class ShapeType : int
+    {
+        Ellipse = 0,
+        Triangle = 1,
+        Rectangle = 2,
+    };
+
     CCanvas(sf::RenderWindow* window)
         : m_window(window)
         , m_color(sf::Color())
@@ -124,6 +131,29 @@ public:
         m_window->display();
     }
 
+    void GetWidgetFrame(ShapeType type) override
+    {
+        switch (type)
+        {
+            case CCanvas::ShapeType::Ellipse:
+            {
+                break;
+            }
+            case CCanvas::ShapeType::Triangle:
+            {
+                break;
+            }
+            case CCanvas::ShapeType::Rectangle:
+            {
+                break;
+            }
+            default:
+            {
+                break;
+            }
+        }
+    }
+
 private:
     const float m_widgetMarginTop = 2;
     const float m_widgetMarginLeft = 40;
@@ -152,13 +182,6 @@ private:
     sf::Color m_color;
     sf::Vector2f m_position;
     std::shared_ptr<sf::RenderWindow> m_window;
-
-    enum class ShapeType : int 
-    {
-        Ellipse = 0,
-        Triangle = 1,
-        Rectangle = 2,
-    };
 
     void DrawWidget(ShapeType shapeType, unsigned widgetPositionNumber)
     {

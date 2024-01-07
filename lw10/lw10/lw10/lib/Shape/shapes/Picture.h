@@ -53,7 +53,7 @@ public:
 		return m_shapes;
 	}
 
-	const std::unique_ptr<Shape>& GetShape(std::string& id) const
+	const std::unique_ptr<Shape>& GetShape(const std::string& id) const
 	{
 		if (!IsShapeExist(id))
 		{

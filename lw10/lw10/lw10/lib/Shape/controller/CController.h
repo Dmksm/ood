@@ -29,15 +29,35 @@ public:
 				ss.clear();
 				if (sf::Mouse::isButtonPressed(sf::Mouse::Left))
 				{
-					m_output << "Button pressed" << std::endl;
-				}
-				if (sf::Mouse::isButtonPressed(sf::Mouse::Middle))
-				{
-					std::string type = "circle";
-					std::string args = "100 110 15";
-					ss << args;
-					boost::uuids::uuid uuid = boost::uuids::random_generator()();
-					AddShape(boost::uuids::to_string(uuid), BASE_COLOR, type, ss);
+					float x = sf::Mouse::getPosition().x;
+					float y = sf::Mouse::getPosition().y;
+
+					if (sf::Mouse::isButtonPressed(sf::Mouse::Middle))
+					{
+						std::string type = "circle";
+						std::string args = "600 600 75";
+						ss << args;
+						boost::uuids::uuid uuid = boost::uuids::random_generator()();
+						AddShape(boost::uuids::to_string(uuid), BASE_COLOR, type, ss);
+					}
+
+
+
+					while (sf::Mouse::isButtonPressed(sf::Mouse::Left))
+					{
+						float prevX = sf::Mouse::getPosition().x;
+						float prevY = sf::Mouse::getPosition().y;
+						if (!m_activeShapeId.empty())
+						{
+							double dx = sf::Mouse::getPosition().x - prevX;
+							double dy = sf::Mouse::getPosition().y - prevY;
+							if (dx != 0 || dy != 0)
+							{
+								MoveShape(m_activeShapeId, dx, dy);
+								DrawPicture(ss);
+							}
+						}
+					}
 				}
 
 				if (event.type == sf::Event::Closed)
@@ -50,6 +70,7 @@ public:
 	}
 
 private:
+	std::string m_activeShapeId = "";
 	const std::string BASE_COLOR = "#ff00ff";
 	
 	std::shared_ptr<sf::RenderWindow> m_window;
@@ -136,14 +157,10 @@ private:
 		return true;
 	}
 
-	bool MoveShape(std::istream& args)
+	bool MoveShape(const std::string& id, double dx, double dy)
 	{
 		try
 		{
-			std::string id;
-			double dx, dy;
-			args >> id >> dx >> dy;
-
 			m_picture->GetShape(id)->Move(dx, dy);
 		}
 		catch (std::exception e)
