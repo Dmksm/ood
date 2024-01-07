@@ -1,9 +1,7 @@
 #pragma once
 #include "../../gfx/ICanvas.h"
 #include "../../gfx/Color.h"
-#include <string>
-#include <sstream>
-#include <iostream>
+#include "../stdafx.h"
 
 class IDrawingStrategy
 {

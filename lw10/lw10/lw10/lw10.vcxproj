@@ -160,6 +160,7 @@
     <ClInclude Include="lib\Shape\controller\CController.h" />
     <ClInclude Include="lib\Shape\gfx\CCanvas.h" />
     <ClInclude Include="lib\Shape\gfx\Color.h" />
+    <ClInclude Include="lib\Shape\gfx\CommonTypes.h" />
     <ClInclude Include="lib\Shape\gfx\EllipseShape.h" />
     <ClInclude Include="lib\Shape\gfx\ICanvas.h" />
     <ClInclude Include="lib\Shape\shapes\Picture.h" />

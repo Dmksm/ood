@@ -2,8 +2,7 @@
 #include "../gfx/ICanvas.h"
 #include "../gfx/Color.h"
 #include "strategy/IDrawingStrategy.h"
-#include <memory>
-#include <string>
+#include "../stdafx.h"
 
 class Shape
 {

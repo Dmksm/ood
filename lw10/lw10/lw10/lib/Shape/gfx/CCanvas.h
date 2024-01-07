@@ -1,21 +1,15 @@
 #pragma once
+#include "../stdafx.h"
 #include "ICanvas.h"
 #include "EllipseShape.h"
 #include "Color.h"
-#include <stdint.h>
-#include <string>
+#include "CommonTypes.h"
+
 using namespace std::string_literals;
 
 class CCanvas : public ICanvas
 {
 public:
-    enum class ShapeType : int
-    {
-        Ellipse = 0,
-        Triangle = 1,
-        Rectangle = 2,
-    };
-
     CCanvas(sf::RenderWindow* window)
         : m_window(window)
         , m_color(sf::Color())
@@ -115,10 +109,20 @@ public:
         float m_widgetPanelWidth = width - 2 * m_widgetPanelLeft;
         DrawRectangle(m_widgetPanelLeft, m_widgetPanelTop, m_widgetPanelWidth, m_widgetPanelHeight);
 
-        unsigned widgetPositionNumber = 0;
-        DrawWidget(ShapeType::Rectangle, ++widgetPositionNumber);
-        DrawWidget(ShapeType::Triangle, ++widgetPositionNumber);
-        DrawWidget(ShapeType::Ellipse, ++widgetPositionNumber);
+        RectD widgetFrame = GetWidgetFrame(ICanvas::ShapeType::Rectangle);
+        m_color = m_widgetBackgroundColor;
+        DrawRectangle(widgetFrame.left, widgetFrame.top, widgetFrame.width, widgetFrame.height);
+        DrawWidget(ShapeType::Rectangle);
+
+        widgetFrame = GetWidgetFrame(ICanvas::ShapeType::Triangle);
+        m_color = m_widgetBackgroundColor;
+        DrawRectangle(widgetFrame.left, widgetFrame.top, widgetFrame.width, widgetFrame.height);
+        DrawWidget(ShapeType::Triangle);
+        
+        widgetFrame = GetWidgetFrame(ICanvas::ShapeType::Ellipse);
+        m_color = m_widgetBackgroundColor;
+        DrawRectangle(widgetFrame.left, widgetFrame.top, widgetFrame.width, widgetFrame.height);
+        DrawWidget(ShapeType::Ellipse);
 
         m_color = m_workSpaceColor;
         float m_workSpacelWidth = m_widgetPanelWidth;
@@ -131,27 +135,14 @@ public:
         m_window->display();
     }
 
-    void GetWidgetFrame(ShapeType type) override
+    RectD GetWidgetFrame(ShapeType shapeType) override
     {
-        switch (type)
-        {
-            case CCanvas::ShapeType::Ellipse:
-            {
-                break;
-            }
-            case CCanvas::ShapeType::Triangle:
-            {
-                break;
-            }
-            case CCanvas::ShapeType::Rectangle:
-            {
-                break;
-            }
-            default:
-            {
-                break;
-            }
-        }
+        float left = (int)shapeType * (m_widgetSize + m_widgetMarginLeft);
+        float top = m_widgetPanelTop + m_widgetMarginTop;
+        float width = m_widgetSize;
+        float height = m_widgetSize;
+
+        return RectD(left, top, width, height);
     }
 
 private:
@@ -178,14 +169,15 @@ private:
     const sf::Color m_widgetShapeColor = sf::Color(17, 100, 180);
     const sf::Color m_widgetTextColor = sf::Color(0, 0, 0);
     const sf::Color m_workSpaceColor = sf::Color(255, 255, 255);
+    const sf::Color m_widgetBackgroundColor = sf::Color(181, 184, 177);
 
     sf::Color m_color;
     sf::Vector2f m_position;
     std::shared_ptr<sf::RenderWindow> m_window;
 
-    void DrawWidget(ShapeType shapeType, unsigned widgetPositionNumber)
+    void DrawWidget(ShapeType shapeType)
     {
-        float left = widgetPositionNumber * (m_widgetSize + m_widgetMarginLeft);
+        float left = (int)shapeType * (m_widgetSize + m_widgetMarginLeft);
         std::string text;
 
         m_color = m_widgetShapeColor;

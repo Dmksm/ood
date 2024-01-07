@@ -7,11 +7,7 @@
 #include "strategy/LineDrawingStrategy.h"
 #include "strategy/TriangleDrawingStrategy.h"
 #include "strategy/TextDrawingStrategy.h"
-#include <memory>
-#include <string>
-#include <stdexcept>
-#include <unordered_map>
-#include <sstream>
+#include "../stdafx.h"
 
 class Picture
 {

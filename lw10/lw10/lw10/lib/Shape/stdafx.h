@@ -7,6 +7,7 @@
 #include <functional>
 #include <numeric>
 #include <string>
+#include <sstream>
 #include <boost/enable_shared_from_this.hpp>
 #include <vector>
 #include <map>
@@ -15,3 +16,4 @@
 #include <boost/uuid/uuid.hpp> 
 #include <boost/uuid/uuid_generators.hpp>
 #include <boost/uuid/uuid_io.hpp>  
+#include <SFML/Graphics.hpp>

@@ -24,6 +24,10 @@ public:
 		{
 			sf::Event event;
 			std::stringstream ss;
+			DrawPicture(ss);
+			RectD rectFrame = m_canvas->GetWidgetFrame(ICanvas::ShapeType::Rectangle);
+			RectD triangleFrame = m_canvas->GetWidgetFrame(ICanvas::ShapeType::Triangle);
+			RectD ellipseFrame = m_canvas->GetWidgetFrame(ICanvas::ShapeType::Ellipse);
 			while (m_window->pollEvent(event))
 			{
 				ss.clear();
@@ -32,7 +36,23 @@ public:
 					float x = sf::Mouse::getPosition().x;
 					float y = sf::Mouse::getPosition().y;
 
-					if (sf::Mouse::isButtonPressed(sf::Mouse::Middle))
+					if (IsInFrame(x, y, rectFrame))
+					{
+						std::string type = "rectangle";
+						std::string args = "600 600 100 100";
+						ss << args;
+						boost::uuids::uuid uuid = boost::uuids::random_generator()();
+						AddShape(boost::uuids::to_string(uuid), BASE_COLOR, type, ss);
+					}
+					if (IsInFrame(x, y, triangleFrame))
+					{
+						std::string type = "triangle";
+						std::string args = "400 600 500 400 600 600";
+						ss << args;
+						boost::uuids::uuid uuid = boost::uuids::random_generator()();
+						AddShape(boost::uuids::to_string(uuid), BASE_COLOR, type, ss);
+					}
+					if (IsInFrame(x, y, ellipseFrame))
 					{
 						std::string type = "circle";
 						std::string args = "600 600 75";
@@ -40,8 +60,6 @@ public:
 						boost::uuids::uuid uuid = boost::uuids::random_generator()();
 						AddShape(boost::uuids::to_string(uuid), BASE_COLOR, type, ss);
 					}
-
-
 
 					while (sf::Mouse::isButtonPressed(sf::Mouse::Left))
 					{
@@ -78,6 +96,12 @@ private:
 	std::shared_ptr<ICanvas> m_canvas;
 	std::istream& m_input;
 	std::ostream& m_output;
+
+	bool IsInFrame(double x, double y, RectD frame)
+	{
+		return x >= frame.left && x <= frame.left + frame.width
+			&& y >= frame.top && y <= frame.top + frame.height;
+	}
 
 	void DrawWidgetPanel()
 	{

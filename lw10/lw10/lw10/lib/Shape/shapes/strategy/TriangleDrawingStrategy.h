@@ -1,5 +1,6 @@
 #pragma once
 #include "IDrawingStrategy.h"
+#include "../stdafx.h"
 
 class TriangleDrawingStrategy : public IDrawingStrategy
 {

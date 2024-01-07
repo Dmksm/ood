@@ -1,7 +1,5 @@
 #pragma once
-#include <string>
-#include <cstdint>
-#include <stdexcept>
+#include "../stdafx.h"
 
 class Color
 {
