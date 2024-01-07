@@ -153,7 +153,8 @@ private:
     sf::Vector2f m_position;
     std::shared_ptr<sf::RenderWindow> m_window;
 
-    enum class ShapeType : int {
+    enum class ShapeType : int 
+    {
         Ellipse = 0,
         Triangle = 1,
         Rectangle = 2,

@@ -157,6 +157,11 @@
     <ClInclude Include="graphics\EllipseShape.h" />
     <ClInclude Include="graphics\SlideView.h" />
     <ClInclude Include="graphics\Style.h" />
+    <ClInclude Include="lib\Shape\controller\CController.h" />
+    <ClInclude Include="lib\Shape\gfx\CCanvas.h" />
+    <ClInclude Include="lib\Shape\gfx\Color.h" />
+    <ClInclude Include="lib\Shape\gfx\EllipseShape.h" />
+    <ClInclude Include="lib\Shape\gfx\ICanvas.h" />
     <ClInclude Include="lib\Shape\stdafx.h" />
     <ClInclude Include="shapes\Shapes.h" />
   </ItemGroup>
