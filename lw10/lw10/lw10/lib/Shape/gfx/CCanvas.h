@@ -103,26 +103,20 @@ public:
         sf::Vector2u size = m_window->getSize();
         unsigned int width = size.x;
         unsigned int height = size.y;
+
         m_color = m_widgetPanelColor;
-        DrawRectangle(30, 58, width - 60, 104);
+        float m_widgetPanelWidth = width - 2 * m_widgetPanelLeft;
+        DrawRectangle(m_widgetPanelLeft, m_widgetPanelTop, m_widgetPanelWidth, m_widgetPanelHeight);
 
-        m_color = m_widgetShapeColor;
-        DrawRectangle(45, 60, 50, 50);
-        m_color = m_widgetTextColor;
-        DrawText(35, 110, 16, "Rectangle");
-
-        m_color = m_widgetShapeColor;
-        DrawTriangle(125, 110, 150, 60, 175, 110);
-        m_color = m_widgetTextColor;
-        DrawText(120, 110, 16, "Triangle");
-
-        m_color = m_widgetShapeColor;
-        DrawEllipse(230, 85, 25, 25);
-        m_color = m_widgetTextColor;
-        DrawText(210, 110, 16, "Circle");
+        unsigned widgetPositionNumber = 0;
+        DrawWidget(ShapeType::Rectangle, ++widgetPositionNumber);
+        DrawWidget(ShapeType::Triangle, ++widgetPositionNumber);
+        DrawWidget(ShapeType::Ellipse, ++widgetPositionNumber);
 
         m_color = m_workSpaceColor;
-        DrawRectangle(30, 182, width - 60, height - 204);
+        float m_workSpacelWidth = m_widgetPanelWidth;
+        DrawRectangle(m_workSpaceMarginLeft, m_widgetPanelTop + m_widgetPanelHeight + m_workSpaceMarginTop,
+            m_workSpacelWidth, height - m_workSpaceMarginBottom);
     }
 
     void Display() override
@@ -131,6 +125,24 @@ public:
     }
 
 private:
+    const float m_widgetMarginTop = 2;
+    const float m_widgetMarginLeft = 40;
+    const float m_widgetSize = 50;
+
+    const float m_widgetPanelLeft = 30;
+    const float m_widgetPanelTop = 58;
+    const float m_widgetButtom = m_widgetPanelTop + m_widgetMarginTop + m_widgetSize;
+    const float m_widgetPanelHeight = 2 * m_widgetSize;
+
+    const float m_textSize = 16;
+    const float m_textMarginLeftFromShapePos = -5;
+    const float m_textMarginTop = 5;
+
+    const float m_workSpaceMarginLeft = m_widgetPanelLeft;
+    const float m_workSpaceMarginTop = 15;
+    const float m_workSpaceMarginBottom = 200;
+    const float m_workSpaceMarginRight = 15;
+
     const sf::Color m_widgetPanelColor = sf::Color(165, 165, 165);
     const sf::Color m_backgroundColor = sf::Color(128, 128, 128);
     const sf::Color m_widgetShapeColor = sf::Color(17, 100, 180);
@@ -140,6 +152,53 @@ private:
     sf::Color m_color;
     sf::Vector2f m_position;
     std::shared_ptr<sf::RenderWindow> m_window;
+
+    enum class ShapeType : int {
+        Ellipse = 0,
+        Triangle = 1,
+        Rectangle = 2,
+    };
+
+    void DrawWidget(ShapeType shapeType, unsigned widgetPositionNumber)
+    {
+        float left = widgetPositionNumber * (m_widgetSize + m_widgetMarginLeft);
+        std::string text;
+
+        m_color = m_widgetShapeColor;
+        switch (shapeType)
+        {
+            case ShapeType::Ellipse:
+            {
+                float radius = m_widgetSize / 2;
+                DrawEllipse(left + radius, m_widgetButtom - radius, radius, radius);
+                text = "Ellipse";
+                break;
+            }
+            case ShapeType::Triangle:
+            {
+                DrawTriangle(
+                    left, m_widgetButtom,
+                    left + m_widgetSize / 2, m_widgetPanelTop + m_widgetMarginTop,
+                    left + m_widgetSize, m_widgetButtom
+                );
+                text = "Triangle";
+                break;
+            }
+            case ShapeType::Rectangle:
+            {
+                DrawRectangle(left, m_widgetPanelTop + m_widgetMarginTop, m_widgetSize, m_widgetSize);
+                text = "Rectangle"; 
+                break;
+            }
+            default:
+            {
+                throw std::logic_error("Undefined shape type");
+            }
+        }
+
+        m_color = m_widgetTextColor;
+        DrawText(left + m_textMarginLeftFromShapePos, m_widgetButtom + m_textMarginTop, m_textSize, text);
+    }
 
     uint32_t HexToUint32(const std::string& hexColor) const
     {
