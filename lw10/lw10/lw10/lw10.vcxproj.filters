@@ -89,6 +89,9 @@
     <ClInclude Include="lib\Shape\gfx\CommonTypes.h">
       <Filter>Файлы заголовков</Filter>
     </ClInclude>
+    <ClInclude Include="lib\Shape\shapes\ShapeFabric.h">
+      <Filter>Файлы заголовков</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="openal32.dll" />

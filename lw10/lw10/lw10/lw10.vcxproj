@@ -165,6 +165,7 @@
     <ClInclude Include="lib\Shape\gfx\ICanvas.h" />
     <ClInclude Include="lib\Shape\shapes\Picture.h" />
     <ClInclude Include="lib\Shape\shapes\Shape.h" />
+    <ClInclude Include="lib\Shape\shapes\ShapeFabric.h" />
     <ClInclude Include="lib\Shape\shapes\strategy\EllipseDrawingStrategy.h" />
     <ClInclude Include="lib\Shape\shapes\strategy\IDrawingStrategy.h" />
     <ClInclude Include="lib\Shape\shapes\strategy\LineDrawingStrategy.h" />
