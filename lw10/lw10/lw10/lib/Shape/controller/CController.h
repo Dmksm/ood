@@ -251,22 +251,16 @@ private:
 		m_canvas->DrawWidgetPanel();
 	}
 
-	bool ChangeShape(std::istream& args)
+	void ChangeShape(const std::string& id, const std::string& type, std::istream& args)
 	{
 		try
 		{
-			std::string id, type;
-			args >> id >> type;
-
 			m_picture->ChangeShape(id, m_shapeFabric->MakeDrawingStrategy(type, args));
 		}
 		catch (std::exception& e)
 		{
 			m_output << e.what() << std::endl;
-			return false;
 		}
-
-		return true;
 	}
 
 	void DeleteShape(const std::string& id)
@@ -274,30 +268,25 @@ private:
 		m_picture->DeleteShape(id);
 	}
 
-	bool ChangeColor(std::istream& args)
+	void ChangeColor(
+		const std::string& id, 
+		const std::string& color
+	)
 	{
 		try
 		{
-			std::string id, color;
-			args >> id >> color;
 			m_picture->GetShape(id)->SetColor(color);
 		}
 		catch (std::exception& e)
 		{
 			m_output << e.what() << std::endl;
-			return false;
 		}
-
-		return true;
 	}
 
-	bool MovePicture(std::istream& args)
+	void MovePicture(double dx, double dy)
 	{
 		try
 		{
-			double dx, dy;
-			args >> dx >> dy;
-
 			for (auto& it : m_picture->GetShapes())
 			{
 				it.second->Move(dx, dy);
@@ -306,13 +295,10 @@ private:
 		catch (std::exception& e)
 		{
 			m_output << e.what() << std::endl;
-			return false;
 		}
-
-		return true;
 	}
 
-	bool MoveShape(const std::string& id, double dx, double dy)
+	void MoveShape(const std::string& id, double dx, double dy)
 	{
 		try
 		{
@@ -321,13 +307,10 @@ private:
 		catch (std::exception& e)
 		{
 			m_output << e.what() << std::endl;
-			return false;
 		}
-
-		return true;
 	}
 
-	bool DisplayShapeList(std::istream& args)
+	void DisplayShapeList(std::istream& args)
 	{
 		try 
 		{
@@ -352,29 +335,20 @@ private:
 		catch (std::exception& e)
 		{
 			m_output << e.what() << std::endl;
-			return false;
 		}
-
-		return true;
 	}
 
-	bool DrawShape(std::istream& args)
+	void DrawShape(const std::string& id)
 	{
 		try
 		{
-			std::string id;
-			args >> id;
-
 			m_picture->GetShape(id)->Draw(*m_canvas);
 			m_canvas->Display();
 		}
 		catch (std::exception& e)
 		{
 			m_output << e.what() << std::endl;
-			return false;
 		}
-
-		return true;
 	}
 
 	void DrawPicture()
@@ -399,7 +373,12 @@ private:
 		}
 	}
 
-	bool AddShape(std::string id, std::string hexColor, std::string type, std::string args)
+	void AddShape(
+		const std::string& id,
+		const std::string& hexColor,
+		const std::string& type,
+		const std::string& args
+	)
 	{
 		try
 		{	
@@ -410,9 +389,6 @@ private:
 		catch (std::exception& e)
 		{
 			m_output << e.what() << std::endl;
-			return false;
 		}
-
-		return true;
 	};
 };
