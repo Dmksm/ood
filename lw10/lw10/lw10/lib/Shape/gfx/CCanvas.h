@@ -177,20 +177,20 @@ public:
             2 * m_selectionMarkerRadius,
         });
         result.push_back({
-           frame.left + m_selectionMarkerRadius,
-           frame.top + m_selectionMarkerRadius,
+           frame.left + frame.width - m_selectionMarkerRadius,
+           frame.top - m_selectionMarkerRadius,
+           2 * m_selectionMarkerRadius,
+           2 * m_selectionMarkerRadius,
+        });
+        result.push_back({
+           frame.left + frame.width - m_selectionMarkerRadius,
+           frame.top + frame.height - m_selectionMarkerRadius,
            2 * m_selectionMarkerRadius,
            2 * m_selectionMarkerRadius,
         });
         result.push_back({
            frame.left - m_selectionMarkerRadius,
-           frame.top + m_selectionMarkerRadius,
-           2 * m_selectionMarkerRadius,
-           2 * m_selectionMarkerRadius,
-        });
-        result.push_back({
-           frame.left + m_selectionMarkerRadius,
-           frame.top - m_selectionMarkerRadius,
+           frame.top + frame.height - m_selectionMarkerRadius,
            2 * m_selectionMarkerRadius,
            2 * m_selectionMarkerRadius,
         });

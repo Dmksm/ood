@@ -30,11 +30,11 @@ public:
 		double dy = 0;
 		bool isShapeMoving = false;
 		bool isShapeResizing = false;
-		bool isMouseOnShape = false;
-		bool isMouseOnSelectionMarker = false;
 		PointD staticPoint = { 0, 0 };
 		while (m_window->isOpen())
 		{
+			bool isMouseOnShape = false;
+			bool isMouseOnSelectionMarker = false;
 			sf::Event event;
 			while (m_window->pollEvent(event))
 			{
@@ -77,6 +77,7 @@ public:
 										staticFrame.left + staticFrame.width / 2,
 										staticFrame.top + staticFrame.height / 2
 									};
+									std::cout << x << " " << y << " staticPoint x " << staticPoint.x << " staticPoint y " << staticPoint.y << std::endl;
 									prevMouseX = x;
 									prevMouseY = y;
 									break;
