@@ -45,6 +45,20 @@ public:
         m_window->draw(ellipse);
     }
 
+    void DrawFrame(RectD frame) override
+    {
+        m_color = m_frameColor;
+        DrawLine(frame.left, frame.top, frame.left + frame.width, frame.top);
+        DrawLine(frame.left + frame.width, frame.top, frame.left + frame.width, frame.top + frame.height);
+        DrawLine(frame.left + frame.width, frame.top + frame.height, frame.left, frame.top + frame.height);
+        DrawLine(frame.left, frame.top + frame.height, frame.left, frame.top);
+        m_color = m_selectionMarkerColor;
+        DrawEllipse(frame.left, frame.top, m_selectionMarkerRadius, m_selectionMarkerRadius);
+        DrawEllipse(frame.left + frame.width, frame.top, m_selectionMarkerRadius, m_selectionMarkerRadius);
+        DrawEllipse(frame.left + frame.width, frame.top + frame.height, m_selectionMarkerRadius, m_selectionMarkerRadius);
+        DrawEllipse(frame.left, frame.top + frame.height, m_selectionMarkerRadius, m_selectionMarkerRadius);
+    }
+
     void DrawRectangle(double left, double top, double width, double height) override
     {
         sf::ConvexShape rectangle(4);
@@ -153,7 +167,41 @@ public:
         return RectD(left, top, width, height);
     }
 
+    std::vector<RectD> GetSelectionMarkerFrame(RectD frame) override
+    {
+        std::vector<RectD> result;
+        result.push_back({
+            frame.left - m_selectionMarkerRadius, 
+            frame.top - m_selectionMarkerRadius,
+            2 * m_selectionMarkerRadius,
+            2 * m_selectionMarkerRadius,
+        });
+        result.push_back({
+           frame.left + m_selectionMarkerRadius,
+           frame.top + m_selectionMarkerRadius,
+           2 * m_selectionMarkerRadius,
+           2 * m_selectionMarkerRadius,
+        });
+        result.push_back({
+           frame.left - m_selectionMarkerRadius,
+           frame.top + m_selectionMarkerRadius,
+           2 * m_selectionMarkerRadius,
+           2 * m_selectionMarkerRadius,
+        });
+        result.push_back({
+           frame.left + m_selectionMarkerRadius,
+           frame.top - m_selectionMarkerRadius,
+           2 * m_selectionMarkerRadius,
+           2 * m_selectionMarkerRadius,
+        });
+        return result;
+    }
+
 private:
+    const sf::Color m_frameColor = sf::Color(0, 0, 255);
+    const sf::Color m_selectionMarkerColor = sf::Color(0, 0, 255);
+    const float m_selectionMarkerRadius = 3;
+
     const float m_widgetMarginTop = 2;
     const float m_widgetMarginLeft = 40;
     const float m_widgetSize = 50;

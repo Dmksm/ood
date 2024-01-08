@@ -29,6 +29,10 @@ public:
 		return RectD({ m_cx - m_rx, m_cy - m_ry, 2 * m_rx, 2 * m_ry });
 	}
 
+	void SetFrame(RectD frame) override
+	{
+	}
+
 	std::string GetStrategyParams() override
 	{
 		std::stringstream ss;

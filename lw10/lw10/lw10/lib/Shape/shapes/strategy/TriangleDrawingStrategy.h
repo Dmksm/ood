@@ -41,6 +41,19 @@ public:
 		});
 	}
 
+	void SetFrame(RectD frame) override
+	{
+		RectD currFrame = GetFrame();
+		double centerX = (m_x1 + m_x2 + m_x3) / 3;
+		double centerY = (m_y1 + m_y2 + m_y3) / 3;
+		double scaleFactorX = frame.width / currFrame.width;
+		double scaleFactorY = frame.height / currFrame.height;
+
+		TransformPoint(m_x1, m_y1, centerX, centerY, scaleFactorX, scaleFactorY);
+		TransformPoint(m_x2, m_y2, centerX, centerY, scaleFactorX, scaleFactorY);
+		TransformPoint(m_x3, m_y3, centerX, centerY, scaleFactorX, scaleFactorY);
+	}
+
 	std::string GetStrategyParams() override
 	{
 		std::stringstream ss;
@@ -56,4 +69,22 @@ private:
 	double m_y2; 
 	double m_x3;
 	double m_y3;
+
+	void TransformPoint(
+		double& x,
+		double& y,
+		double centerX, 
+		double centerY, 
+		double scaleFactorX, 
+		double scaleFactorY
+	)
+	{
+		x -= centerX;
+		x *= scaleFactorX;
+		x += centerX;
+
+		y -= centerY;
+		y *= scaleFactorY;
+		y += centerY;
+	}
 };

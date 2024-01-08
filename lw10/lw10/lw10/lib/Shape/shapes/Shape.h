@@ -16,6 +16,11 @@ public:
 	{
 	};
 
+	void SetFrame(RectD frame)
+	{
+		return m_drawingStrategy->SetFrame(frame);
+	}
+
 	RectD GetFrame() const
 	{
 		return m_drawingStrategy->GetFrame();

@@ -26,6 +26,10 @@ public:
 		canvas.DrawLine(m_x1, m_y1, m_x2, m_y2);
 	};
 
+	void SetFrame(RectD frame) override
+	{
+	}
+
 	RectD GetFrame() const override
 	{
 		return RectD({

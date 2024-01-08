@@ -24,6 +24,10 @@ public:
 		canvas.DrawRectangle(m_left, m_top, m_width, m_height);
 	};
 
+	void SetFrame(RectD frame) override
+	{
+	}
+
 	RectD GetFrame() const override
 	{
 		return RectD({ m_left, m_top, m_width, m_height });

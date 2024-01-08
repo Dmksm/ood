@@ -63,19 +63,6 @@ public:
 		return m_SequenceNumberList.at(id);
 	}
 
-	/*void CloneShape(const std::string& id, const std::string& newId)
-	{
-		ShapesList::iterator shapeIterator = GetShapeIterator(id);
-		if (shapeIterator == m_shapes->end())
-		{
-			throw std::logic_error("Shape with id = "s + id + " does not exist! "s);
-		};
-
-		Shape shape(shapeIterator->second.GetDrawingStrategy(), 
-			id, shapeIterator->second.GetColor());
-		m_shapes->insert({ ++m_token, shape });
-	}*/
-
 private:
 	ShapesList m_shapes = {};
 	unsigned m_sequenceNumber = 0;

@@ -25,6 +25,11 @@ public:
 		canvas.DrawText(m_left, m_top, m_fontSize, m_text);
 	};
 
+	void SetFrame(RectD frame) override
+	{
+
+	}
+
 	RectD GetFrame() const override
 	{
 		return RectD({ m_left, m_top, m_fontSize * (1 + m_text.size() / 5), 1.5 * m_fontSize });

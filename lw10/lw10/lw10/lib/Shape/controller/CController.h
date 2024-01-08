@@ -20,8 +20,7 @@ public:
 
 	void Execute()
 	{
-		std::stringstream ss;
-		DrawPicture(ss);
+		DrawWidgetPanel();
 		RectD rectFrame = m_canvas->GetWidgetFrame(ICanvas::ShapeType::Rectangle);
 		RectD triangleFrame = m_canvas->GetWidgetFrame(ICanvas::ShapeType::Triangle);
 		RectD ellipseFrame = m_canvas->GetWidgetFrame(ICanvas::ShapeType::Ellipse);
@@ -30,12 +29,13 @@ public:
 		double dx = 0;
 		double dy = 0;
 		bool isShapeMoving = false;
+		bool isShapeResizing = false;
+		PointD staticPoint = { 0, 0 };
 		while (m_window->isOpen())
 		{
 			sf::Event event;
 			while (m_window->pollEvent(event))
 			{
-				ss.clear();
 				switch (event.type)
 				{
 					case sf::Event::MouseButtonPressed:
@@ -59,38 +59,73 @@ public:
 								isShapeMoving = false;
 							}
 
+							std::vector<RectD> selectionFrames;
+							if (m_activeShapeID.has_value())
+							{
+								RectD frame = m_picture->GetShape(m_activeShapeID.value())->GetFrame();
+								selectionFrames = m_canvas->GetSelectionMarkerFrame(frame);
+							}
+
+							int index = 0;
+							for (RectD& frame : selectionFrames)
+							{
+								if (IsInFrame(x, y, frame))
+								{
+									isShapeResizing = true;
+									index = (index + 2) % 4;
+									RectD staticFrame = *(selectionFrames.begin() + index);
+									staticPoint = {
+										staticFrame.left + staticFrame.width / 2,
+										staticFrame.top + staticFrame.height / 2
+									};
+									prevMouseX = x;
+									prevMouseY = y;
+									break;
+								}
+								++index;
+							}
+
 							if (IsInFrame(x, y, rectFrame))
 							{
 								std::string type = "rectangle";
-								ss << DEFAULT_RECTANGLE_ARGS;
 								boost::uuids::uuid uuid = boost::uuids::random_generator()();
-								AddShape(boost::uuids::to_string(uuid), BASE_COLOR, type, ss);
+								AddShape(boost::uuids::to_string(uuid), BASE_COLOR, type, DEFAULT_RECTANGLE_ARGS);
 							}
 							if (IsInFrame(x, y, triangleFrame))
 							{
 								std::string type = "triangle";
-								ss << DEFAULT_TRIANGLE_ARGS;
 								boost::uuids::uuid uuid = boost::uuids::random_generator()();
-								AddShape(boost::uuids::to_string(uuid), BASE_COLOR, type, ss);
+								AddShape(boost::uuids::to_string(uuid), BASE_COLOR, type, DEFAULT_TRIANGLE_ARGS);
 							}
 							if (IsInFrame(x, y, ellipseFrame))
 							{
 								std::string type = "circle";
-								ss << DEFAULT_ELLIPSE_ARGS;
 								boost::uuids::uuid uuid = boost::uuids::random_generator()();
-								AddShape(boost::uuids::to_string(uuid), BASE_COLOR, type, ss);
+								AddShape(boost::uuids::to_string(uuid), BASE_COLOR, type, DEFAULT_ELLIPSE_ARGS);
 							}
 						}
 						break;
 					case sf::Event::MouseMoved:
 					{
-						if (isShapeMoving)
+						if ((isShapeMoving || isShapeResizing) && m_activeShapeID.has_value())
 						{
 							dx = event.mouseMove.x - prevMouseX;
 							dy = event.mouseMove.y - prevMouseY;
 							prevMouseX = event.mouseMove.x;
 							prevMouseY = event.mouseMove.y;
-							MoveShape(m_activeShapeID.value(), dx, dy);
+							if (isShapeMoving)
+							{
+								MoveShape(m_activeShapeID.value(), dx, dy);
+							}
+							if (isShapeResizing)
+							{
+								double left = std::min(staticPoint.x, (double)event.mouseMove.x);
+								double top = std::min(staticPoint.y, (double)event.mouseMove.y);
+								double width = std::abs(left - std::max(staticPoint.x, (double)event.mouseMove.x));
+								double height = std::abs(top - std::max(staticPoint.y, (double)event.mouseMove.y));
+								RectD newFrame = { left, top, width, height };
+								m_picture->GetShape(m_activeShapeID.value())->SetFrame(newFrame);
+							}
 						}
 						break;
 					}
@@ -99,6 +134,7 @@ public:
 						if (event.mouseButton.button == sf::Mouse::Left)
 						{
 							isShapeMoving = false;
+							isShapeResizing = false;
 						}
 						break;
 					}
@@ -112,7 +148,7 @@ public:
 					}
 				}
 			}
-			DrawPicture(ss);
+			DrawPicture();
 		}
 	}
 
@@ -291,31 +327,28 @@ private:
 		return true;
 	}
 
-	bool DrawPicture(std::istream& args)
+	void DrawPicture()
 	{
 		DrawWidgetPanel();
-		try
+		for (auto& it : m_picture->GetShapes())
 		{
-			for (auto& it : m_picture->GetShapes())
+			it.second->Draw(*m_canvas);
+			if (it.second->GetId() == m_activeShapeID)
 			{
-				it.second->Draw(*m_canvas);
+				RectD frame = it.second->GetFrame();
+				m_canvas->DrawFrame(frame);
 			}
-			m_canvas->Display();
 		}
-		catch (std::exception e)
-		{
-			m_output << e.what() << std::endl;
-			return false;
-		}
-
-		return true;
+		m_canvas->Display();
 	}
 
-	bool AddShape(std::string id, std::string hexColor, std::string type, std::istream& args)
+	bool AddShape(std::string id, std::string hexColor, std::string type, std::string args)
 	{
 		try
 		{	
-			m_picture->AddShape(std::make_unique<Shape>(MakeDrawingStrategy(type, args), id, hexColor));
+			std::stringstream ss;
+			ss << args;
+			m_picture->AddShape(std::make_unique<Shape>(MakeDrawingStrategy(type, ss), id, hexColor));
 		}
 		catch (std::exception e)
 		{
