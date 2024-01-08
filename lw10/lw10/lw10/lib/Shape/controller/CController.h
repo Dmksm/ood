@@ -25,13 +25,8 @@ public:
 	void Execute()
 	{
 		DrawWidgetPanel();
-		RectD rectFrame = m_canvas->GetWidgetFrame(ICanvas::ShapeType::Rectangle);
-		RectD triangleFrame = m_canvas->GetWidgetFrame(ICanvas::ShapeType::Triangle);
-		RectD ellipseFrame = m_canvas->GetWidgetFrame(ICanvas::ShapeType::Ellipse);
-		double prevMouseX = 0;
-		double prevMouseY = 0;
-		double dx = 0;
-		double dy = 0;
+		PointD prevMousePos = { 0, 0 };
+		PointD differencePoint = { 0, 0 };
 		bool isShapeMoving = false;
 		bool isShapeResizing = false;
 		PointD staticPoint = { 0, 0 };
@@ -46,139 +41,14 @@ public:
 				{
 					case sf::Event::MouseButtonPressed:
 					{
-						if (event.mouseButton.button == sf::Mouse::Left)
-						{
-							int x = event.mouseButton.x;
-							int y = event.mouseButton.y;
-
-							auto shapeID = GetShapeIDByCoords(x, y);
-							if (shapeID.has_value())
-							{
-								isMouseOnShape = true;
-								m_activeShapeID = shapeID.value();
-								isShapeMoving = true;
-								prevMouseX = x;
-								prevMouseY = y;
-							}
-
-							std::vector<RectD> selectionFrames;
-							if (m_activeShapeID.has_value())
-							{
-								RectD frame = m_picture->GetShape(m_activeShapeID.value())->GetFrame();
-								selectionFrames = m_canvas->GetSelectionMarkerFrame(frame);
-							}
-
-							int index = 0;
-							for (RectD& frame : selectionFrames)
-							{
-								if (IsInFrame(x, y, frame))
-								{
-									isMouseOnSelectionMarker = true;
-									isShapeResizing = true;
-									index = (index + 2) % 4;
-									RectD staticFrame = *(selectionFrames.begin() + index);
-									staticPoint = {
-										staticFrame.left + staticFrame.width / 2,
-										staticFrame.top + staticFrame.height / 2
-									};
-									prevMouseX = x;
-									prevMouseY = y;
-									break;
-								}
-								++index;
-							}
-
-							if (IsInFrame(x, y, rectFrame))
-							{
-								std::string type = "rectangle";
-								boost::uuids::uuid uuid = boost::uuids::random_generator()();
-								AddShape(boost::uuids::to_string(uuid), BASE_COLOR, type, DEFAULT_RECTANGLE_ARGS);
-							}
-							if (IsInFrame(x, y, triangleFrame))
-							{
-								std::string type = "triangle";
-								boost::uuids::uuid uuid = boost::uuids::random_generator()();
-								AddShape(boost::uuids::to_string(uuid), BASE_COLOR, type, DEFAULT_TRIANGLE_ARGS);
-							}
-							if (IsInFrame(x, y, ellipseFrame))
-							{
-								std::string type = "circle";
-								boost::uuids::uuid uuid = boost::uuids::random_generator()();
-								AddShape(boost::uuids::to_string(uuid), BASE_COLOR, type, DEFAULT_ELLIPSE_ARGS);
-							}
-
-							if (!(isMouseOnShape || isMouseOnSelectionMarker))
-							{
-								m_activeShapeID = std::nullopt;
-								isShapeMoving = false;
-							}
-						}
+						HandleMousePressedEvent(event, isMouseOnShape, isShapeMoving, prevMousePos,
+							isMouseOnSelectionMarker, isShapeResizing, staticPoint);
 						break;
 					}
 					case sf::Event::MouseMoved:
 					{
-						if ((isShapeMoving || isShapeResizing) && m_activeShapeID.has_value())
-						{
-							RectD border = m_canvas->GetWorkSpaceFrameBorder();
-							double currX = event.mouseMove.x;
-							double currY = event.mouseMove.y;
-							RectD activeFrame = m_picture->GetShape(m_activeShapeID.value())->GetFrame();
-							dx = currX - prevMouseX;
-							dy = currY - prevMouseY;
-							if (activeFrame.left + dx < border.left)
-							{
-								dx = border.left - activeFrame.left;
-							}
-							if (activeFrame.left + activeFrame.width + dx > border.left + border.width)
-							{
-								dx = (border.left + border.width) - (activeFrame.left + activeFrame.width);
-							}
-							if (activeFrame.top + dy < border.top)
-							{
-								dy = border.top - activeFrame.top;
-							}
-							if (activeFrame.top + activeFrame.height + dy > border.top + border.height)
-							{
-								dy = (border.top + border.height) - (activeFrame.top + activeFrame.height);
-							}
-
-							prevMouseX = currX;
-							prevMouseY = currY;
-							if (isShapeResizing)
-							{
-								double left = std::min(staticPoint.x, (double)event.mouseMove.x);
-								double top = std::min(staticPoint.y, (double)event.mouseMove.y);
-								double width = std::abs(left - std::max(staticPoint.x, (double)event.mouseMove.x));
-								double height = std::abs(top - std::max(staticPoint.y, (double)event.mouseMove.y));
-								m_picture->GetShape(m_activeShapeID.value())->SetFrame({ left, top, width, height });
-
-								RectD frame = m_picture->GetShape(m_activeShapeID.value())->GetFrame();
-								if (frame.left < border.left)
-								{
-									frame.left = border.left;
-								}
-								if (frame.top < border.top)
-								{
-									frame.top = border.top;
-								}
-								if (frame.left + frame.width > border.left + border.width)
-								{
-									frame.width = (border.left + border.width) - frame.left;
-								}
-								if (frame.top + frame.height > border.top + border.height)
-								{
-									frame.height = (border.top + border.height) - frame.top;
-								}
-								m_picture->GetShape(m_activeShapeID.value())->SetFrame(frame);
-							} 
-							else
-							{
-								if (isShapeMoving)
-								{
-									MoveShape(m_activeShapeID.value(), dx, dy);
-								}
-							}
-						}
+						HandleMouseMovedEvent(event, isShapeMoving, isShapeResizing,
+							staticPoint, differencePoint, prevMousePos);
 						break;
 					}
 					case sf::Event::MouseButtonReleased:
@@ -227,12 +97,179 @@ private:
 	std::ostream& m_output;
 	std::unique_ptr<IShapeFabric> m_shapeFabric;
 
-	std::optional<std::string> GetShapeIDByCoords(double x, double y)
+	void HandleMouseMovedEvent(
+		sf::Event event,
+		bool isShapeMoving, 
+		bool isShapeResizing,
+		PointD staticPoint,
+		PointD& differencePoint,
+		PointD& prevMousePos
+	)
+	{
+		if ((isShapeMoving || isShapeResizing) && m_activeShapeID.has_value())
+		{
+			RectD border = m_canvas->GetWorkSpaceFrameBorder();
+			double currX = event.mouseMove.x;
+			double currY = event.mouseMove.y;
+			RectD activeFrame = m_picture->GetShape(m_activeShapeID.value())->GetFrame();
+			differencePoint.x = currX - prevMousePos.x;
+			differencePoint.y = currY - prevMousePos.y;
+			ChangePointIfOutOfBorder(differencePoint, activeFrame, border);
+
+			prevMousePos.x = currX;
+			prevMousePos.y = currY;
+			if (isShapeResizing)
+			{
+				double left = std::min(staticPoint.x, (double)event.mouseMove.x);
+				double top = std::min(staticPoint.y, (double)event.mouseMove.y);
+				double width = std::abs(left - std::max(staticPoint.x, (double)event.mouseMove.x));
+				double height = std::abs(top - std::max(staticPoint.y, (double)event.mouseMove.y));
+				m_picture->GetShape(m_activeShapeID.value())->SetFrame({ left, top, width, height });
+
+				RectD frame = m_picture->GetShape(m_activeShapeID.value())->GetFrame();
+				ChangeFrameIfOutOfBorder(frame, border);
+				m_picture->GetShape(m_activeShapeID.value())->SetFrame(frame);
+			}
+			else
+			{
+				if (isShapeMoving)
+				{
+					MoveShape(m_activeShapeID.value(), differencePoint.x, differencePoint.y);
+				}
+			}
+		}
+	}
+
+	void HandleMousePressedEvent(
+		sf::Event event, 
+		bool& isMouseOnShape,
+		bool& isShapeMoving,
+		PointD& prevMousePos,
+		bool& isMouseOnSelectionMarker,
+		bool& isShapeResizing,
+		PointD& staticPoint
+	)
+	{
+		if (event.mouseButton.button == sf::Mouse::Left)
+		{
+			PointD mousePos = { event.mouseButton.x, event.mouseButton.y };
+
+			auto shapeID = GetShapeIDByCoords(mousePos);
+			if (shapeID.has_value())
+			{
+				isMouseOnShape = true;
+				m_activeShapeID = shapeID.value();
+				isShapeMoving = true;
+				prevMousePos = mousePos;
+			}
+
+			std::vector<RectD> selectionFrames;
+			if (m_activeShapeID.has_value())
+			{
+				RectD frame = m_picture->GetShape(m_activeShapeID.value())->GetFrame();
+				selectionFrames = m_canvas->GetSelectionMarkerFrame(frame);
+			}
+
+			int index = 0;
+			for (RectD& frame : selectionFrames)
+			{
+				if (IsInFrame(mousePos, frame))
+				{
+					isMouseOnSelectionMarker = true;
+					isShapeResizing = true;
+					index = (index + 2) % 4;
+					RectD staticFrame = *(selectionFrames.begin() + index);
+					staticPoint = {
+						staticFrame.left + staticFrame.width / 2,
+						staticFrame.top + staticFrame.height / 2
+					};
+					prevMousePos = mousePos;
+					break;
+				}
+				++index;
+			}
+
+			IsInWidget(mousePos);
+
+			if (!(isMouseOnShape || isMouseOnSelectionMarker))
+			{
+				m_activeShapeID = std::nullopt;
+				isShapeMoving = false;
+			}
+		}
+	}
+
+	void ChangeFrameIfOutOfBorder(RectD& frame, RectD border)
+	{
+		if (frame.left < border.left)
+		{
+			frame.left = border.left;
+		}
+		if (frame.top < border.top)
+		{
+			frame.top = border.top;
+		}
+		if (frame.left + frame.width > border.left + border.width)
+		{
+			frame.width = (border.left + border.width) - frame.left;
+		}
+		if (frame.top + frame.height > border.top + border.height)
+		{
+			frame.height = (border.top + border.height) - frame.top;
+		}
+	}
+
+	void ChangePointIfOutOfBorder(PointD& differencePoint, RectD activeFrame, RectD border)
+	{
+		if (activeFrame.left + differencePoint.x < border.left)
+		{
+			differencePoint.x = border.left - activeFrame.left;
+		}
+		if (activeFrame.left + activeFrame.width + differencePoint.x > border.left + border.width)
+		{
+			differencePoint.x = (border.left + border.width) - (activeFrame.left + activeFrame.width);
+		}
+		if (activeFrame.top + differencePoint.y < border.top)
+		{
+			differencePoint.y = border.top - activeFrame.top;
+		}
+		if (activeFrame.top + activeFrame.height + differencePoint.y > border.top + border.height)
+		{
+			differencePoint.y = (border.top + border.height) - (activeFrame.top + activeFrame.height);
+		}
+	}
+
+	void IsInWidget(PointD pos)
+	{
+		RectD rectFrame = m_canvas->GetWidgetFrame(ICanvas::ShapeType::Rectangle);
+		RectD triangleFrame = m_canvas->GetWidgetFrame(ICanvas::ShapeType::Triangle);
+		RectD ellipseFrame = m_canvas->GetWidgetFrame(ICanvas::ShapeType::Ellipse);
+		if (IsInFrame(pos, rectFrame))
+		{
+			std::string type = "rectangle";
+			boost::uuids::uuid uuid = boost::uuids::random_generator()();
+			AddShape(boost::uuids::to_string(uuid), BASE_COLOR, type, DEFAULT_RECTANGLE_ARGS);
+		}
+		if (IsInFrame(pos, triangleFrame))
+		{
+			std::string type = "triangle";
+			boost::uuids::uuid uuid = boost::uuids::random_generator()();
+			AddShape(boost::uuids::to_string(uuid), BASE_COLOR, type, DEFAULT_TRIANGLE_ARGS);
+		}
+		if (IsInFrame(pos, ellipseFrame))
+		{
+			std::string type = "circle";
+			boost::uuids::uuid uuid = boost::uuids::random_generator()();
+			AddShape(boost::uuids::to_string(uuid), BASE_COLOR, type, DEFAULT_ELLIPSE_ARGS);
+		}
+	}
+
+	std::optional<std::string> GetShapeIDByCoords(PointD mousePos)
 	{
 		for (auto& it : m_picture->GetShapes())
 		{
 			RectD frame = it.second->GetFrame();
-			if (IsInFrame(x, y, frame))
+			if (IsInFrame(mousePos, frame))
 			{
 				return it.second->GetId();
 			}
@@ -240,10 +277,10 @@ private:
 		return std::nullopt;
 	}
 
-	bool IsInFrame(double x, double y, RectD frame)
+	bool IsInFrame(PointD pos, RectD frame)
 	{
-		return x >= frame.left && x <= frame.left + frame.width
-			&& y >= frame.top && y <= frame.top + frame.height;
+		return pos.x >= frame.left && pos.x <= frame.left + frame.width
+			&& pos.y >= frame.top && pos.y <= frame.top + frame.height;
 	}
 
 	void DrawWidgetPanel()
