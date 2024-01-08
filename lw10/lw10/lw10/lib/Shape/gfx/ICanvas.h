@@ -25,5 +25,7 @@ public:
 	virtual void DrawFrame(RectD frame) = 0;
 	virtual std::vector<RectD> GetSelectionMarkerFrame(RectD frame) = 0;
 	virtual RectD GetWidgetFrame(ShapeType type) = 0;
+	virtual RectD GetWorkSpaceFrameBorder() = 0;
 	virtual void Display() = 0;
+	virtual ~ICanvas() = default;
 };

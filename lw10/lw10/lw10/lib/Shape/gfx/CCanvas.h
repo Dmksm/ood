@@ -150,6 +150,8 @@ public:
         float m_workSpacelWidth = m_widgetPanelWidth;
         DrawRectangle(m_workSpaceMarginLeft, m_widgetPanelTop + m_widgetPanelHeight + m_workSpaceMarginTop,
             m_workSpacelWidth, height - m_workSpaceMarginBottom);
+        m_workSpaceBorder = { m_workSpaceMarginLeft, m_widgetPanelTop + m_widgetPanelHeight + m_workSpaceMarginTop,
+            m_workSpacelWidth, height - m_workSpaceMarginBottom };
     }
 
     void Display() override
@@ -197,6 +199,11 @@ public:
         return result;
     }
 
+    RectD GetWorkSpaceFrameBorder() override
+    {
+        return m_workSpaceBorder;
+    }
+
 private:
     const sf::Color m_frameColor = sf::Color(0, 0, 255);
     const sf::Color m_selectionMarkerColor = sf::Color(0, 0, 255);
@@ -227,6 +234,7 @@ private:
     const sf::Color m_workSpaceColor = sf::Color(255, 255, 255);
     const sf::Color m_widgetBackgroundColor = sf::Color(181, 184, 177);
 
+    RectD m_workSpaceBorder;
     float m_outlineThickness = 1;
     sf::Color m_outlineColor = sf::Color(0, 0, 0);
     sf::Color m_color;

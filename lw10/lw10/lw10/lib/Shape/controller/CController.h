@@ -114,10 +114,31 @@ public:
 					{
 						if ((isShapeMoving || isShapeResizing) && m_activeShapeID.has_value())
 						{
-							dx = event.mouseMove.x - prevMouseX;
-							dy = event.mouseMove.y - prevMouseY;
-							prevMouseX = event.mouseMove.x;
-							prevMouseY = event.mouseMove.y;
+							RectD border = m_canvas->GetWorkSpaceFrameBorder();
+							double currX = event.mouseMove.x;
+							double currY = event.mouseMove.y;
+							RectD activeFrame = m_picture->GetShape(m_activeShapeID.value())->GetFrame();
+							if (event.mouseMove.x < border.left)
+							{
+								currX = border.left;
+							}
+							if (event.mouseMove.x > border.left + border.width)
+							{
+								currX = border.left + border.width;
+							}
+							if (event.mouseMove.y < border.top)
+							{
+								currY = border.top;
+							}
+							if (event.mouseMove.y > border.top + border.height)
+							{
+								currY = border.top + border.height;
+							}
+
+							dx = currX - prevMouseX;
+							dy = currY - prevMouseY;
+							prevMouseX = currX;
+							prevMouseY = currY;
 							if (isShapeResizing)
 							{
 								double left = std::min(staticPoint.x, (double)event.mouseMove.x);
@@ -134,7 +155,6 @@ public:
 									MoveShape(m_activeShapeID.value(), dx, dy);
 								}
 							}
-							
 						}
 						break;
 					}
