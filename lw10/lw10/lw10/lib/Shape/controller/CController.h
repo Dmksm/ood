@@ -28,8 +28,8 @@ public:
 		RectD rectFrame = m_canvas->GetWidgetFrame(ICanvas::ShapeType::Rectangle);
 		RectD triangleFrame = m_canvas->GetWidgetFrame(ICanvas::ShapeType::Triangle);
 		RectD ellipseFrame = m_canvas->GetWidgetFrame(ICanvas::ShapeType::Ellipse);
-		float prevMouseX = 0;
-		float prevMouseY = 0;
+		double prevMouseX = 0;
+		double prevMouseY = 0;
 		double dx = 0;
 		double dy = 0;
 		bool isShapeMoving = false;
@@ -48,8 +48,8 @@ public:
 					{
 						if (event.mouseButton.button == sf::Mouse::Left)
 						{
-							float x = event.mouseButton.x;
-							float y = event.mouseButton.y;
+							int x = event.mouseButton.x;
+							int y = event.mouseButton.y;
 
 							auto shapeID = GetShapeIDByCoords(x, y);
 							if (shapeID.has_value())

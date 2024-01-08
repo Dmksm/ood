@@ -101,7 +101,7 @@ public:
         drawingText.setPosition(m_position);
         drawingText.move(sf::Vector2f((float)left, (float)top));
         drawingText.setString(text);
-        drawingText.setCharacterSize(fontSize);
+        drawingText.setCharacterSize((unsigned)fontSize);
         drawingText.setFillColor(m_color);
         drawingText.setOutlineColor(m_outlineColor);
         drawingText.setOutlineThickness(m_outlineThickness);
@@ -234,7 +234,7 @@ private:
     const sf::Color m_workSpaceColor = sf::Color(255, 255, 255);
     const sf::Color m_widgetBackgroundColor = sf::Color(181, 184, 177);
 
-    RectD m_workSpaceBorder;
+    RectD m_workSpaceBorder = { 0, 0, 0, 0 };
     float m_outlineThickness = 1;
     sf::Color m_outlineColor = sf::Color(0, 0, 0);
     sf::Color m_color;
