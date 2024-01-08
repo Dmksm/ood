@@ -77,7 +77,6 @@ public:
 										staticFrame.left + staticFrame.width / 2,
 										staticFrame.top + staticFrame.height / 2
 									};
-									std::cout << x << " " << y << " staticPoint x " << staticPoint.x << " staticPoint y " << staticPoint.y << std::endl;
 									prevMouseX = x;
 									prevMouseY = y;
 									break;
@@ -153,6 +152,14 @@ public:
 						m_window->close();
 						break;
 					}
+					case sf::Event::KeyPressed:
+					{
+						if (event.key.code == sf::Keyboard::Delete && m_activeShapeID.has_value())
+						{
+							DeleteShape(m_activeShapeID.value());
+							m_activeShapeID = std::nullopt;
+						}
+					}
 					default:
 						break;
 					}
@@ -217,21 +224,9 @@ private:
 		return true;
 	}
 
-	bool DeleteShape(std::istream& args)
+	void DeleteShape(const std::string& id)
 	{
-		try
-		{
-			std::string id;
-			args >> id;
-			m_picture->DeleteShape(id);
-		}
-		catch (std::exception e)
-		{
-			m_output << e.what() << std::endl;
-			return false;
-		}
-
-		return true;
+		m_picture->DeleteShape(id);
 	}
 
 	bool ChangeColor(std::istream& args)
