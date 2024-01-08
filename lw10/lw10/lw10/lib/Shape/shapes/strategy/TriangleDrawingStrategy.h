@@ -1,6 +1,6 @@
 #pragma once
 #include "IDrawingStrategy.h"
-#include "../stdafx.h"
+#include "../../stdafx.h"
 
 class TriangleDrawingStrategy : public IDrawingStrategy
 {
@@ -30,6 +30,16 @@ public:
 		canvas.SetColor(color);
 		canvas.DrawTriangle(m_x1, m_y1, m_x2, m_y2, m_x3, m_y3);
 	};
+
+	RectD GetFrame() const override
+	{
+		return RectD({
+			 std::min(m_x1, std::min(m_x2, m_x3)),
+			 std::min(m_y1, std::min(m_y2, m_y3)),
+			 std::max(m_x1, std::max(m_x2, m_x3)) - std::min(m_x1, std::min(m_x2, m_x3)),
+			 std::max(m_y1, std::max(m_y2, m_y3)) - std::min(m_y1, std::min(m_y2, m_y3))
+		});
+	}
 
 	std::string GetStrategyParams() override
 	{

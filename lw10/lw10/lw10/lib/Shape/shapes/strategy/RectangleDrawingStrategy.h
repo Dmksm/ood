@@ -18,12 +18,16 @@ public:
 		m_top += dy;
 	}
 
-
 	void Draw(ICanvas& canvas, Color color) override
 	{
 		canvas.SetColor(color);
 		canvas.DrawRectangle(m_left, m_top, m_width, m_height);
 	};
+
+	RectD GetFrame() const override
+	{
+		return RectD({ m_left, m_top, m_width, m_height });
+	}
 
 	std::string GetStrategyParams() override
 	{

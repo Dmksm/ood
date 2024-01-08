@@ -20,67 +20,90 @@ public:
 
 	void Execute()
 	{
+		std::stringstream ss;
+		DrawPicture(ss);
+		RectD rectFrame = m_canvas->GetWidgetFrame(ICanvas::ShapeType::Rectangle);
+		RectD triangleFrame = m_canvas->GetWidgetFrame(ICanvas::ShapeType::Triangle);
+		RectD ellipseFrame = m_canvas->GetWidgetFrame(ICanvas::ShapeType::Ellipse);
+		float prevMouseX = 0;
+		float prevMouseY = 0;
+		double dx = 0;
+		double dy = 0;
+		bool isShapeMoving = false;
 		while (m_window->isOpen())
 		{
 			sf::Event event;
-			std::stringstream ss;
-			DrawPicture(ss);
-			RectD rectFrame = m_canvas->GetWidgetFrame(ICanvas::ShapeType::Rectangle);
-			RectD triangleFrame = m_canvas->GetWidgetFrame(ICanvas::ShapeType::Triangle);
-			RectD ellipseFrame = m_canvas->GetWidgetFrame(ICanvas::ShapeType::Ellipse);
 			while (m_window->pollEvent(event))
 			{
 				ss.clear();
-				if (sf::Mouse::isButtonPressed(sf::Mouse::Left))
+				switch (event.type)
 				{
-					float x = sf::Mouse::getPosition().x;
-					float y = sf::Mouse::getPosition().y;
+				case sf::Event::MouseButtonPressed:
+				{
+					if (event.mouseButton.button == sf::Mouse::Left)
+					{
+						float x = event.mouseButton.x;
+						float y = event.mouseButton.y;
 
-					if (IsInFrame(x, y, rectFrame))
-					{
-						std::string type = "rectangle";
-						ss << DEFAULT_RECTANGLE_ARGS;
-						boost::uuids::uuid uuid = boost::uuids::random_generator()();
-						AddShape(boost::uuids::to_string(uuid), BASE_COLOR, type, ss);
-					}
-					if (IsInFrame(x, y, triangleFrame))
-					{
-						std::string type = "triangle";
-						ss << DEFAULT_TRIANGLE_ARGS;
-						boost::uuids::uuid uuid = boost::uuids::random_generator()();
-						AddShape(boost::uuids::to_string(uuid), BASE_COLOR, type, ss);
-					}
-					if (IsInFrame(x, y, ellipseFrame))
-					{
-						std::string type = "circle";
-						ss << DEFAULT_ELLIPSE_ARGS;
-						boost::uuids::uuid uuid = boost::uuids::random_generator()();
-						AddShape(boost::uuids::to_string(uuid), BASE_COLOR, type, ss);
-					}
-
-					while (sf::Mouse::isButtonPressed(sf::Mouse::Left))
-					{
-						float prevX = sf::Mouse::getPosition().x;
-						float prevY = sf::Mouse::getPosition().y;
-						if (!m_activeShapeId.empty())
+						auto shapeID = GetShapeIDByCoords(x, y);
+						if (shapeID.has_value())
 						{
-							double dx = sf::Mouse::getPosition().x - prevX;
-							double dy = sf::Mouse::getPosition().y - prevY;
-							if (dx != 0 || dy != 0)
-							{
-								MoveShape(m_activeShapeId, dx, dy);
-								DrawPicture(ss);
-							}
+							m_activeShapeID = shapeID.value();
+							isShapeMoving = true;
+							prevMouseX = event.mouseMove.x;
+							prevMouseY = event.mouseMove.y;
+						}
+						else
+						{
+							m_activeShapeID = std::nullopt;
+						}
+
+						if (IsInFrame(x, y, rectFrame))
+						{
+							std::string type = "rectangle";
+							ss << DEFAULT_RECTANGLE_ARGS;
+							boost::uuids::uuid uuid = boost::uuids::random_generator()();
+							AddShape(boost::uuids::to_string(uuid), BASE_COLOR, type, ss);
+						}
+						if (IsInFrame(x, y, triangleFrame))
+						{
+							std::string type = "triangle";
+							ss << DEFAULT_TRIANGLE_ARGS;
+							boost::uuids::uuid uuid = boost::uuids::random_generator()();
+							AddShape(boost::uuids::to_string(uuid), BASE_COLOR, type, ss);
+						}
+						if (IsInFrame(x, y, ellipseFrame))
+						{
+							std::string type = "circle";
+							ss << DEFAULT_ELLIPSE_ARGS;
+							boost::uuids::uuid uuid = boost::uuids::random_generator()();
+							AddShape(boost::uuids::to_string(uuid), BASE_COLOR, type, ss);
 						}
 					}
+					break;
 				}
-
-				if (event.type == sf::Event::Closed)
+				case sf::Event::MouseButtonReleased:
+				{
+					if (event.mouseButton.button == sf::Mouse::Left)
+					{
+						isShapeMoving = false;
+					}
+					break;
+				}
+				case sf::Event::Closed:
 				{
 					m_window->close();
+					break;
 				}
-				DrawPicture(ss);
+				}
 			}
+			if (isShapeMoving)
+			{
+				dx = event.mouseMove.x - prevMouseX;
+				dy = event.mouseMove.y - prevMouseY;
+				MoveShape(m_activeShapeID.value(), dx, dy);
+			}
+			DrawPicture(ss);
 		}
 	}
 
@@ -88,14 +111,27 @@ private:
 	const std::string DEFAULT_ELLIPSE_ARGS = "600 600 75";
 	const std::string DEFAULT_RECTANGLE_ARGS = "600 600 100 100";
 	const std::string DEFAULT_TRIANGLE_ARGS = "400 600 500 400 600 600";
-	std::string m_activeShapeId = "";
 	const std::string BASE_COLOR = "#ff00ff";
-	
+
+	std::optional<std::string> m_activeShapeID = std::nullopt;
 	std::shared_ptr<sf::RenderWindow> m_window;
 	std::shared_ptr<Picture> m_picture;
 	std::shared_ptr<ICanvas> m_canvas;
 	std::istream& m_input;
 	std::ostream& m_output;
+
+	std::optional<std::string> GetShapeIDByCoords(double x, double y)
+	{
+		for (auto& it : m_picture->GetShapes())
+		{
+			RectD frame = it.second->GetFrame();
+			if (IsInFrame(x, y, frame))
+			{
+				return it.second->GetId();
+			}
+		}
+		return std::nullopt;
+	}
 
 	bool IsInFrame(double x, double y, RectD frame)
 	{

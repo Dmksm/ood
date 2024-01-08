@@ -25,6 +25,11 @@ public:
 		canvas.DrawText(m_left, m_top, m_fontSize, m_text);
 	};
 
+	RectD GetFrame() const override
+	{
+		return RectD({ m_left, m_top, m_fontSize * (1 + m_text.size() / 5), 1.5 * m_fontSize });
+	}
+
 	std::string GetStrategyParams() override
 	{
 		std::stringstream ss;

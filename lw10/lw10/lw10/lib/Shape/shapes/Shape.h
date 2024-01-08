@@ -16,6 +16,11 @@ public:
 	{
 	};
 
+	RectD GetFrame() const
+	{
+		return m_drawingStrategy->GetFrame();
+	}
+
 	void SetDrawingStrategy(std::unique_ptr<IDrawingStrategy>&& drawingStrategy)
 	{
 		m_drawingStrategy = std::move(drawingStrategy);

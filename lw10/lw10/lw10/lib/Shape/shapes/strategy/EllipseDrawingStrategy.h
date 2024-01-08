@@ -24,6 +24,11 @@ public:
 		canvas.DrawEllipse(m_cx, m_cy, m_rx, m_ry);
 	};
 
+	RectD GetFrame() const override
+	{
+		return RectD({ m_cx - m_rx, m_cy - m_ry, 2 * m_rx, 2 * m_ry });
+	}
+
 	std::string GetStrategyParams() override
 	{
 		std::stringstream ss;
