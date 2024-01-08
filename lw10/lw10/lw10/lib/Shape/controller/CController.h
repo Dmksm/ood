@@ -30,6 +30,8 @@ public:
 		double dy = 0;
 		bool isShapeMoving = false;
 		bool isShapeResizing = false;
+		bool isMouseOnShape = false;
+		bool isMouseOnSelectionMarker = false;
 		PointD staticPoint = { 0, 0 };
 		while (m_window->isOpen())
 		{
@@ -48,15 +50,11 @@ public:
 							auto shapeID = GetShapeIDByCoords(x, y);
 							if (shapeID.has_value())
 							{
+								isMouseOnShape = true;
 								m_activeShapeID = shapeID.value();
 								isShapeMoving = true;
 								prevMouseX = x;
 								prevMouseY = y;
-							}
-							else
-							{
-								m_activeShapeID = std::nullopt;
-								isShapeMoving = false;
 							}
 
 							std::vector<RectD> selectionFrames;
@@ -71,6 +69,7 @@ public:
 							{
 								if (IsInFrame(x, y, frame))
 								{
+									isMouseOnSelectionMarker = true;
 									isShapeResizing = true;
 									index = (index + 2) % 4;
 									RectD staticFrame = *(selectionFrames.begin() + index);
@@ -103,6 +102,12 @@ public:
 								boost::uuids::uuid uuid = boost::uuids::random_generator()();
 								AddShape(boost::uuids::to_string(uuid), BASE_COLOR, type, DEFAULT_ELLIPSE_ARGS);
 							}
+
+							if (!(isMouseOnShape || isMouseOnSelectionMarker))
+							{
+								m_activeShapeID = std::nullopt;
+								isShapeMoving = false;
+							}
 						}
 						break;
 					case sf::Event::MouseMoved:
@@ -113,10 +118,6 @@ public:
 							dy = event.mouseMove.y - prevMouseY;
 							prevMouseX = event.mouseMove.x;
 							prevMouseY = event.mouseMove.y;
-							if (isShapeMoving)
-							{
-								MoveShape(m_activeShapeID.value(), dx, dy);
-							}
 							if (isShapeResizing)
 							{
 								double left = std::min(staticPoint.x, (double)event.mouseMove.x);
@@ -125,7 +126,15 @@ public:
 								double height = std::abs(top - std::max(staticPoint.y, (double)event.mouseMove.y));
 								RectD newFrame = { left, top, width, height };
 								m_picture->GetShape(m_activeShapeID.value())->SetFrame(newFrame);
+							} 
+							else
+							{
+								if (isShapeMoving)
+								{
+									MoveShape(m_activeShapeID.value(), dx, dy);
+								}
 							}
+							
 						}
 						break;
 					}
