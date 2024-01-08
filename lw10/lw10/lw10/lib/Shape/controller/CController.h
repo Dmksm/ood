@@ -118,25 +118,25 @@ public:
 							double currX = event.mouseMove.x;
 							double currY = event.mouseMove.y;
 							RectD activeFrame = m_picture->GetShape(m_activeShapeID.value())->GetFrame();
-							if (event.mouseMove.x < border.left)
-							{
-								currX = border.left;
-							}
-							if (event.mouseMove.x > border.left + border.width)
-							{
-								currX = border.left + border.width;
-							}
-							if (event.mouseMove.y < border.top)
-							{
-								currY = border.top;
-							}
-							if (event.mouseMove.y > border.top + border.height)
-							{
-								currY = border.top + border.height;
-							}
-
 							dx = currX - prevMouseX;
 							dy = currY - prevMouseY;
+							if (activeFrame.left + dx < border.left)
+							{
+								dx = border.left - activeFrame.left;
+							}
+							if (activeFrame.left + activeFrame.width + dx > border.left + border.width)
+							{
+								dx = (border.left + border.width) - (activeFrame.left + activeFrame.width);
+							}
+							if (activeFrame.top + dy < border.top)
+							{
+								dy = border.top - activeFrame.top;
+							}
+							if (activeFrame.top + activeFrame.height + dy > border.top + border.height)
+							{
+								dy = (border.top + border.height) - (activeFrame.top + activeFrame.height);
+							}
+
 							prevMouseX = currX;
 							prevMouseY = currY;
 							if (isShapeResizing)
