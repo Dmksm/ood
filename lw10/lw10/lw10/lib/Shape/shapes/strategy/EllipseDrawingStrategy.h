@@ -33,6 +33,8 @@ public:
 	{
 		m_rx = frame.width / 2;
 		m_ry = frame.height / 2;
+		m_cx = frame.left + m_rx;
+		m_cy = frame.top + m_ry;
 	}
 
 	std::string GetStrategyParams() override

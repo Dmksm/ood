@@ -22,7 +22,7 @@ public:
 
     virtual std::size_t getPointCount() const
     {
-        return 30; // fixed, but could be an attribute of the class if needed
+        return m_pointCount;
     }
 
     virtual sf::Vector2f getPoint(std::size_t index) const
@@ -38,4 +38,5 @@ public:
 
 private:
     sf::Vector2f m_radius;
+    std::size_t m_pointCount = 90;
 };

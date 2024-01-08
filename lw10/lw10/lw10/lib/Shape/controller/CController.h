@@ -145,8 +145,26 @@ public:
 								double top = std::min(staticPoint.y, (double)event.mouseMove.y);
 								double width = std::abs(left - std::max(staticPoint.x, (double)event.mouseMove.x));
 								double height = std::abs(top - std::max(staticPoint.y, (double)event.mouseMove.y));
-								RectD newFrame = { left, top, width, height };
-								m_picture->GetShape(m_activeShapeID.value())->SetFrame(newFrame);
+								m_picture->GetShape(m_activeShapeID.value())->SetFrame({ left, top, width, height });
+
+								RectD frame = m_picture->GetShape(m_activeShapeID.value())->GetFrame();
+								if (frame.left < border.left)
+								{
+									frame.left = border.left;
+								}
+								if (frame.top < border.top)
+								{
+									frame.top = border.top;
+								}
+								if (frame.left + frame.width > border.left + border.width)
+								{
+									frame.width = (border.left + border.width) - frame.left;
+								}
+								if (frame.top + frame.height > border.top + border.height)
+								{
+									frame.height = (border.top + border.height) - frame.top;
+								}
+								m_picture->GetShape(m_activeShapeID.value())->SetFrame(frame);
 							} 
 							else
 							{
