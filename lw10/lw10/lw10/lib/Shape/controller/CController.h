@@ -38,70 +38,79 @@ public:
 				ss.clear();
 				switch (event.type)
 				{
-				case sf::Event::MouseButtonPressed:
-				{
-					if (event.mouseButton.button == sf::Mouse::Left)
+					case sf::Event::MouseButtonPressed:
 					{
-						float x = event.mouseButton.x;
-						float y = event.mouseButton.y;
-
-						auto shapeID = GetShapeIDByCoords(x, y);
-						if (shapeID.has_value())
+						if (event.mouseButton.button == sf::Mouse::Left)
 						{
-							m_activeShapeID = shapeID.value();
-							isShapeMoving = true;
+							float x = event.mouseButton.x;
+							float y = event.mouseButton.y;
+
+							auto shapeID = GetShapeIDByCoords(x, y);
+							if (shapeID.has_value())
+							{
+								m_activeShapeID = shapeID.value();
+								isShapeMoving = true;
+								prevMouseX = x;
+								prevMouseY = y;
+							}
+							else
+							{
+								m_activeShapeID = std::nullopt;
+								isShapeMoving = false;
+							}
+
+							if (IsInFrame(x, y, rectFrame))
+							{
+								std::string type = "rectangle";
+								ss << DEFAULT_RECTANGLE_ARGS;
+								boost::uuids::uuid uuid = boost::uuids::random_generator()();
+								AddShape(boost::uuids::to_string(uuid), BASE_COLOR, type, ss);
+							}
+							if (IsInFrame(x, y, triangleFrame))
+							{
+								std::string type = "triangle";
+								ss << DEFAULT_TRIANGLE_ARGS;
+								boost::uuids::uuid uuid = boost::uuids::random_generator()();
+								AddShape(boost::uuids::to_string(uuid), BASE_COLOR, type, ss);
+							}
+							if (IsInFrame(x, y, ellipseFrame))
+							{
+								std::string type = "circle";
+								ss << DEFAULT_ELLIPSE_ARGS;
+								boost::uuids::uuid uuid = boost::uuids::random_generator()();
+								AddShape(boost::uuids::to_string(uuid), BASE_COLOR, type, ss);
+							}
+						}
+						break;
+					case sf::Event::MouseMoved:
+					{
+						if (isShapeMoving)
+						{
+							dx = event.mouseMove.x - prevMouseX;
+							dy = event.mouseMove.y - prevMouseY;
 							prevMouseX = event.mouseMove.x;
 							prevMouseY = event.mouseMove.y;
+							MoveShape(m_activeShapeID.value(), dx, dy);
 						}
-						else
-						{
-							m_activeShapeID = std::nullopt;
-						}
-
-						if (IsInFrame(x, y, rectFrame))
-						{
-							std::string type = "rectangle";
-							ss << DEFAULT_RECTANGLE_ARGS;
-							boost::uuids::uuid uuid = boost::uuids::random_generator()();
-							AddShape(boost::uuids::to_string(uuid), BASE_COLOR, type, ss);
-						}
-						if (IsInFrame(x, y, triangleFrame))
-						{
-							std::string type = "triangle";
-							ss << DEFAULT_TRIANGLE_ARGS;
-							boost::uuids::uuid uuid = boost::uuids::random_generator()();
-							AddShape(boost::uuids::to_string(uuid), BASE_COLOR, type, ss);
-						}
-						if (IsInFrame(x, y, ellipseFrame))
-						{
-							std::string type = "circle";
-							ss << DEFAULT_ELLIPSE_ARGS;
-							boost::uuids::uuid uuid = boost::uuids::random_generator()();
-							AddShape(boost::uuids::to_string(uuid), BASE_COLOR, type, ss);
-						}
+						break;
 					}
-					break;
-				}
-				case sf::Event::MouseButtonReleased:
-				{
-					if (event.mouseButton.button == sf::Mouse::Left)
+					case sf::Event::MouseButtonReleased:
 					{
-						isShapeMoving = false;
+						if (event.mouseButton.button == sf::Mouse::Left)
+						{
+							isShapeMoving = false;
+						}
+						break;
 					}
-					break;
+					case sf::Event::Closed:
+					{
+						m_window->close();
+						break;
+					}
+					default:
+						break;
+					}
 				}
-				case sf::Event::Closed:
-				{
-					m_window->close();
-					break;
-				}
-				}
-			}
-			if (isShapeMoving)
-			{
-				dx = event.mouseMove.x - prevMouseX;
-				dy = event.mouseMove.y - prevMouseY;
-				MoveShape(m_activeShapeID.value(), dx, dy);
 			}
 			DrawPicture(ss);
 		}
