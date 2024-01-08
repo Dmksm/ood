@@ -31,6 +31,8 @@ public:
 
 	void SetFrame(RectD frame) override
 	{
+		m_rx = frame.width / 2;
+		m_ry = frame.height / 2;
 	}
 
 	std::string GetStrategyParams() override

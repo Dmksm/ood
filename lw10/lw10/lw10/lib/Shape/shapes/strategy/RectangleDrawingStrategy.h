@@ -26,6 +26,10 @@ public:
 
 	void SetFrame(RectD frame) override
 	{
+		m_left = frame.left;
+		m_top = frame.top;
+		m_height = frame.height;
+		m_width = frame.width;
 	}
 
 	RectD GetFrame() const override
