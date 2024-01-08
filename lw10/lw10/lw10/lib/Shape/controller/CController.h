@@ -39,24 +39,21 @@ public:
 					if (IsInFrame(x, y, rectFrame))
 					{
 						std::string type = "rectangle";
-						std::string args = "600 600 100 100";
-						ss << args;
+						ss << DEFAULT_RECTANGLE_ARGS;
 						boost::uuids::uuid uuid = boost::uuids::random_generator()();
 						AddShape(boost::uuids::to_string(uuid), BASE_COLOR, type, ss);
 					}
 					if (IsInFrame(x, y, triangleFrame))
 					{
 						std::string type = "triangle";
-						std::string args = "400 600 500 400 600 600";
-						ss << args;
+						ss << DEFAULT_TRIANGLE_ARGS;
 						boost::uuids::uuid uuid = boost::uuids::random_generator()();
 						AddShape(boost::uuids::to_string(uuid), BASE_COLOR, type, ss);
 					}
 					if (IsInFrame(x, y, ellipseFrame))
 					{
 						std::string type = "circle";
-						std::string args = "600 600 75";
-						ss << args;
+						ss << DEFAULT_ELLIPSE_ARGS;
 						boost::uuids::uuid uuid = boost::uuids::random_generator()();
 						AddShape(boost::uuids::to_string(uuid), BASE_COLOR, type, ss);
 					}
@@ -88,6 +85,9 @@ public:
 	}
 
 private:
+	const std::string DEFAULT_ELLIPSE_ARGS = "600 600 75";
+	const std::string DEFAULT_RECTANGLE_ARGS = "600 600 100 100";
+	const std::string DEFAULT_TRIANGLE_ARGS = "400 600 500 400 600 600";
 	std::string m_activeShapeId = "";
 	const std::string BASE_COLOR = "#ff00ff";
 	

@@ -39,6 +39,8 @@ public:
         ellipse.setPosition(m_position);
         ellipse.move(sf::Vector2f((float)cx - (float)rx, (float)cy - (float)ry));
         ellipse.setFillColor(m_color);
+        ellipse.setOutlineColor(m_outlineColor);
+        ellipse.setOutlineThickness(m_outlineThickness);
         m_window->setActive(true);
         m_window->draw(ellipse);
     }
@@ -53,6 +55,8 @@ public:
 
         rectangle.setPosition(m_position);
         rectangle.setFillColor(m_color);
+        rectangle.setOutlineColor(m_outlineColor);
+        rectangle.setOutlineThickness(m_outlineThickness);
         m_window->draw(rectangle);
     }
 
@@ -65,6 +69,8 @@ public:
 
         triangle.setPosition(m_position);
         triangle.setFillColor(m_color);
+        triangle.setOutlineColor(m_outlineColor);
+        triangle.setOutlineThickness(m_outlineThickness);
         m_window->draw(triangle);
     }
 
@@ -83,6 +89,8 @@ public:
         drawingText.setString(text);
         drawingText.setCharacterSize(fontSize);
         drawingText.setFillColor(m_color);
+        drawingText.setOutlineColor(m_outlineColor);
+        drawingText.setOutlineThickness(m_outlineThickness);
         m_window->draw(drawingText);
     }
 
@@ -171,6 +179,8 @@ private:
     const sf::Color m_workSpaceColor = sf::Color(255, 255, 255);
     const sf::Color m_widgetBackgroundColor = sf::Color(181, 184, 177);
 
+    float m_outlineThickness = 1;
+    sf::Color m_outlineColor = sf::Color(0, 0, 0);
     sf::Color m_color;
     sf::Vector2f m_position;
     std::shared_ptr<sf::RenderWindow> m_window;
