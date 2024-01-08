@@ -1,14 +1,21 @@
 #pragma once
 #include "../stdafx.h"
-#include "../shapes/Picture.h"
+#include "../shapes/IPicture.h"
+#include "../shapes/IShapeFabric.h"
+#include "strategy/IDrawingStrategy.h"
+#include "strategy/EllipseDrawingStrategy.h"
+#include "strategy/RectangleDrawingStrategy.h"
+#include "strategy/LineDrawingStrategy.h"
+#include "strategy/TriangleDrawingStrategy.h"
+#include "strategy/TextDrawingStrategy.h"
 
-class CShapeFabric
+class CShapeFabric: public IShapeFabric
 {
 public:
 	std::unique_ptr<IDrawingStrategy> MakeDrawingStrategy(
 		const std::string& type,
 		std::istream& args
-	)
+	) const override
 	{
 		if (type == "circle")
 		{
@@ -36,7 +43,7 @@ public:
 		}
 	}
 private:
-	std::unique_ptr<EllipseDrawingStrategy> MakeEllipseStrategy(std::istream& args)
+	std::unique_ptr<EllipseDrawingStrategy> MakeEllipseStrategy(std::istream& args) const
 	{
 		double x, y, radius;
 		args >> x >> y >> radius;
@@ -47,7 +54,7 @@ private:
 		return std::make_unique<EllipseDrawingStrategy>(x, y, radius, radius);
 	}
 
-	std::unique_ptr<RectangleDrawingStrategy> MakeRectangleStrategy(std::istream& args)
+	std::unique_ptr<RectangleDrawingStrategy> MakeRectangleStrategy(std::istream& args) const
 	{
 		double x, y, width, heigth;
 		args >> x >> y >> width >> heigth;
@@ -59,7 +66,7 @@ private:
 		return std::make_unique<RectangleDrawingStrategy>(x, y, width, heigth);
 	}
 
-	std::unique_ptr<LineDrawingStrategy> MakeLineStrategy(std::istream& args)
+	std::unique_ptr<LineDrawingStrategy> MakeLineStrategy(std::istream& args) const
 	{
 		double x1, y1, x2, y2;
 		args >> x1 >> y1 >> x2 >> y2;
@@ -67,7 +74,7 @@ private:
 		return std::make_unique<LineDrawingStrategy>(x1, y1, x2, y2);
 	}
 
-	std::unique_ptr<TriangleDrawingStrategy> MakeTriangleStrategy(std::istream& args)
+	std::unique_ptr<TriangleDrawingStrategy> MakeTriangleStrategy(std::istream& args) const
 	{
 		double x1, y1, x2, y2, x3, y3;
 		args >> x1 >> y1 >> x2 >> y2 >> x3 >> y3;
@@ -75,7 +82,7 @@ private:
 		return std::make_unique<TriangleDrawingStrategy>(x1, y1, x2, y2, x3, y3);
 	}
 
-	std::unique_ptr<TextDrawingStrategy> MakeTextStrategy(std::istream& args)
+	std::unique_ptr<TextDrawingStrategy> MakeTextStrategy(std::istream& args) const
 	{
 		double width, heigth, fontSize;
 		std::string text;

@@ -1,14 +1,14 @@
 #pragma once
 #include "../stdafx.h"
-#include "../shapes/ShapeFabric.h"
+#include "../shapes/IShapeFabric.h"
 #include "../gfx/ICanvas.h"
 
 class CController
 {
 public:
 	CController(
-		std::unique_ptr<CShapeFabric>&& shapeFabric,
-		std::unique_ptr<Picture>&& picture,
+		std::unique_ptr<IShapeFabric>&& shapeFabric,
+		std::unique_ptr<IPicture>&& picture,
 		sf::RenderWindow* renderWindow,
 		std::istream& input, 
 		std::ostream& output
@@ -221,11 +221,11 @@ private:
 
 	std::optional<std::string> m_activeShapeID = std::nullopt;
 	std::shared_ptr<sf::RenderWindow> m_window;
-	std::shared_ptr<Picture> m_picture;
+	std::shared_ptr<IPicture> m_picture;
 	std::shared_ptr<ICanvas> m_canvas;
 	std::istream& m_input;
 	std::ostream& m_output;
-	std::unique_ptr<CShapeFabric> m_shapeFabric;
+	std::unique_ptr<IShapeFabric> m_shapeFabric;
 
 	std::optional<std::string> GetShapeIDByCoords(double x, double y)
 	{
@@ -405,7 +405,7 @@ private:
 		{	
 			std::stringstream ss;
 			ss << args;
-			m_picture->AddShape(std::make_unique<Shape>(m_shapeFabric->MakeDrawingStrategy(type, ss), id, hexColor));
+			m_picture->AddShape(std::make_unique<CShape>(m_shapeFabric->MakeDrawingStrategy(type, ss), id, hexColor));
 		}
 		catch (std::exception& e)
 		{

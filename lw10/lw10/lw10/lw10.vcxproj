@@ -163,9 +163,12 @@
     <ClInclude Include="lib\Shape\gfx\CommonTypes.h" />
     <ClInclude Include="lib\Shape\gfx\EllipseShape.h" />
     <ClInclude Include="lib\Shape\gfx\ICanvas.h" />
-    <ClInclude Include="lib\Shape\shapes\Picture.h" />
-    <ClInclude Include="lib\Shape\shapes\Shape.h" />
-    <ClInclude Include="lib\Shape\shapes\ShapeFabric.h" />
+    <ClInclude Include="lib\Shape\shapes\CPicture.h" />
+    <ClInclude Include="lib\Shape\shapes\CShape.h" />
+    <ClInclude Include="lib\Shape\shapes\CShapeFabric.h" />
+    <ClInclude Include="lib\Shape\shapes\IPicture.h" />
+    <ClInclude Include="lib\Shape\shapes\IShape.h" />
+    <ClInclude Include="lib\Shape\shapes\IShapeFabric.h" />
     <ClInclude Include="lib\Shape\shapes\strategy\EllipseDrawingStrategy.h" />
     <ClInclude Include="lib\Shape\shapes\strategy\IDrawingStrategy.h" />
     <ClInclude Include="lib\Shape\shapes\strategy\LineDrawingStrategy.h" />

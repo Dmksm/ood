@@ -1,6 +1,7 @@
 #pragma once
 #include "../gfx/CCanvas.h"
-#include "Shape.h"
+#include "CShape.h"
+#include "IPicture.h"
 #include "strategy/IDrawingStrategy.h"
 #include "strategy/EllipseDrawingStrategy.h"
 #include "strategy/RectangleDrawingStrategy.h"
@@ -9,12 +10,10 @@
 #include "strategy/TextDrawingStrategy.h"
 #include "../stdafx.h"
 
-class Picture
+class CPicture: public IPicture
 {
 public:
-	using ShapesList = std::unordered_map<std::string, std::unique_ptr<Shape>>;
-
-	void DeleteShape(const std::string& id)
+	void DeleteShape(const std::string& id) override
 	{
 		auto it = m_shapes.find(id);
 		if (it != m_shapes.end())
@@ -24,7 +23,7 @@ public:
 		}
 	}
 
-	void AddShape(std::unique_ptr<Shape>&& shapePtr)
+	void AddShape(std::unique_ptr<IShape>&& shapePtr) override
 	{
 		if (IsShapeExist(shapePtr->GetId()))
 		{
@@ -35,7 +34,7 @@ public:
 		m_SequenceNumberList.insert({ id, ++m_sequenceNumber });
 	};
 
-	void ChangeShape(const std::string& id, std::unique_ptr<IDrawingStrategy>&& drawingStrategyPtr)
+	void ChangeShape(const std::string& id, std::unique_ptr<IDrawingStrategy>&& drawingStrategyPtr) override
 	{
 		if (!IsShapeExist(id))
 		{
@@ -44,12 +43,12 @@ public:
 		m_shapes.at(id)->SetDrawingStrategy(std::move(drawingStrategyPtr));
 	};
 
-	const ShapesList& GetShapes() const
+	const ShapesList& GetShapes() const override
 	{
 		return m_shapes;
 	}
 
-	const std::unique_ptr<Shape>& GetShape(const std::string& id) const
+	const std::unique_ptr<IShape>& GetShape(const std::string& id) const override
 	{
 		if (!IsShapeExist(id))
 		{
@@ -58,7 +57,7 @@ public:
 		return m_shapes.at(id);
 	}
 
-	unsigned GetSequenceNumber(const std::string id) const
+	unsigned GetSequenceNumber(const std::string id) const override
 	{
 		return m_SequenceNumberList.at(id);
 	}

@@ -3,11 +3,12 @@
 #include "../gfx/Color.h"
 #include "strategy/IDrawingStrategy.h"
 #include "../stdafx.h"
+#include "IShape.h"
 
-class Shape
+class CShape: public IShape
 {
 public:
-	Shape(std::unique_ptr<IDrawingStrategy>&& drawingStrategy, 
+	CShape(std::unique_ptr<IDrawingStrategy>&& drawingStrategy, 
 		const std::string& id,
 		Color color)
 		: m_drawingStrategy(std::move(drawingStrategy))
@@ -16,22 +17,22 @@ public:
 	{
 	};
 
-	void SetFrame(RectD frame)
+	void SetFrame(RectD frame) override
 	{
 		return m_drawingStrategy->SetFrame(frame);
 	}
 
-	RectD GetFrame() const
+	RectD GetFrame() const override
 	{
 		return m_drawingStrategy->GetFrame();
 	}
 
-	void SetDrawingStrategy(std::unique_ptr<IDrawingStrategy>&& drawingStrategy)
+	void SetDrawingStrategy(std::unique_ptr<IDrawingStrategy>&& drawingStrategy) override
 	{
 		m_drawingStrategy = std::move(drawingStrategy);
 	}
 
-	void Move(double dx, double dy) const
+	void Move(double dx, double dy) const override
 	{
 		if (!(dx == 0 && dy == 0))
 		{
@@ -39,12 +40,12 @@ public:
 		}
 	}
 
-	void Draw(ICanvas& canvas) const
+	void Draw(ICanvas& canvas) const override
 	{
 		m_drawingStrategy->Draw(canvas, m_color);
 	};
 
-	void SetColor(Color color)
+	void SetColor(Color color) override
 	{
 		if (m_color.GetHexFormat() != color.GetHexFormat())
 		{
@@ -52,17 +53,17 @@ public:
 		}
 	}	
 
-	std::string GetId() const
+	std::string GetId() const override
 	{
 		return m_id;
 	}
 
-	Color GetColor() const
+	Color GetColor() const override
 	{
 		return m_color;
 	}
 
-	std::string GetStrategyParams() const
+	std::string GetStrategyParams() const override
 	{
 		return (m_drawingStrategy) ? m_drawingStrategy->GetStrategyParams() : "";
 	}
