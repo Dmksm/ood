@@ -268,15 +268,28 @@ private:
 
 	std::optional<std::string> GetShapeIDByCoords(PointD mousePos)
 	{
+		std::optional<std::string> result = std::nullopt;
 		for (auto& it : m_picture->GetShapes())
 		{
 			RectD frame = it.second->GetFrame();
 			if (IsInFrame(mousePos, frame))
 			{
-				return it.second->GetId();
+				if (!result.has_value())
+				{
+					result = it.second->GetId();
+				}
+				else
+				{
+					if (m_picture->GetSequenceNumber(it.second->GetId()) >
+						m_picture->GetSequenceNumber(result.value())
+						)
+					{
+						result = it.second->GetId();
+					}
+				}
 			}
 		}
-		return std::nullopt;
+		return result;
 	}
 
 	bool IsInFrame(PointD pos, RectD frame)
