@@ -25,7 +25,7 @@ public:
 
 	void AddShape(std::unique_ptr<IShape>&& shapePtr) override
 	{
-		if (IsShapeExist(shapePtr->GetId()))
+		if (shapePtr == nullptr || IsShapeExist(shapePtr->GetId()))
 		{
 			throw std::logic_error("Shape with id = "s + shapePtr->GetId() + " already exist! "s);
 		};

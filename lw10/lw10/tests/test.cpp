@@ -7,7 +7,6 @@
 #include "../lw10/lib/Shape/gfx/CCanvas.h"
 #include "../lw10/lib/Shape/stdafx.h"
 
-
 using namespace std::string_literals;
 
 class CMockCanvas : public ICanvas
@@ -534,7 +533,6 @@ public:
 	};
 };
 
-
 SCENARIO("test controller")
 {
 	GIVEN("picture and controller out and mock data")
@@ -624,8 +622,8 @@ SCENARIO("test controller")
 			REQUIRE(controller.m_picture->GetShape(DEFAULT_ID)->GetStrategyParams() == "rectangle 10 20 30 40");
 			controller.AddShape(DEFAULT_ID_2, BASE_COLOR, "triangle", "10 10 20 5 30 10");
 			REQUIRE(controller.m_picture->GetShape(DEFAULT_ID_2)->GetStrategyParams() == "triangle 10 10 20 5 30 10");
-			controller.AddShape(DEFAULT_ID_3, BASE_COLOR, "ellipse", "50 60 100 200");
-			REQUIRE(controller.m_picture->GetShape(DEFAULT_ID_3)->GetStrategyParams() == "ellipse 50 60 100 200");
+			controller.AddShape(DEFAULT_ID_3, BASE_COLOR, "ellipse", "50 60 30 20");
+			REQUIRE(controller.m_picture->GetShape(DEFAULT_ID_3)->GetStrategyParams() == "ellipse 50 60 30 20");
 			controller.MoveShape(DEFAULT_ID, 10, 5);
 			controller.MoveShape(DEFAULT_ID_2, 5, 5);
 			controller.MoveShape(DEFAULT_ID_3, 10, 10);
@@ -633,7 +631,7 @@ SCENARIO("test controller")
 			{
 				REQUIRE(controller.m_picture->GetShape(DEFAULT_ID)->GetStrategyParams() == "rectangle 20 25 30 40");
 				REQUIRE(controller.m_picture->GetShape(DEFAULT_ID_2)->GetStrategyParams() == "triangle 15 15 25 10 35 15");
-				REQUIRE(controller.m_picture->GetShape(DEFAULT_ID_3)->GetStrategyParams() == "ellipse 60 70 100 200");
+				REQUIRE(controller.m_picture->GetShape(DEFAULT_ID_3)->GetStrategyParams() == "ellipse 60 70 30 20");
 			}
 		}
 	}
@@ -644,13 +642,113 @@ SCENARIO("test picture")
 	GIVEN("picture and out and mock data")
 	{
 		std::stringstream out;
+		CShapeFabric shapeFabric;
 		CPicture picture;
 		const std::string BASE_COLOR = "#ff00ff";
+		const std::string TYPE = "ellipse";
+		const std::string TYPE_2 = "rectangle";
+		const std::string TYPE_3 = "triangle";
 		const std::string DEFAULT_ID = "1";
 		const std::string DEFAULT_ID_2 = "2";
 		const std::string DEFAULT_ID_3 = "3";
+		std::stringstream ss;
+		ss << "10 12 13 16";
 		WHEN("Add shape")
 		{
+			REQUIRE_NOTHROW(picture.AddShape(std::make_unique<CShape>(
+				shapeFabric.MakeDrawingStrategy(TYPE, ss), DEFAULT_ID, BASE_COLOR)
+			));
+			THEN("Added new one")
+			{
+				REQUIRE(picture.GetShapes().size() == 1);
+				REQUIRE(picture.GetShape(DEFAULT_ID)->GetStrategyParams() == "ellipse 10 12 13 16");
+			}
 		}
+		WHEN("Delete shape")
+		{
+			REQUIRE_NOTHROW(picture.AddShape(std::make_unique<CShape>(
+				shapeFabric.MakeDrawingStrategy(TYPE, ss), DEFAULT_ID, BASE_COLOR)
+			));
+			picture.DeleteShape(DEFAULT_ID);
+			THEN("Added new one")
+			{
+				REQUIRE(picture.GetShapes().size() == 0);
+			}
+		}
+		WHEN("Get z-index of shape")
+		{
+			REQUIRE_NOTHROW(picture.AddShape(std::make_unique<CShape>(
+				shapeFabric.MakeDrawingStrategy(TYPE, ss), DEFAULT_ID, BASE_COLOR)
+			));
+			ss.clear();
+			ss << "20 40 15 50";
+			REQUIRE_NOTHROW(picture.AddShape(std::make_unique<CShape>(
+				shapeFabric.MakeDrawingStrategy(TYPE_2, ss), DEFAULT_ID_2, BASE_COLOR)
+			));
+			ss.clear();
+			ss << "20 40 15 50 12 21";
+			REQUIRE_NOTHROW(picture.AddShape(std::make_unique<CShape>(
+				shapeFabric.MakeDrawingStrategy(TYPE_3, ss), DEFAULT_ID_3, BASE_COLOR)
+			));
+			THEN("Added new one")
+			{
+				REQUIRE(picture.GetSequenceNumber(DEFAULT_ID) == 1);
+				REQUIRE(picture.GetSequenceNumber(DEFAULT_ID_2) == 2);
+				REQUIRE(picture.GetSequenceNumber(DEFAULT_ID_3) == 3);
+			}
+		}
+	}
+}
+
+SCENARIO("test shape")
+{
+	GIVEN("picture and out and mock data")
+	{
+		std::stringstream out;
+		CShapeFabric shapeFabric;
+		CPicture picture;
+		const std::string BASE_COLOR = "#ff00ff";
+		const std::string TYPE = "ellipse";
+		const std::string TYPE_2 = "rectangle";
+		const std::string TYPE_3 = "triangle";
+		const std::string DEFAULT_ID = "1";
+		const std::string DEFAULT_ID_2 = "2";
+		const std::string DEFAULT_ID_3 = "3";
+		std::stringstream ss;
+		ss << "10 12 13 16";
+		WHEN("Get shape frame")
+		{
+			REQUIRE_NOTHROW(picture.AddShape(std::make_unique<CShape>(
+				shapeFabric.MakeDrawingStrategy(TYPE, ss), DEFAULT_ID, BASE_COLOR)
+			));
+			ss.clear();
+			ss << "20 40 15 50";
+			REQUIRE_NOTHROW(picture.AddShape(std::make_unique<CShape>(
+				shapeFabric.MakeDrawingStrategy(TYPE_2, ss), DEFAULT_ID_2, BASE_COLOR)
+			));
+			ss.clear();
+			ss << "20 40 15 50 12 21";
+			REQUIRE_NOTHROW(picture.AddShape(std::make_unique<CShape>(
+				shapeFabric.MakeDrawingStrategy(TYPE_3, ss), DEFAULT_ID_3, BASE_COLOR)
+			));
+			THEN("got correct shape frame")
+			{
+				REQUIRE(picture.GetShape(DEFAULT_ID)->GetFrame().left == -3);
+				REQUIRE(picture.GetShape(DEFAULT_ID)->GetFrame().top == -4);
+				REQUIRE(picture.GetShape(DEFAULT_ID)->GetFrame().width == 26);
+				REQUIRE(picture.GetShape(DEFAULT_ID)->GetFrame().height == 32);
+
+				REQUIRE(picture.GetShape(DEFAULT_ID_2)->GetFrame().left == 20);
+				REQUIRE(picture.GetShape(DEFAULT_ID_2)->GetFrame().top == 40);
+				REQUIRE(picture.GetShape(DEFAULT_ID_2)->GetFrame().width == 15);
+				REQUIRE(picture.GetShape(DEFAULT_ID_2)->GetFrame().height == 50);
+
+				REQUIRE(picture.GetShape(DEFAULT_ID_3)->GetFrame().left == 12);
+				REQUIRE(picture.GetShape(DEFAULT_ID_3)->GetFrame().top == 21);
+				REQUIRE(picture.GetShape(DEFAULT_ID_3)->GetFrame().width == 8);
+				REQUIRE(picture.GetShape(DEFAULT_ID_3)->GetFrame().height == 29);
+			}
+		}
+
 	}
 }

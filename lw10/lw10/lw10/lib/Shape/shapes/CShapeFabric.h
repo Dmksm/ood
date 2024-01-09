@@ -45,13 +45,13 @@ public:
 private:
 	std::unique_ptr<EllipseDrawingStrategy> MakeEllipseStrategy(std::istream& args) const
 	{
-		double x, y, radius;
-		args >> x >> y >> radius;
-		if (radius < 0)
+		double x, y, radiusX, radiusY;
+		args >> x >> y >> radiusX >> radiusY;
+		if (radiusX < 0 || radiusY < 0)
 		{
 			throw std::logic_error("Radius can not be negative!");
 		}
-		return std::make_unique<EllipseDrawingStrategy>(x, y, radius, radius);
+		return std::make_unique<EllipseDrawingStrategy>(x, y, radiusX, radiusY);
 	}
 
 	std::unique_ptr<RectangleDrawingStrategy> MakeRectangleStrategy(std::istream& args) const
