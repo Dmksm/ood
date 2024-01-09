@@ -1,10 +1,10 @@
 #pragma once
-#include "IDrawingStrategy.h"
+#include "IBehaviourStrategy.h"
 
-class EllipseDrawingStrategy: public IDrawingStrategy
+class EllipseBehaviourStrategy: public IBehaviourStrategy
 {
 public:
-	EllipseDrawingStrategy(double cx, double cy, double rx, double ry)
+	EllipseBehaviourStrategy(double cx, double cy, double rx, double ry)
 		: m_cx(cx)
 		, m_cy(cy)
 		, m_rx(rx)

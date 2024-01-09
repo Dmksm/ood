@@ -165,16 +165,16 @@
     <ClInclude Include="lib\Shape\gfx\ICanvas.h" />
     <ClInclude Include="lib\Shape\shapes\CPicture.h" />
     <ClInclude Include="lib\Shape\shapes\CShape.h" />
-    <ClInclude Include="lib\Shape\shapes\CShapeFabric.h" />
+    <ClInclude Include="lib\Shape\shapes\CShapeBehaviourFactory.h" />
     <ClInclude Include="lib\Shape\shapes\IPicture.h" />
     <ClInclude Include="lib\Shape\shapes\IShape.h" />
-    <ClInclude Include="lib\Shape\shapes\IShapeFabric.h" />
-    <ClInclude Include="lib\Shape\shapes\strategy\EllipseDrawingStrategy.h" />
-    <ClInclude Include="lib\Shape\shapes\strategy\IDrawingStrategy.h" />
-    <ClInclude Include="lib\Shape\shapes\strategy\LineDrawingStrategy.h" />
-    <ClInclude Include="lib\Shape\shapes\strategy\RectangleDrawingStrategy.h" />
-    <ClInclude Include="lib\Shape\shapes\strategy\TextDrawingStrategy.h" />
-    <ClInclude Include="lib\Shape\shapes\strategy\TriangleDrawingStrategy.h" />
+    <ClInclude Include="lib\Shape\shapes\IShapeBehaviourFactory.h" />
+    <ClInclude Include="lib\Shape\shapes\strategy\EllipseBehaviourStrategy.h" />
+    <ClInclude Include="lib\Shape\shapes\strategy\IBehaviourStrategy.h" />
+    <ClInclude Include="lib\Shape\shapes\strategy\LineBehaviourStrategy.h" />
+    <ClInclude Include="lib\Shape\shapes\strategy\RectangleBehaviourStrategy.h" />
+    <ClInclude Include="lib\Shape\shapes\strategy\TextBehaviourStrategy.h" />
+    <ClInclude Include="lib\Shape\shapes\strategy\TriangleBehaviourStrategy.h" />
     <ClInclude Include="lib\Shape\stdafx.h" />
     <ClInclude Include="shapes\Shapes.h" />
   </ItemGroup>

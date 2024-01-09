@@ -1,10 +1,10 @@
 #pragma once
-#include "IDrawingStrategy.h"
+#include "IBehaviourStrategy.h"
 
-class LineDrawingStrategy : public IDrawingStrategy
+class LineBehaviourStrategy : public IBehaviourStrategy
 {
 public:
-	LineDrawingStrategy(double x1, double y1, double x2, double y2)
+	LineBehaviourStrategy(double x1, double y1, double x2, double y2)
 		: m_x1(x1)
 		, m_y1(y1)
 		, m_x2(x2)

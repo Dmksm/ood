@@ -1,11 +1,11 @@
 #pragma once
 #include "../../stdafx.h"
-#include "IDrawingStrategy.h"
+#include "IBehaviourStrategy.h"
 
-class TextDrawingStrategy : public IDrawingStrategy
+class TextBehaviourStrategy : public IBehaviourStrategy
 {
 public:
-	TextDrawingStrategy(double left, double top, double fontSize, const std::string& text)
+	TextBehaviourStrategy(double left, double top, double fontSize, const std::string& text)
 		: m_left(left)
 		, m_top(top)
 		, m_fontSize(fontSize)

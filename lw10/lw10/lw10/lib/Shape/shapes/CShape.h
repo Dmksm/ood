@@ -1,14 +1,14 @@
 #pragma once
 #include "../gfx/ICanvas.h"
 #include "../gfx/Color.h"
-#include "strategy/IDrawingStrategy.h"
+#include "strategy/IBehaviourStrategy.h"
 #include "../stdafx.h"
 #include "IShape.h"
 
 class CShape: public IShape
 {
 public:
-	CShape(std::unique_ptr<IDrawingStrategy>&& drawingStrategy, 
+	CShape(std::unique_ptr<IBehaviourStrategy>&& drawingStrategy,
 		const std::string& id,
 		Color color)
 		: m_drawingStrategy(std::move(drawingStrategy))
@@ -27,7 +27,7 @@ public:
 		return m_drawingStrategy->GetFrame();
 	}
 
-	void SetDrawingStrategy(std::unique_ptr<IDrawingStrategy>&& drawingStrategy) override
+	void SetBehaviourStrategy(std::unique_ptr<IBehaviourStrategy>&& drawingStrategy) override
 	{
 		m_drawingStrategy = std::move(drawingStrategy);
 	}
@@ -69,7 +69,7 @@ public:
 	}
 
 private:
-	std::unique_ptr<IDrawingStrategy> m_drawingStrategy = nullptr;
+	std::unique_ptr<IBehaviourStrategy> m_drawingStrategy = nullptr;
 	Color m_color;
 	std::string m_id = "";
 

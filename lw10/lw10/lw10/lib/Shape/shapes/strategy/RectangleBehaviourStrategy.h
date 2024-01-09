@@ -1,10 +1,10 @@
 #pragma once
-#include "IDrawingStrategy.h"
+#include "IBehaviourStrategy.h"
 
-class RectangleDrawingStrategy : public IDrawingStrategy
+class RectangleBehaviourStrategy : public IBehaviourStrategy
 {
 public:
-	RectangleDrawingStrategy(double left, double top, double width, double height)
+	RectangleBehaviourStrategy(double left, double top, double width, double height)
 		: m_left(left)
 		, m_top(top)
 		, m_width(width)

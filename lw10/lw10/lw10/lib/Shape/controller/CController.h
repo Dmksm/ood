@@ -1,6 +1,6 @@
 #pragma once
 #include "../stdafx.h"
-#include "../shapes/IShapeFabric.h"
+#include "../shapes/IShapeBehaviourFactory.h"
 #include "../gfx/ICanvas.h"
 #include "../gfx/CCanvas.h"
 #include "../shapes/CShape.h"
@@ -9,14 +9,14 @@ class CController
 {
 public:
 	CController(
-		std::unique_ptr<IShapeFabric>&& shapeFabric,
+		std::unique_ptr<IShapeBehaviourFactory>&& shapeFactory,
 		std::unique_ptr<IPicture>&& picture,
 		sf::RenderWindow* renderWindow,
 		std::istream& input, 
 		std::ostream& output
 	)
 		: m_picture(std::move(picture))
-		, m_shapeFabric(std::move(shapeFabric))
+		, m_shapeFactory(std::move(shapeFactory))
 		, m_window(renderWindow)
 		, m_canvas(std::move(std::make_shared<CCanvas>(renderWindow)))
 		, m_input(input)
@@ -86,9 +86,7 @@ public:
 	}
 
 private:
-	const std::string DEFAULT_ELLIPSE_ARGS = "600 600 75 75";
-	const std::string DEFAULT_RECTANGLE_ARGS = "600 600 100 100";
-	const std::string DEFAULT_TRIANGLE_ARGS = "400 600 500 400 600 600";
+	const RectD DEFAULT_FRAME = {600, 600, 200, 200};
 	const std::string BASE_COLOR = "#ff00ff";
 
 	std::optional<std::string> m_activeShapeID = std::nullopt;
@@ -97,7 +95,7 @@ private:
 	std::shared_ptr<ICanvas> m_canvas;
 	std::istream& m_input;
 	std::ostream& m_output;
-	std::unique_ptr<IShapeFabric> m_shapeFabric;
+	std::unique_ptr<IShapeBehaviourFactory> m_shapeFactory;
 
 	void HandleMouseMovedEvent(
 		sf::Event event,
@@ -250,19 +248,19 @@ private:
 		{
 			std::string type = "rectangle";
 			boost::uuids::uuid uuid = boost::uuids::random_generator()();
-			AddShape(boost::uuids::to_string(uuid), BASE_COLOR, type, DEFAULT_RECTANGLE_ARGS);
+			AddShape(boost::uuids::to_string(uuid), BASE_COLOR, type, DEFAULT_FRAME, std::nullopt, std::nullopt);
 		}
 		if (IsInFrame(pos, triangleFrame))
 		{
 			std::string type = "triangle";
 			boost::uuids::uuid uuid = boost::uuids::random_generator()();
-			AddShape(boost::uuids::to_string(uuid), BASE_COLOR, type, DEFAULT_TRIANGLE_ARGS);
+			AddShape(boost::uuids::to_string(uuid), BASE_COLOR, type, DEFAULT_FRAME, std::nullopt, std::nullopt);
 		}
 		if (IsInFrame(pos, ellipseFrame))
 		{
 			std::string type = "ellipse";
 			boost::uuids::uuid uuid = boost::uuids::random_generator()();
-			AddShape(boost::uuids::to_string(uuid), BASE_COLOR, type, DEFAULT_ELLIPSE_ARGS);
+			AddShape(boost::uuids::to_string(uuid), BASE_COLOR, type, DEFAULT_FRAME, std::nullopt, std::nullopt);
 		}
 	}
 
@@ -303,11 +301,14 @@ private:
 		m_canvas->DrawWidgetPanel();
 	}
 
-	void ChangeShape(const std::string& id, const std::string& type, std::istream& args)
+	void ChangeShape(const std::string& id, const std::string& type, RectD frame,
+		std::optional<unsigned> framefontSize,
+		std::optional<std::string> text
+	)
 	{
 		try
 		{
-			m_picture->ChangeShape(id, m_shapeFabric->MakeDrawingStrategy(type, args));
+			m_picture->ChangeShape(id, m_shapeFactory->MakeBehaviourStrategy(type, frame, framefontSize, text));
 		}
 		catch (std::exception& e)
 		{
@@ -440,14 +441,14 @@ private:
 		const std::string& id,
 		const std::string& hexColor,
 		const std::string& type,
-		const std::string& args
+		RectD frame,
+		std::optional<unsigned> framefontSize,
+		std::optional<std::string> text
 	)
 	{
 		try
 		{	
-			std::stringstream ss;
-			ss << args;
-			m_picture->AddShape(std::make_unique<CShape>(m_shapeFabric->MakeDrawingStrategy(type, ss), id, hexColor));
+			m_picture->AddShape(std::make_unique<CShape>(m_shapeFactory->MakeBehaviourStrategy(type, frame, framefontSize, text), id, hexColor));
 		}
 		catch (std::exception& e)
 		{

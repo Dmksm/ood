@@ -62,34 +62,43 @@
     <ClInclude Include="lib\Shape\controller\CController.h">
       <Filter>Файлы заголовков</Filter>
     </ClInclude>
-    <ClInclude Include="lib\Shape\shapes\Picture.h">
+    <ClInclude Include="lib\Shape\shapes\strategy\EllipseBehaviourStrategy.h">
       <Filter>Файлы заголовков</Filter>
     </ClInclude>
-    <ClInclude Include="lib\Shape\shapes\Shape.h">
+    <ClInclude Include="lib\Shape\shapes\strategy\IBehaviourStrategy.h">
       <Filter>Файлы заголовков</Filter>
     </ClInclude>
-    <ClInclude Include="lib\Shape\shapes\strategy\EllipseDrawingStrategy.h">
+    <ClInclude Include="lib\Shape\shapes\strategy\LineBehaviourStrategy.h">
       <Filter>Файлы заголовков</Filter>
     </ClInclude>
-    <ClInclude Include="lib\Shape\shapes\strategy\IDrawingStrategy.h">
+    <ClInclude Include="lib\Shape\shapes\strategy\RectangleBehaviourStrategy.h">
       <Filter>Файлы заголовков</Filter>
     </ClInclude>
-    <ClInclude Include="lib\Shape\shapes\strategy\LineDrawingStrategy.h">
+    <ClInclude Include="lib\Shape\shapes\strategy\TextBehaviourStrategy.h">
       <Filter>Файлы заголовков</Filter>
     </ClInclude>
-    <ClInclude Include="lib\Shape\shapes\strategy\RectangleDrawingStrategy.h">
-      <Filter>Файлы заголовков</Filter>
-    </ClInclude>
-    <ClInclude Include="lib\Shape\shapes\strategy\TextDrawingStrategy.h">
-      <Filter>Файлы заголовков</Filter>
-    </ClInclude>
-    <ClInclude Include="lib\Shape\shapes\strategy\TriangleDrawingStrategy.h">
+    <ClInclude Include="lib\Shape\shapes\strategy\TriangleBehaviourStrategy.h">
       <Filter>Файлы заголовков</Filter>
     </ClInclude>
     <ClInclude Include="lib\Shape\gfx\CommonTypes.h">
       <Filter>Файлы заголовков</Filter>
     </ClInclude>
-    <ClInclude Include="lib\Shape\shapes\ShapeFabric.h">
+    <ClInclude Include="lib\Shape\shapes\CPicture.h">
+      <Filter>Файлы заголовков</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\Shape\shapes\CShape.h">
+      <Filter>Файлы заголовков</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\Shape\shapes\CShapeBehaviourFactory.h">
+      <Filter>Файлы заголовков</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\Shape\shapes\IPicture.h">
+      <Filter>Файлы заголовков</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\Shape\shapes\IShape.h">
+      <Filter>Файлы заголовков</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\Shape\shapes\IShapeBehaviourFactory.h">
       <Filter>Файлы заголовков</Filter>
     </ClInclude>
   </ItemGroup>

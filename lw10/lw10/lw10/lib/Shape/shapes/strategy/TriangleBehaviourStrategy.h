@@ -1,11 +1,11 @@
 #pragma once
-#include "IDrawingStrategy.h"
+#include "IBehaviourStrategy.h"
 #include "../../stdafx.h"
 
-class TriangleDrawingStrategy : public IDrawingStrategy
+class TriangleBehaviourStrategy : public IBehaviourStrategy
 {
 public:
-	TriangleDrawingStrategy(double x1, double y1, double x2, double y2, double x3, double y3)
+	TriangleBehaviourStrategy(double x1, double y1, double x2, double y2, double x3, double y3)
 		: m_x1(x1)
 		, m_y1(y1)
 		, m_x2(x2)

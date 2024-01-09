@@ -6,6 +6,7 @@
 class ICanvas
 {
 public:
+	//почему зависимость от модельных
 	enum class ShapeType : int
 	{
 		Rectangle = 1,
@@ -21,6 +22,7 @@ public:
 	virtual void DrawTriangle(double x1, double y1, double x2, double y2, double x3, double y3) = 0;
 	virtual void DrawRectangle(double left, double top, double width, double height) = 0;
 	virtual void DrawLine(double x1, double y1, double x2, double y2) = 0;
+	//отображение виджетов не в канвас
 	virtual void DrawWidgetPanel() = 0;
 	virtual void DrawFrame(RectD frame) = 0;
 	virtual std::vector<RectD> GetSelectionMarkerFrame(RectD frame) = 0;

@@ -2,12 +2,12 @@
 #include "../gfx/CCanvas.h"
 #include "CShape.h"
 #include "IPicture.h"
-#include "strategy/IDrawingStrategy.h"
-#include "strategy/EllipseDrawingStrategy.h"
-#include "strategy/RectangleDrawingStrategy.h"
-#include "strategy/LineDrawingStrategy.h"
-#include "strategy/TriangleDrawingStrategy.h"
-#include "strategy/TextDrawingStrategy.h"
+#include "strategy/IBehaviourStrategy.h"
+#include "strategy/EllipseBehaviourStrategy.h"
+#include "strategy/RectangleBehaviourStrategy.h"
+#include "strategy/LineBehaviourStrategy.h"
+#include "strategy/TriangleBehaviourStrategy.h"
+#include "strategy/TextBehaviourStrategy.h"
 #include "../stdafx.h"
 
 class CPicture: public IPicture
@@ -34,13 +34,13 @@ public:
 		m_SequenceNumberList.insert({ id, ++m_sequenceNumber });
 	};
 
-	void ChangeShape(const std::string& id, std::unique_ptr<IDrawingStrategy>&& drawingStrategyPtr) override
+	void ChangeShape(const std::string& id, std::unique_ptr<IBehaviourStrategy>&& drawingStrategyPtr) override
 	{
 		if (!IsShapeExist(id))
 		{
 			throw std::logic_error("Shape with id = "s + id + " does not exist! "s);
 		};
-		m_shapes.at(id)->SetDrawingStrategy(std::move(drawingStrategyPtr));
+		m_shapes.at(id)->SetBehaviourStrategy(std::move(drawingStrategyPtr));
 	};
 
 	const ShapesList& GetShapes() const override
