@@ -40,11 +40,6 @@ public:
 		}
 	}
 
-	void Draw(ICanvas& canvas) const override
-	{
-		m_drawingStrategy->Draw(canvas, m_color);
-	};
-
 	void SetColor(Color color) override
 	{
 		if (m_color.GetHexFormat() != color.GetHexFormat())
@@ -63,9 +58,9 @@ public:
 		return m_color;
 	}
 
-	std::string GetStrategyParams() const override
+	std::string GetType() const override
 	{
-		return (m_drawingStrategy) ? m_drawingStrategy->GetStrategyParams() : "";
+		return (m_drawingStrategy) ? m_drawingStrategy->GetType() : "";
 	}
 
 private:

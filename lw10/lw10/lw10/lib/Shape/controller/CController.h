@@ -363,39 +363,44 @@ private:
 		}
 	}
 
-	void DisplayShapeList(std::istream& args)
-	{
-		try 
-		{
-			std::map<unsigned, std::string> outputMessage;
-			for (auto& it : m_picture->GetShapes())
-			{
-				std::string strategyParams = it.second->GetStrategyParams();
-				std::string	shapeType = strategyParams.substr(0, strategyParams.find(' '));
-				std::string id = it.second->GetId();
-
-				std::stringstream ss;
-				ss << m_picture->GetSequenceNumber(id) << " " << shapeType << " " 
-					<< id << " " << it.second->GetColor().GetRGBFormat()
-					<< strategyParams.substr(strategyParams.find(' ')) << std::endl;
-				outputMessage.insert({ m_picture->GetSequenceNumber(id), ss.str()});
-			}
-			for (auto& it : outputMessage)
-			{
-				m_output << it.second;
-			}
-		}
-		catch (std::exception& e)
-		{
-			m_output << e.what() << std::endl;
-		}
-	}
-
 	void DrawShape(const std::string& id)
 	{
 		try
 		{
-			m_picture->GetShape(id)->Draw(*m_canvas);
+			m_canvas->SetColor(m_picture->GetShape(id)->GetColor());
+			RectD frame = m_picture->GetShape(id)->GetFrame();
+			if (m_picture->GetShape(id)->GetType() == "ellipse")
+			{
+				m_canvas->DrawEllipse(
+					frame.left + frame.width / 2,
+					frame.top + frame.height / 2,
+					frame.width / 2,
+					frame.height / 2
+				);
+			}
+			if (m_picture->GetShape(id)->GetType() == "rectangle")
+			{
+				m_canvas->DrawRectangle(
+					frame.left, frame.top,
+					frame.width, frame.height
+				);
+			}
+			if (m_picture->GetShape(id)->GetType() == "triangle")
+			{
+				m_canvas->DrawTriangle(
+					frame.left, frame.top + frame.height,
+					frame.left + frame.width / 2, frame.top,
+					frame.left + frame.width, frame.top + frame.height
+				);
+			}
+			if (m_picture->GetShape(id)->GetType() == "line")
+			{
+				m_canvas->DrawLine(
+					frame.left, frame.top,
+					frame.left + frame.width, frame.top + frame.height
+				);
+			}
+
 			m_canvas->Display();
 		}
 		catch (std::exception& e)
@@ -421,7 +426,41 @@ private:
 			for (auto& it : orderList)
 			{
 				std::string ID = it.second;
-				m_picture->GetShape(ID)->Draw(*m_canvas);
+				
+				m_canvas->SetColor(m_picture->GetShape(ID)->GetColor());
+				RectD frame = m_picture->GetShape(ID)->GetFrame();
+				if (m_picture->GetShape(ID)->GetType() == "ellipse")
+				{
+					m_canvas->DrawEllipse(
+						frame.left + frame.width / 2,
+						frame.top + frame.height / 2,
+						frame.width / 2,
+						frame.height / 2
+					);
+				}
+				if (m_picture->GetShape(ID)->GetType() == "rectangle")
+				{
+					m_canvas->DrawRectangle(
+						frame.left, frame.top,
+						frame.width, frame.height
+					);
+				}
+				if (m_picture->GetShape(ID)->GetType() == "triangle")
+				{
+					m_canvas->DrawTriangle(
+						frame.left, frame.top + frame.height,
+						frame.left + frame.width / 2, frame.top,
+						frame.left + frame.width, frame.top + frame.height
+					);
+				}
+				if (m_picture->GetShape(ID)->GetType() == "line")
+				{
+					m_canvas->DrawLine(
+						frame.left, frame.top,
+						frame.left + frame.width, frame.top + frame.height
+					);
+				}
+				
 				if (ID == m_activeShapeID)
 				{
 					RectD frame = m_picture->GetShape(ID)->GetFrame();

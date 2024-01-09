@@ -20,12 +20,6 @@ public:
 		m_y2 += dy;
 	}
 
-	void Draw(ICanvas& canvas, Color color) override
-	{
-		canvas.SetColor(color);
-		canvas.DrawLine(m_x1, m_y1, m_x2, m_y2);
-	};
-
 	void SetFrame(RectD frame) override
 	{
 		if (m_x1 < m_x2)
@@ -64,12 +58,9 @@ public:
 		});
 	}
 
-	std::string GetStrategyParams() override
+	std::string GetType() override
 	{
-		std::stringstream ss;
-		ss << "line " << m_x1 << " " << m_y1 << " "
-			<< m_x2 << " " << m_y2;
-		return ss.str();
+		return "line";
 	};
 
 private:

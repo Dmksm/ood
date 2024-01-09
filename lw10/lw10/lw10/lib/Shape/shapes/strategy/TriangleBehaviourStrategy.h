@@ -25,12 +25,6 @@ public:
 		m_y3 += dy;
 	}
 
-	void Draw(ICanvas& canvas, Color color) override
-	{
-		canvas.SetColor(color);
-		canvas.DrawTriangle(m_x1, m_y1, m_x2, m_y2, m_x3, m_y3);
-	};
-
 	RectD GetFrame() const override
 	{
 		return RectD({
@@ -54,12 +48,9 @@ public:
 		TransformPoint(m_x3, m_y3, centerX, centerY, scaleFactorX, scaleFactorY);
 	}
 
-	std::string GetStrategyParams() override
+	std::string GetType() override
 	{
-		std::stringstream ss;
-		ss << "triangle " << m_x1 << " " << m_y1
-			<< " " << m_x2 << " " << m_y2 << " " << m_x3 << " " << m_y3;
-		return ss.str();
+		return "triangle";
 	};
 
 private:

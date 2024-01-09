@@ -18,12 +18,6 @@ public:
 		m_top += dy;
 	}
 
-	void Draw(ICanvas& canvas, Color color) override
-	{
-		canvas.SetColor(color);
-		canvas.DrawRectangle(m_left, m_top, m_width, m_height);
-	};
-
 	void SetFrame(RectD frame) override
 	{
 		m_left = frame.left;
@@ -37,12 +31,9 @@ public:
 		return RectD({ m_left, m_top, m_width, m_height });
 	}
 
-	std::string GetStrategyParams() override
+	std::string GetType() override
 	{
-		std::stringstream ss;
-		ss << "rectangle " << m_left << " " << m_top << " "
-			<< m_width << " " << m_height;
-		return ss.str();
+		return "rectangle";
 	};
 
 private:

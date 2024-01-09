@@ -11,10 +11,9 @@ public:
 	virtual RectD GetFrame() const = 0;
 	virtual void SetBehaviourStrategy(std::unique_ptr<IBehaviourStrategy>&& drawingStrategy) = 0;
 	virtual void Move(double dx, double dy) const = 0;
-	virtual void Draw(ICanvas& canvas) const = 0;
 	virtual void SetColor(Color color) = 0;
 	virtual std::string GetId() const = 0;
 	virtual Color GetColor() const = 0;
-	virtual std::string GetStrategyParams() const = 0;
+	virtual std::string GetType() const = 0;
 	virtual ~IShape() = default;
 };

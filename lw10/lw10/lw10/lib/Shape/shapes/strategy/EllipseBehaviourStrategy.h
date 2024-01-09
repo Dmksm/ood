@@ -18,12 +18,6 @@ public:
 		m_cy += dy;
 	}
 
-	void Draw(ICanvas& canvas, Color color) override
-	{
-		canvas.SetColor(color);
-		canvas.DrawEllipse(m_cx, m_cy, m_rx, m_ry);
-	};
-
 	RectD GetFrame() const override
 	{
 		return RectD({ m_cx - m_rx, m_cy - m_ry, 2 * m_rx, 2 * m_ry });
@@ -37,12 +31,9 @@ public:
 		m_cy = frame.top + m_ry;
 	}
 
-	std::string GetStrategyParams() override
+	std::string GetType() override
 	{
-		std::stringstream ss;
-		ss << "ellipse " << m_cx << " " << m_cy << " " << m_rx
-			<< " " << m_ry;
-		return ss.str();
+		return "ellipse";
 	};
 
 private:

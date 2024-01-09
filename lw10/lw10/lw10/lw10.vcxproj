@@ -173,7 +173,6 @@
     <ClInclude Include="lib\Shape\shapes\strategy\IBehaviourStrategy.h" />
     <ClInclude Include="lib\Shape\shapes\strategy\LineBehaviourStrategy.h" />
     <ClInclude Include="lib\Shape\shapes\strategy\RectangleBehaviourStrategy.h" />
-    <ClInclude Include="lib\Shape\shapes\strategy\TextBehaviourStrategy.h" />
     <ClInclude Include="lib\Shape\shapes\strategy\TriangleBehaviourStrategy.h" />
     <ClInclude Include="lib\Shape\stdafx.h" />
     <ClInclude Include="shapes\Shapes.h" />

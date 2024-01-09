@@ -7,7 +7,6 @@
 #include "strategy/RectangleBehaviourStrategy.h"
 #include "strategy/LineBehaviourStrategy.h"
 #include "strategy/TriangleBehaviourStrategy.h"
-#include "strategy/TextBehaviourStrategy.h"
 #include "../stdafx.h"
 
 class CPicture: public IPicture

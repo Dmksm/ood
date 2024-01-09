@@ -7,7 +7,6 @@
 #include "strategy/RectangleBehaviourStrategy.h"
 #include "strategy/LineBehaviourStrategy.h"
 #include "strategy/TriangleBehaviourStrategy.h"
-#include "strategy/TextBehaviourStrategy.h"
 
 class CShapeBehaviourFactory : public IShapeBehaviourFactory
 {
@@ -34,10 +33,6 @@ public:
 		else if (type == "triangle")
 		{
 			return MakeTriangleStrategy(frame);
-		}
-		else if (type == "text")
-		{
-			return MakeTextStrategy(frame, framefontSize, text);
 		}
 		else
 		{
@@ -77,21 +72,6 @@ private:
 			frame.left, frame.top + frame.height,
 			frame.left + frame.width / 2, frame.top,
 			frame.left + frame.width, frame.top + frame.height
-		);
-	}
-
-	std::unique_ptr<TextBehaviourStrategy> MakeTextStrategy(
-		RectD frame,
-		std::optional<unsigned> framefontSize, 
-		std::optional<std::string> text
-	) const
-	{
-		if (!framefontSize.has_value() || !text.has_value())
-		{
-			throw std::logic_error("insufficient data for build text strategy!");
-		}
-		return std::make_unique<TextBehaviourStrategy>(
-			frame.width, frame.height, framefontSize.value(), text.value()
 		);
 	}
 };
