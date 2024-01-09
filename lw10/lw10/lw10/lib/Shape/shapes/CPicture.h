@@ -57,7 +57,7 @@ public:
 		return m_shapes.at(id);
 	}
 
-	unsigned GetSequenceNumber(const std::string id) const override
+	unsigned GetSequenceNumber(const std::string& id) const override
 	{
 		return m_SequenceNumberList.at(id);
 	}

@@ -17,7 +17,7 @@ public:
 		std::istream& args
 	) const override
 	{
-		if (type == "circle")
+		if (type == "ellipse")
 		{
 			return MakeEllipseStrategy(args);
 		}

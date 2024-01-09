@@ -13,6 +13,6 @@ public:
 	virtual void ChangeShape(const std::string& id, std::unique_ptr<IDrawingStrategy>&& drawingStrategyPtr) = 0;
 	virtual const ShapesList& GetShapes() const = 0;
 	virtual const std::unique_ptr<IShape>& GetShape(const std::string& id) const = 0;
-	virtual unsigned GetSequenceNumber(const std::string id) const = 0;
+	virtual unsigned GetSequenceNumber(const std::string& id) const = 0;
 	virtual ~IPicture() = default;
 };

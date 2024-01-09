@@ -28,6 +28,30 @@ public:
 
 	void SetFrame(RectD frame) override
 	{
+		if (m_x1 < m_x2)
+		{
+			m_x1 = frame.left;
+		}
+		else
+		{
+			if (m_x1 == m_x2)
+			{
+				m_x1 = frame.left;
+			}
+			m_x2 = frame.left;
+		}
+		if (m_y1 < m_y2)
+		{
+			m_y1 = frame.top;
+		}
+		else
+		{
+			if (m_y1 == m_y2)
+			{
+				m_y1 = frame.top;
+			}
+			m_y2 = frame.top;
+		}
 	}
 
 	RectD GetFrame() const override
@@ -37,7 +61,7 @@ public:
 			std::min(m_y1, m_y2),
 			std::max(m_x1, m_x2) - std::min(m_x1, m_x2),
 			std::max(m_y1, m_y2) - std::min(m_y1, m_y2)
-			});
+		});
 	}
 
 	std::string GetStrategyParams() override

@@ -2,6 +2,8 @@
 #include "../stdafx.h"
 #include "../shapes/IShapeFabric.h"
 #include "../gfx/ICanvas.h"
+#include "../gfx/CCanvas.h"
+#include "../shapes/CShape.h"
 
 class CController
 {
@@ -152,7 +154,7 @@ private:
 	{
 		if (event.mouseButton.button == sf::Mouse::Left)
 		{
-			PointD mousePos = { event.mouseButton.x, event.mouseButton.y };
+			PointD mousePos = { (double)event.mouseButton.x, (double)event.mouseButton.y };
 
 			auto shapeID = GetShapeIDByCoords(mousePos);
 			if (shapeID.has_value())
@@ -258,7 +260,7 @@ private:
 		}
 		if (IsInFrame(pos, ellipseFrame))
 		{
-			std::string type = "circle";
+			std::string type = "ellipse";
 			boost::uuids::uuid uuid = boost::uuids::random_generator()();
 			AddShape(boost::uuids::to_string(uuid), BASE_COLOR, type, DEFAULT_ELLIPSE_ARGS);
 		}
@@ -393,15 +395,25 @@ private:
 		try
 		{
 			DrawWidgetPanel();
-			for (auto& it : m_picture->GetShapes())
+			unsigned positionNumber = 0;
+			while (++positionNumber <= m_picture->GetShapes().size())
 			{
-				it.second->Draw(*m_canvas);
-				if (it.second->GetId() == m_activeShapeID)
+				for (auto& it : m_picture->GetShapes())
 				{
-					RectD frame = it.second->GetFrame();
-					m_canvas->DrawFrame(frame);
+					std::string ID = it.second->GetId();
+					if (positionNumber == m_picture->GetSequenceNumber(ID))
+					{
+						it.second->Draw(*m_canvas);
+						if (ID == m_activeShapeID)
+						{
+							RectD frame = it.second->GetFrame();
+							m_canvas->DrawFrame(frame);
+						}
+						break;
+					}
 				}
 			}
+
 			m_canvas->Display();
 		}
 		catch (std::exception& e)
