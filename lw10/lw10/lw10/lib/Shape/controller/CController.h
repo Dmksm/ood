@@ -86,7 +86,7 @@ public:
 	}
 
 private:
-	const std::string DEFAULT_ELLIPSE_ARGS = "600 600 75";
+	const std::string DEFAULT_ELLIPSE_ARGS = "600 600 75 75";
 	const std::string DEFAULT_RECTANGLE_ARGS = "600 600 100 100";
 	const std::string DEFAULT_TRIANGLE_ARGS = "400 600 500 400 600 600";
 	const std::string BASE_COLOR = "#ff00ff";
@@ -409,21 +409,22 @@ private:
 		{
 			DrawWidgetPanel();
 			unsigned positionNumber = 0;
-			while (++positionNumber <= m_picture->GetShapes().size())
+
+			std::map<unsigned, std::string> orderList;
+			for (auto& it : m_picture->GetShapes())
 			{
-				for (auto& it : m_picture->GetShapes())
+				std::string ID = it.second->GetId();
+				orderList[m_picture->GetSequenceNumber(ID)] = it.second->GetId();
+			}
+
+			for (auto& it : orderList)
+			{
+				std::string ID = it.second;
+				m_picture->GetShape(ID)->Draw(*m_canvas);
+				if (ID == m_activeShapeID)
 				{
-					std::string ID = it.second->GetId();
-					if (positionNumber == m_picture->GetSequenceNumber(ID))
-					{
-						it.second->Draw(*m_canvas);
-						if (ID == m_activeShapeID)
-						{
-							RectD frame = it.second->GetFrame();
-							m_canvas->DrawFrame(frame);
-						}
-						break;
-					}
+					RectD frame = m_picture->GetShape(ID)->GetFrame();
+					m_canvas->DrawFrame(frame);
 				}
 			}
 
