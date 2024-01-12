@@ -31,9 +31,9 @@ public:
 		m_cy = frame.top + m_ry;
 	}
 
-	std::string GetType() override
+	ShapeType GetType() override
 	{
-		return "ellipse";
+		return ShapeType::Ellipse;
 	};
 
 private:

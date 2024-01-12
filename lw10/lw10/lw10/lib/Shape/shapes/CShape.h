@@ -11,7 +11,7 @@ public:
 	CShape(std::unique_ptr<IBehaviourStrategy>&& drawingStrategy,
 		const std::string& id,
 		Color color)
-		: m_drawingStrategy(std::move(drawingStrategy))
+		: m_behaviourStrategy(std::move(drawingStrategy))
 		, m_id(id)
 	    , m_color(color)
 	{
@@ -19,24 +19,24 @@ public:
 
 	void SetFrame(RectD frame) override
 	{
-		return m_drawingStrategy->SetFrame(frame);
+		return m_behaviourStrategy->SetFrame(frame);
 	}
 
 	RectD GetFrame() const override
 	{
-		return m_drawingStrategy->GetFrame();
+		return m_behaviourStrategy->GetFrame();
 	}
 
 	void SetBehaviourStrategy(std::unique_ptr<IBehaviourStrategy>&& drawingStrategy) override
 	{
-		m_drawingStrategy = std::move(drawingStrategy);
+		m_behaviourStrategy = std::move(drawingStrategy);
 	}
 
 	void Move(double dx, double dy) const override
 	{
 		if (!(dx == 0 && dy == 0))
 		{
-			m_drawingStrategy->Move(dx, dy);
+			m_behaviourStrategy->Move(dx, dy);
 		}
 	}
 
@@ -58,13 +58,17 @@ public:
 		return m_color;
 	}
 
-	std::string GetType() const override
+	std::optional<IBehaviourStrategy::ShapeType> GetType() const override
 	{
-		return (m_drawingStrategy) ? m_drawingStrategy->GetType() : "";
+		if (m_behaviourStrategy)
+		{
+			return m_behaviourStrategy->GetType();
+		}
+		return std::nullopt;
 	}
 
 private:
-	std::unique_ptr<IBehaviourStrategy> m_drawingStrategy = nullptr;
+	std::unique_ptr<IBehaviourStrategy> m_behaviourStrategy = nullptr;
 	Color m_color;
 	std::string m_id = "";
 

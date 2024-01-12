@@ -45,9 +45,9 @@ public:
 		m_y3 = frame.top + frame.height;
 	}
 
-	std::string GetType() override
+	ShapeType GetType() override
 	{
-		return "triangle";
+		return ShapeType::Triangle;
 	};
 
 private:

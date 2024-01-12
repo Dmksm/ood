@@ -271,7 +271,8 @@ private:
 		for (auto& it : m_picture->GetShapes())
 		{
 			RectD frame = it.second->GetFrame();
-			if (IsInFrame(mousePos, frame))
+			std::optional<IBehaviourStrategy::ShapeType> type = it.second->GetType();
+			if (IsInFrame(mousePos, frame, type))
 			{
 				if (!result.has_value())
 				{
@@ -291,10 +292,56 @@ private:
 		return result;
 	}
 
-	bool IsInFrame(PointD pos, RectD frame)
+	bool IsInFrame(PointD pos, RectD frame, 
+		std::optional<IBehaviourStrategy::ShapeType> shapeType = std::nullopt)
 	{
+		if (shapeType.has_value())
+		{
+			switch (shapeType.value())
+			{
+				case IBehaviourStrategy::ShapeType::Ellipse:
+				{
+					PointD center = { frame.left + frame.width / 2, frame.top + frame.height / 2 };
+					PointD axis = { frame.width / 2, frame.height / 2 };
+					return IsPointInsideEllipse(pos, center, axis);
+				}
+				case IBehaviourStrategy::ShapeType::Triangle:
+				{
+					PointD pointA = { frame.left, frame.top + frame.height };
+					PointD pointB = { frame.left + frame.width / 2, frame.top };
+					PointD pointC = { frame.left + frame.width, frame.top + frame.height };
+					return IsPointInsideTriangle(pos, pointA, pointB, pointC);
+				}
+				default:
+				{
+					break;
+				}
+			}
+		}
 		return pos.x >= frame.left && pos.x <= frame.left + frame.width
 			&& pos.y >= frame.top && pos.y <= frame.top + frame.height;
+	}
+
+	double CrossProduct(PointD A, PointD B, PointD C) {
+		return (B.x - A.x) * (C.y - A.y) - (B.y - A.y) * (C.x - A.x);
+	}
+
+	bool IsPointInsideTriangle(PointD pos, PointD A, PointD B, PointD C) {
+		double d1 = CrossProduct(A, B, pos);
+		double d2 = CrossProduct(B, C, pos);
+		double d3 = CrossProduct(C, A, pos);
+
+		bool hasNeg = (d1 < 0) || (d2 < 0) || (d3 < 0);
+		bool hasPos = (d1 > 0) || (d2 > 0) || (d3 > 0);
+
+		return !(hasNeg && hasPos);
+	}
+
+	bool IsPointInsideEllipse(PointD pos, PointD center, PointD axis) {
+		double term1 = std::pow((pos.x - center.x) / axis.x, 2);
+		double term2 = std::pow((pos.y - center.y) / axis.y, 2);
+
+		return term1 + term2 <= 1;
 	}
 
 	void DrawWidgetPanel()
@@ -370,38 +417,42 @@ private:
 		{
 			m_view->SetColor(m_picture->GetShape(id)->GetColor());
 			RectD frame = m_picture->GetShape(id)->GetFrame();
-			if (m_picture->GetShape(id)->GetType() == "ellipse")
+			std::optional<IBehaviourStrategy::ShapeType> type = m_picture->GetShape(id)->GetType();
+			if (type.has_value())
 			{
-				m_view->DrawEllipse(
-					frame.left + frame.width / 2,
-					frame.top + frame.height / 2,
-					frame.width / 2,
-					frame.height / 2
-				);
-			}
-			if (m_picture->GetShape(id)->GetType() == "rectangle")
-			{
-				m_view->DrawRectangle(
-					frame.left, frame.top,
-					frame.width, frame.height
-				);
-			}
-			if (m_picture->GetShape(id)->GetType() == "triangle")
-			{
-				m_view->DrawTriangle(
-					frame.left, frame.top + frame.height,
-					frame.left + frame.width / 2, frame.top,
-					frame.left + frame.width, frame.top + frame.height
-				);
-			}
-			if (m_picture->GetShape(id)->GetType() == "line")
-			{
-				m_view->DrawLine(
-					frame.left, frame.top,
-					frame.left + frame.width, frame.top + frame.height
-				);
-			}
+				if (type.value() == IBehaviourStrategy::ShapeType::Ellipse)
+				{
+					m_view->DrawEllipse(
+						frame.left + frame.width / 2,
+						frame.top + frame.height / 2,
+						frame.width / 2,
+						frame.height / 2
+					);
+				}
+				if (type.value() == IBehaviourStrategy::ShapeType::Rectangle)
+				{
+					m_view->DrawRectangle(
+						frame.left, frame.top,
+						frame.width, frame.height
+					);
+				}
+				if (type.value() == IBehaviourStrategy::ShapeType::Triangle)
+				{
+					m_view->DrawTriangle(
+						frame.left, frame.top + frame.height,
+						frame.left + frame.width / 2, frame.top,
+						frame.left + frame.width, frame.top + frame.height
+					);
+				}
+				if (type.value() == IBehaviourStrategy::ShapeType::Line)
+				{
+					m_view->DrawLine(
+						frame.left, frame.top,
+						frame.left + frame.width, frame.top + frame.height
+					);
+				}
 
+			}
 			m_view->Display();
 		}
 		catch (std::exception& e)
@@ -429,43 +480,47 @@ private:
 				std::string ID = it.second;
 				
 				m_view->SetColor(m_picture->GetShape(ID)->GetColor());
-				RectD frame = m_picture->GetShape(ID)->GetFrame();
-				if (m_picture->GetShape(ID)->GetType() == "ellipse")
+				RectD frame = m_picture->GetShape(ID)->GetFrame(); 
+				std::optional<IBehaviourStrategy::ShapeType> type = m_picture->GetShape(ID)->GetType();
+				if (type.has_value())
 				{
-					m_view->DrawEllipse(
-						frame.left + frame.width / 2,
-						frame.top + frame.height / 2,
-						frame.width / 2,
-						frame.height / 2
-					);
-				}
-				if (m_picture->GetShape(ID)->GetType() == "rectangle")
-				{
-					m_view->DrawRectangle(
-						frame.left, frame.top,
-						frame.width, frame.height
-					);
-				}
-				if (m_picture->GetShape(ID)->GetType() == "triangle")
-				{
-					m_view->DrawTriangle(
-						frame.left, frame.top + frame.height,
-						frame.left + frame.width / 2, frame.top,
-						frame.left + frame.width, frame.top + frame.height
-					);
-				}
-				if (m_picture->GetShape(ID)->GetType() == "line")
-				{
-					m_view->DrawLine(
-						frame.left, frame.top,
-						frame.left + frame.width, frame.top + frame.height
-					);
-				}
-				
-				if (ID == m_activeShapeID)
-				{
-					RectD frame = m_picture->GetShape(ID)->GetFrame();
-					m_view->DrawFrame(frame);
+					if (type.value() == IBehaviourStrategy::ShapeType::Ellipse)
+					{
+						m_view->DrawEllipse(
+							frame.left + frame.width / 2,
+							frame.top + frame.height / 2,
+							frame.width / 2,
+							frame.height / 2
+						);
+					}
+					if (type.value() == IBehaviourStrategy::ShapeType::Rectangle)
+					{
+						m_view->DrawRectangle(
+							frame.left, frame.top,
+							frame.width, frame.height
+						);
+					}
+					if (type.value() == IBehaviourStrategy::ShapeType::Triangle)
+					{
+						m_view->DrawTriangle(
+							frame.left, frame.top + frame.height,
+							frame.left + frame.width / 2, frame.top,
+							frame.left + frame.width, frame.top + frame.height
+						);
+					}
+					if (type.value() == IBehaviourStrategy::ShapeType::Line)
+					{
+						m_view->DrawLine(
+							frame.left, frame.top,
+							frame.left + frame.width, frame.top + frame.height
+						);
+					}
+
+					if (ID == m_activeShapeID)
+					{
+						RectD frame = m_picture->GetShape(ID)->GetFrame();
+						m_view->DrawFrame(frame);
+					}
 				}
 			}
 

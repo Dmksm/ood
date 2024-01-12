@@ -14,6 +14,6 @@ public:
 	virtual void SetColor(Color color) = 0;
 	virtual std::string GetId() const = 0;
 	virtual Color GetColor() const = 0;
-	virtual std::string GetType() const = 0;
+	virtual std::optional<IBehaviourStrategy::ShapeType> GetType() const = 0;
 	virtual ~IShape() = default;
 };

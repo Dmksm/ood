@@ -58,9 +58,9 @@ public:
 		});
 	}
 
-	std::string GetType() override
+	ShapeType GetType() override
 	{
-		return "line";
+		return ShapeType::Line;
 	};
 
 private:

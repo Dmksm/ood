@@ -31,9 +31,9 @@ public:
 		return RectD({ m_left, m_top, m_width, m_height });
 	}
 
-	std::string GetType() override
+	ShapeType GetType() override
 	{
-		return "rectangle";
+		return ShapeType::Rectangle;
 	};
 
 private:
