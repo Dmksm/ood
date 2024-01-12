@@ -163,6 +163,8 @@
     <ClInclude Include="lib\Shape\gfx\CommonTypes.h" />
     <ClInclude Include="lib\Shape\gfx\EllipseShape.h" />
     <ClInclude Include="lib\Shape\gfx\ICanvas.h" />
+    <ClInclude Include="lib\Shape\gfx\CView.h" />
+    <ClInclude Include="lib\Shape\gfx\IView.h" />
     <ClInclude Include="lib\Shape\shapes\CPicture.h" />
     <ClInclude Include="lib\Shape\shapes\CShape.h" />
     <ClInclude Include="lib\Shape\shapes\CShapeBehaviourFactory.h" />

@@ -1,8 +1,9 @@
 #pragma once
 #include "../stdafx.h"
 #include "../shapes/IShapeBehaviourFactory.h"
-#include "../gfx/ICanvas.h"
-#include "../gfx/CCanvas.h"
+#include "../gfx/IView.h"
+#include "../gfx/IView.h"
+#include "../gfx/CView.h"
 #include "../shapes/CShape.h"
 
 class CController
@@ -18,7 +19,7 @@ public:
 		: m_picture(std::move(picture))
 		, m_shapeFactory(std::move(shapeFactory))
 		, m_window(renderWindow)
-		, m_canvas(std::move(std::make_shared<CCanvas>(renderWindow)))
+		, m_view(std::move(std::make_shared<CView>(renderWindow)))
 		, m_input(input)
 		, m_output(output)
 	{
@@ -92,7 +93,7 @@ private:
 	std::optional<std::string> m_activeShapeID = std::nullopt;
 	std::shared_ptr<sf::RenderWindow> m_window;
 	std::shared_ptr<IPicture> m_picture;
-	std::shared_ptr<ICanvas> m_canvas;
+	std::shared_ptr<IView> m_view;
 	std::istream& m_input;
 	std::ostream& m_output;
 	std::unique_ptr<IShapeBehaviourFactory> m_shapeFactory;
@@ -108,7 +109,7 @@ private:
 	{
 		if ((isShapeMoving || isShapeResizing) && m_activeShapeID.has_value())
 		{
-			RectD border = m_canvas->GetWorkSpaceFrameBorder();
+			RectD border = m_view->GetWorkSpaceFrameBorder();
 			double currX = event.mouseMove.x;
 			double currY = event.mouseMove.y;
 			RectD activeFrame = m_picture->GetShape(m_activeShapeID.value())->GetFrame();
@@ -167,7 +168,7 @@ private:
 			if (m_activeShapeID.has_value())
 			{
 				RectD frame = m_picture->GetShape(m_activeShapeID.value())->GetFrame();
-				selectionFrames = m_canvas->GetSelectionMarkerFrame(frame);
+				selectionFrames = m_view->GetSelectionMarkerFrame(frame);
 			}
 
 			int index = 0;
@@ -241,9 +242,9 @@ private:
 
 	void IsInWidget(PointD pos)
 	{
-		RectD rectFrame = m_canvas->GetWidgetFrame(ICanvas::ShapeType::Rectangle);
-		RectD triangleFrame = m_canvas->GetWidgetFrame(ICanvas::ShapeType::Triangle);
-		RectD ellipseFrame = m_canvas->GetWidgetFrame(ICanvas::ShapeType::Ellipse);
+		RectD rectFrame = m_view->GetWidgetFrame(IView::ShapeType::Rectangle);
+		RectD triangleFrame = m_view->GetWidgetFrame(IView::ShapeType::Triangle);
+		RectD ellipseFrame = m_view->GetWidgetFrame(IView::ShapeType::Ellipse);
 		if (IsInFrame(pos, rectFrame))
 		{
 			std::string type = "rectangle";
@@ -298,7 +299,7 @@ private:
 
 	void DrawWidgetPanel()
 	{
-		m_canvas->DrawWidgetPanel();
+		m_view->DrawWidgetPanel();
 	}
 
 	void ChangeShape(const std::string& id, const std::string& type, RectD frame,
@@ -367,11 +368,11 @@ private:
 	{
 		try
 		{
-			m_canvas->SetColor(m_picture->GetShape(id)->GetColor());
+			m_view->SetColor(m_picture->GetShape(id)->GetColor());
 			RectD frame = m_picture->GetShape(id)->GetFrame();
 			if (m_picture->GetShape(id)->GetType() == "ellipse")
 			{
-				m_canvas->DrawEllipse(
+				m_view->DrawEllipse(
 					frame.left + frame.width / 2,
 					frame.top + frame.height / 2,
 					frame.width / 2,
@@ -380,14 +381,14 @@ private:
 			}
 			if (m_picture->GetShape(id)->GetType() == "rectangle")
 			{
-				m_canvas->DrawRectangle(
+				m_view->DrawRectangle(
 					frame.left, frame.top,
 					frame.width, frame.height
 				);
 			}
 			if (m_picture->GetShape(id)->GetType() == "triangle")
 			{
-				m_canvas->DrawTriangle(
+				m_view->DrawTriangle(
 					frame.left, frame.top + frame.height,
 					frame.left + frame.width / 2, frame.top,
 					frame.left + frame.width, frame.top + frame.height
@@ -395,13 +396,13 @@ private:
 			}
 			if (m_picture->GetShape(id)->GetType() == "line")
 			{
-				m_canvas->DrawLine(
+				m_view->DrawLine(
 					frame.left, frame.top,
 					frame.left + frame.width, frame.top + frame.height
 				);
 			}
 
-			m_canvas->Display();
+			m_view->Display();
 		}
 		catch (std::exception& e)
 		{
@@ -427,11 +428,11 @@ private:
 			{
 				std::string ID = it.second;
 				
-				m_canvas->SetColor(m_picture->GetShape(ID)->GetColor());
+				m_view->SetColor(m_picture->GetShape(ID)->GetColor());
 				RectD frame = m_picture->GetShape(ID)->GetFrame();
 				if (m_picture->GetShape(ID)->GetType() == "ellipse")
 				{
-					m_canvas->DrawEllipse(
+					m_view->DrawEllipse(
 						frame.left + frame.width / 2,
 						frame.top + frame.height / 2,
 						frame.width / 2,
@@ -440,14 +441,14 @@ private:
 				}
 				if (m_picture->GetShape(ID)->GetType() == "rectangle")
 				{
-					m_canvas->DrawRectangle(
+					m_view->DrawRectangle(
 						frame.left, frame.top,
 						frame.width, frame.height
 					);
 				}
 				if (m_picture->GetShape(ID)->GetType() == "triangle")
 				{
-					m_canvas->DrawTriangle(
+					m_view->DrawTriangle(
 						frame.left, frame.top + frame.height,
 						frame.left + frame.width / 2, frame.top,
 						frame.left + frame.width, frame.top + frame.height
@@ -455,7 +456,7 @@ private:
 				}
 				if (m_picture->GetShape(ID)->GetType() == "line")
 				{
-					m_canvas->DrawLine(
+					m_view->DrawLine(
 						frame.left, frame.top,
 						frame.left + frame.width, frame.top + frame.height
 					);
@@ -464,11 +465,11 @@ private:
 				if (ID == m_activeShapeID)
 				{
 					RectD frame = m_picture->GetShape(ID)->GetFrame();
-					m_canvas->DrawFrame(frame);
+					m_view->DrawFrame(frame);
 				}
 			}
 
-			m_canvas->Display();
+			m_view->Display();
 		}
 		catch (std::exception& e)
 		{
